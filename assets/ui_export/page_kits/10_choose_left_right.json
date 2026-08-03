@@ -1,0 +1,17 @@
+{
+  "page": "10_choose_left_right",
+  "title": "Cat-ear yes/no selector",
+  "assets": [
+    "backgrounds/bg_02_sofa_idle.png",
+    "foods/food_002.png"
+  ],
+  "backend_hooks": [
+    "POST /v1/device/event left_ear/right_ear"
+  ],
+  "buttons": [
+    "Left: Change",
+    "Right: Eat this",
+    "Save to blind box"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

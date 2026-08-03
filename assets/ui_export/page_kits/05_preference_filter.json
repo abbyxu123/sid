@@ -1,0 +1,18 @@
+{
+  "page": "05_preference_filter",
+  "title": "Taste, allergy, taboo filter",
+  "assets": [
+    "backgrounds/bg_08_sofa_corner.png",
+    "characters/cat_taste_food.png"
+  ],
+  "backend_hooks": [
+    "POST /v1/input constraints"
+  ],
+  "buttons": [
+    "Spice",
+    "Avoid",
+    "Today I do not want",
+    "Continue"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

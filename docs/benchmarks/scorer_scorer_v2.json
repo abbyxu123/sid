@@ -1,0 +1,10 @@
+{
+ "tag": "scorer_v2",
+ "holdout_cases": 40,
+ "agent_calls": 160,
+ "json_ok_rate": 0.838,
+ "top1_agree_rate": 0.7,
+ "score_mae": 0.1383,
+ "hard_flag_agree": 0.916,
+ "latency_avg_s": 7.24
+}

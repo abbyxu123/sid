@@ -1,0 +1,357 @@
+[
+ {
+  "id": "r01_kaoyu_s",
+  "restaurant": "江边捞烤鱼",
+  "item": "香辣烤鱼小份",
+  "price_total": 36,
+  "eta_minutes": 26,
+  "cuisine": "川菜",
+  "spicy_level": "medium",
+  "ingredients": [
+   "鱼",
+   "辣椒",
+   "豆芽"
+  ],
+  "tags": [
+   "热食",
+   "米饭"
+  ],
+  "distance_m": 800,
+  "open_now": true,
+  "queue_minutes": 0,
+ "channel": "delivery"
+ },
+ {
+  "id": "r14_suancaiyu",
+  "restaurant": "小河边酸菜鱼",
+  "item": "酸菜鱼单人小锅",
+  "price_total": 42,
+  "eta_minutes": 32,
+  "cuisine": "川菜",
+  "spicy_level": "mild",
+  "ingredients": [
+   "鱼",
+   "酸菜",
+   "豆芽"
+  ],
+  "tags": [
+   "热食",
+   "汤",
+   "米饭"
+  ],
+  "distance_m": 900,
+  "open_now": true,
+  "queue_minutes": 0,
+  "channel": "delivery"
+ },
+ {
+  "id": "r15_qingzhengyu",
+  "restaurant": "粤味小馆",
+  "item": "清蒸鲈鱼饭",
+  "price_total": 56,
+  "eta_minutes": 34,
+  "cuisine": "粤菜",
+  "spicy_level": "none",
+  "ingredients": [
+   "鱼",
+   "米饭",
+   "青菜"
+  ],
+  "tags": [
+   "热食",
+   "米饭"
+  ],
+  "distance_m": 1000,
+  "open_now": true,
+  "queue_minutes": 0,
+  "channel": "delivery"
+ },
+ {
+  "id": "r16_tomatofish",
+  "restaurant": "暖汤研究所",
+  "item": "番茄鱼片汤饭",
+  "price_total": 39,
+  "eta_minutes": 29,
+  "cuisine": "家常菜",
+  "spicy_level": "none",
+  "ingredients": [
+   "鱼",
+   "番茄",
+   "米饭"
+  ],
+  "tags": [
+   "热食",
+   "汤"
+  ],
+  "distance_m": 650,
+  "open_now": true,
+  "queue_minutes": 0,
+  "channel": "delivery"
+ },
+ {
+  "id": "r02_chuanchuan",
+  "restaurant": "签王之王",
+  "item": "冷锅串串双人套餐",
+  "price_total": 58,
+  "eta_minutes": 45,
+  "cuisine": "川菜",
+  "spicy_level": "hot",
+  "ingredients": [
+   "牛肉",
+   "土豆",
+   "辣椒",
+   "花生"
+  ],
+  "tags": [
+   "热食"
+  ],
+  "distance_m": 1200,
+  "open_now": true,
+  "queue_minutes": 45,
+  "channel": "dine_in"
+ },
+ {
+  "id": "r03_lanzhou",
+  "restaurant": "兰州拉面",
+  "item": "牛肉拉面套餐",
+  "price_total": 22,
+  "eta_minutes": 18,
+  "cuisine": "西北",
+  "spicy_level": "mild",
+  "ingredients": [
+   "牛肉",
+   "面"
+  ],
+  "tags": [
+   "面食",
+   "汤",
+   "热食"
+  ],
+  "distance_m": 300,
+  "open_now": true,
+  "queue_minutes": 5,
+  "channel": "delivery"
+ },
+ {
+  "id": "r04_shaguo",
+  "restaurant": "砂锅居",
+  "item": "麻辣砂锅米线",
+  "price_total": 24,
+  "eta_minutes": 22,
+  "cuisine": "云南",
+  "spicy_level": "hot",
+  "ingredients": [
+   "米线",
+   "辣椒",
+   "豆腐"
+  ],
+  "tags": [
+   "热食",
+   "汤"
+  ],
+  "distance_m": 600,
+  "open_now": true,
+  "queue_minutes": 0,
+  "channel": "delivery"
+ },
+ {
+  "id": "r05_qingtuan",
+  "restaurant": "轻团沙拉",
+  "item": "鸡胸轻食碗",
+  "price_total": 32,
+  "eta_minutes": 20,
+  "cuisine": "轻食",
+  "spicy_level": "none",
+  "ingredients": [
+   "鸡肉",
+   "生菜",
+   "藜麦"
+  ],
+  "tags": [
+   "冷食",
+   "健身"
+  ],
+  "distance_m": 900,
+  "open_now": true,
+  "queue_minutes": 0,
+  "channel": "delivery"
+ },
+ {
+  "id": "r06_riliao",
+  "restaurant": "鮨心日料",
+  "item": "双人寿司拼盘",
+  "price_total": 128,
+  "eta_minutes": 35,
+  "cuisine": "日料",
+  "spicy_level": "none",
+  "ingredients": [
+   "鱼",
+   "米饭",
+   "海鲜"
+  ],
+  "tags": [
+   "冷食"
+  ],
+  "distance_m": 1500,
+  "open_now": true,
+  "queue_minutes": 20,
+  "channel": "dine_in"
+ },
+ {
+  "id": "r07_xiangcai",
+  "restaurant": "湘遇小炒",
+  "item": "辣椒炒肉盖码饭",
+  "price_total": 28,
+  "eta_minutes": 24,
+  "cuisine": "湘菜",
+  "spicy_level": "hot",
+  "ingredients": [
+   "猪肉",
+   "辣椒",
+   "米饭"
+  ],
+  "tags": [
+   "热食",
+   "米饭"
+  ],
+  "distance_m": 700,
+  "open_now": true,
+  "queue_minutes": 0,
+  "channel": "delivery"
+ },
+ {
+  "id": "r08_zhou",
+  "restaurant": "潮汕砂锅粥",
+  "item": "虾蟹粥双人份",
+  "price_total": 68,
+  "eta_minutes": 40,
+  "cuisine": "粤菜",
+  "spicy_level": "none",
+  "ingredients": [
+   "虾",
+   "蟹",
+   "米"
+  ],
+  "tags": [
+   "热食",
+   "汤",
+   "海鲜"
+  ],
+  "distance_m": 1100,
+  "open_now": false,
+  "queue_minutes": 0,
+  "channel": "delivery"
+ },
+ {
+  "id": "r09_hanshi",
+  "restaurant": "首尔部队锅",
+  "item": "部队锅单人餐",
+  "price_total": 39,
+  "eta_minutes": 28,
+  "cuisine": "韩餐",
+  "spicy_level": "medium",
+  "ingredients": [
+   "午餐肉",
+   "泡面",
+   "年糕",
+   "辣椒"
+  ],
+  "tags": [
+   "热食",
+   "汤",
+   "面食"
+  ],
+  "distance_m": 850,
+  "open_now": true,
+  "queue_minutes": 0,
+  "channel": "delivery"
+ },
+ {
+  "id": "r10_gaifan",
+  "restaurant": "老碗黄焖鸡",
+  "item": "黄焖鸡米饭中辣",
+  "price_total": 26,
+  "eta_minutes": 21,
+  "cuisine": "鲁菜",
+  "spicy_level": "medium",
+  "ingredients": [
+   "鸡肉",
+   "土豆",
+   "米饭"
+  ],
+  "tags": [
+   "热食",
+   "米饭"
+  ],
+  "distance_m": 400,
+  "open_now": true,
+  "queue_minutes": 0,
+  "channel": "delivery"
+ },
+ {
+  "id": "r11_jitui",
+  "restaurant": "香香鸡排",
+  "item": "香辣鸡腿饭",
+  "price_total": 36,
+  "eta_minutes": 26,
+  "cuisine": "快餐",
+  "spicy_level": "medium",
+  "ingredients": [
+   "鸡肉",
+   "辣椒",
+   "米饭"
+  ],
+  "tags": [
+   "热食",
+   "米饭"
+  ],
+  "distance_m": 500,
+  "open_now": true,
+  "queue_minutes": 0,
+  "channel": "delivery"
+ },
+ {
+  "id": "r12_shaokao",
+  "restaurant": "炭火烧烤",
+  "item": "烧烤小串套餐",
+  "price_total": 45,
+  "eta_minutes": 25,
+  "cuisine": "川菜",
+  "spicy_level": "hot",
+  "ingredients": [
+   "羊肉",
+   "辣椒",
+   "花生"
+  ],
+  "tags": [
+   "热食",
+   "到店"
+  ],
+  "distance_m": 400,
+  "open_now": true,
+  "queue_minutes": 10,
+  "channel": "dine_in"
+ },
+ {
+  "id": "r13_jiachao",
+  "restaurant": "口味小炒",
+  "item": "石锅豆腐小炒饭",
+  "price_total": 38,
+  "eta_minutes": 15,
+  "cuisine": "小炒",
+  "spicy_level": "mild",
+  "ingredients": [
+   "豆腐",
+   "米饭",
+   "青菜"
+  ],
+  "tags": [
+   "热食",
+   "到店"
+  ],
+  "distance_m": 250,
+  "open_now": true,
+  "queue_minutes": 0,
+  "channel": "dine_in"
+ }
+]

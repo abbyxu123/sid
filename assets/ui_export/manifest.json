@@ -1,0 +1,2642 @@
+[
+  {
+    "type": "background",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/室内场景/首图.png",
+    "export": "assets/ui_export/backgrounds/bg_01_home.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "87c440340e40",
+    "note": "448x368 screen-ready background"
+  },
+  {
+    "type": "background",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/室内场景/沙发.png",
+    "export": "assets/ui_export/backgrounds/bg_02_sofa_idle.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "74386540bd33",
+    "note": "448x368 screen-ready background"
+  },
+  {
+    "type": "background",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/室内场景/无人沙发.png",
+    "export": "assets/ui_export/backgrounds/bg_03_empty_sofa.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "10e80a327092",
+    "note": "448x368 screen-ready background"
+  },
+  {
+    "type": "background",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/室内场景/桌子.png",
+    "export": "assets/ui_export/backgrounds/bg_04_table.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "01baa7a9232d",
+    "note": "448x368 screen-ready background"
+  },
+  {
+    "type": "background",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/室内场景/课桌.png",
+    "export": "assets/ui_export/backgrounds/bg_05_desk.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "a612718dbf50",
+    "note": "448x368 screen-ready background"
+  },
+  {
+    "type": "background",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/室内场景/开会.png",
+    "export": "assets/ui_export/backgrounds/bg_06_council_room.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "2ac23da5757d",
+    "note": "448x368 screen-ready background"
+  },
+  {
+    "type": "background",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/室内场景/厨房.png",
+    "export": "assets/ui_export/backgrounds/bg_07_kitchen.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "ab39de62ce46",
+    "note": "448x368 screen-ready background"
+  },
+  {
+    "type": "background",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/室内场景/沙发一角.png",
+    "export": "assets/ui_export/backgrounds/bg_08_sofa_corner.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "9c96354b57db",
+    "note": "448x368 screen-ready background"
+  },
+  {
+    "type": "background",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/室内场景/沙发喝茶.png",
+    "export": "assets/ui_export/backgrounds/bg_09_tea_sofa.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "7971a98cce34",
+    "note": "448x368 screen-ready background"
+  },
+  {
+    "type": "background",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/室内场景/进门口.png",
+    "export": "assets/ui_export/backgrounds/bg_10_doorway.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "74cb1320f50a",
+    "note": "448x368 screen-ready background"
+  },
+  {
+    "type": "character",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI角色汇总/决策结果猫.png",
+    "export": "assets/ui_export/characters/cat_chair_decision.png",
+    "size": [
+      322,
+      320
+    ],
+    "sha": "b95741e8b0a7",
+    "note": "transparent cropped character"
+  },
+  {
+    "type": "character",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI角色汇总/美味推荐猫.png",
+    "export": "assets/ui_export/characters/cat_taste_food.png",
+    "size": [
+      302,
+      320
+    ],
+    "sha": "87ca52a157b8",
+    "note": "transparent cropped character"
+  },
+  {
+    "type": "character",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI角色汇总/探索寻找猫.png",
+    "export": "assets/ui_export/characters/cat_forage_search.png",
+    "size": [
+      293,
+      320
+    ],
+    "sha": "2d4d387cc9cb",
+    "note": "transparent cropped character"
+  },
+  {
+    "type": "character",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI角色汇总/猫时间管理者.png",
+    "export": "assets/ui_export/characters/cat_time_manager.png",
+    "size": [
+      223,
+      320
+    ],
+    "sha": "2dbab1188d80",
+    "note": "transparent cropped character"
+  },
+  {
+    "type": "character",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI角色汇总/排队时间估算猫.png",
+    "export": "assets/ui_export/characters/cat_queue_time.png",
+    "size": [
+      279,
+      320
+    ],
+    "sha": "ae6ad8593904",
+    "note": "transparent cropped character"
+  },
+  {
+    "type": "character",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI角色汇总/猫会计.png",
+    "export": "assets/ui_export/characters/cat_budget_accountant.png",
+    "size": [
+      279,
+      320
+    ],
+    "sha": "cc9b856515b1",
+    "note": "transparent cropped character"
+  },
+  {
+    "type": "character",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI角色汇总/定位距离猫.png",
+    "export": "assets/ui_export/characters/cat_map_distance.png",
+    "size": [
+      312,
+      320
+    ],
+    "sha": "7063c7d557c4",
+    "note": "transparent cropped character"
+  },
+  {
+    "type": "character",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI角色汇总/长期记忆猫.png",
+    "export": "assets/ui_export/characters/cat_memory_keeper.png",
+    "size": [
+      270,
+      320
+    ],
+    "sha": "f93dc3319fa6",
+    "note": "transparent cropped character"
+  },
+  {
+    "type": "character",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI角色汇总/打折提醒猫.png",
+    "export": "assets/ui_export/characters/cat_deal_alert.png",
+    "size": [
+      205,
+      320
+    ],
+    "sha": "699d80858b30",
+    "note": "transparent cropped character"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜1.png",
+    "export": "assets/ui_export/foods/food_001.png",
+    "size": [
+      300,
+      202
+    ],
+    "sha": "58cff13e4884",
+    "note": "food candidate #001"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜2.png",
+    "export": "assets/ui_export/foods/food_002.png",
+    "size": [
+      232,
+      240
+    ],
+    "sha": "1244d1eeadc2",
+    "note": "food candidate #002"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜3.png",
+    "export": "assets/ui_export/foods/food_003.png",
+    "size": [
+      300,
+      236
+    ],
+    "sha": "07fcdec376ca",
+    "note": "food candidate #003"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜4.png",
+    "export": "assets/ui_export/foods/food_004.png",
+    "size": [
+      230,
+      239
+    ],
+    "sha": "332f1003b14f",
+    "note": "food candidate #004"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜5.png",
+    "export": "assets/ui_export/foods/food_005.png",
+    "size": [
+      259,
+      239
+    ],
+    "sha": "bf9645ed175a",
+    "note": "food candidate #005"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜6.png",
+    "export": "assets/ui_export/foods/food_006.png",
+    "size": [
+      300,
+      211
+    ],
+    "sha": "b8e8455748eb",
+    "note": "food candidate #006"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜7.png",
+    "export": "assets/ui_export/foods/food_007.png",
+    "size": [
+      300,
+      191
+    ],
+    "sha": "0bb812b0e330",
+    "note": "food candidate #007"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜8.png",
+    "export": "assets/ui_export/foods/food_008.png",
+    "size": [
+      258,
+      240
+    ],
+    "sha": "eafccc4d3ade",
+    "note": "food candidate #008"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜9.png",
+    "export": "assets/ui_export/foods/food_009.png",
+    "size": [
+      295,
+      240
+    ],
+    "sha": "2b86a32b0e0b",
+    "note": "food candidate #009"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜10.png",
+    "export": "assets/ui_export/foods/food_010.png",
+    "size": [
+      261,
+      240
+    ],
+    "sha": "48fe3e734185",
+    "note": "food candidate #010"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜11.png",
+    "export": "assets/ui_export/foods/food_011.png",
+    "size": [
+      240,
+      240
+    ],
+    "sha": "19b9212fd05e",
+    "note": "food candidate #011"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜12.png",
+    "export": "assets/ui_export/foods/food_012.png",
+    "size": [
+      300,
+      235
+    ],
+    "sha": "d680615e5bd0",
+    "note": "food candidate #012"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜13.png",
+    "export": "assets/ui_export/foods/food_013.png",
+    "size": [
+      258,
+      240
+    ],
+    "sha": "81cde7a5a458",
+    "note": "food candidate #013"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜14.png",
+    "export": "assets/ui_export/foods/food_014.png",
+    "size": [
+      300,
+      202
+    ],
+    "sha": "205d768fddca",
+    "note": "food candidate #014"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜15.png",
+    "export": "assets/ui_export/foods/food_015.png",
+    "size": [
+      230,
+      240
+    ],
+    "sha": "cb80cd4d7b1e",
+    "note": "food candidate #015"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜16.png",
+    "export": "assets/ui_export/foods/food_016.png",
+    "size": [
+      250,
+      240
+    ],
+    "sha": "99d1658e2bb9",
+    "note": "food candidate #016"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜17.png",
+    "export": "assets/ui_export/foods/food_017.png",
+    "size": [
+      300,
+      202
+    ],
+    "sha": "18b932a2d784",
+    "note": "food candidate #017"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜18.png",
+    "export": "assets/ui_export/foods/food_018.png",
+    "size": [
+      266,
+      239
+    ],
+    "sha": "2665d416daa2",
+    "note": "food candidate #018"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜19.png",
+    "export": "assets/ui_export/foods/food_019.png",
+    "size": [
+      257,
+      240
+    ],
+    "sha": "8915846b64a6",
+    "note": "food candidate #019"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜20.png",
+    "export": "assets/ui_export/foods/food_020.png",
+    "size": [
+      300,
+      206
+    ],
+    "sha": "c2a8093167ee",
+    "note": "food candidate #020"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜21.png",
+    "export": "assets/ui_export/foods/food_021.png",
+    "size": [
+      300,
+      226
+    ],
+    "sha": "0941cdea11bd",
+    "note": "food candidate #021"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜22.png",
+    "export": "assets/ui_export/foods/food_022.png",
+    "size": [
+      268,
+      240
+    ],
+    "sha": "f3fcec0358c3",
+    "note": "food candidate #022"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜23.png",
+    "export": "assets/ui_export/foods/food_023.png",
+    "size": [
+      256,
+      239
+    ],
+    "sha": "4014ebcd683d",
+    "note": "food candidate #023"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜24.png",
+    "export": "assets/ui_export/foods/food_024.png",
+    "size": [
+      248,
+      240
+    ],
+    "sha": "91a04fd4d00b",
+    "note": "food candidate #024"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜25.png",
+    "export": "assets/ui_export/foods/food_025.png",
+    "size": [
+      289,
+      240
+    ],
+    "sha": "b7c1ecdc6b87",
+    "note": "food candidate #025"
+  },
+  {
+    "type": "food",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/预设菜色与菜号/菜26.png",
+    "export": "assets/ui_export/foods/food_026.png",
+    "size": [
+      246,
+      239
+    ],
+    "sha": "470f0949147a",
+    "note": "food candidate #026"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/1.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_01_home.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "2d2994a8b82b",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/2.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_02_mode_or_profile.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "298ebea4b7aa",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/3.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_03_filter.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "dedbf1a2595b",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/4.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_04_voice_input.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "e8c5ceb1b39f",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/5.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_05_scene_budget.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "2162b734d2af",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/66.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_06_council.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "1b75d1ba2368",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/7.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_07_searching.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "c0ad08927bb0",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/盲盒.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_08_blind_box.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "a56096dcf414",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/开盲盒.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_09_open_blind_box.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "4d6c5c4ca8c4",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/可能真饿.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_10_hunger_check.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "49e1467879fe",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/魔法.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_11_lucky_food.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "0d7a6f6e3421",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/口味记录长期记忆.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_12_food_memory.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "6fe1cc8d1870",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "screen_ref",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/屏幕上的测试不一定-只是看看/说给你听.png",
+    "export": "assets/ui_export/screen_refs/screen_ref_13_voice_note.png",
+    "size": [
+      448,
+      368
+    ],
+    "sha": "f1936dc40112",
+    "note": "reference only, not dynamic UI source"
+  },
+  {
+    "type": "component",
+    "source": "generated",
+    "export": "assets/ui_export/components/qr_placeholder.png",
+    "size": [
+      180,
+      180
+    ],
+    "sha": "dca4ea92486e",
+    "note": "front-end may replace with real QR generated from confirm url"
+  },
+  {
+    "type": "component",
+    "source": "generated",
+    "export": "assets/ui_export/components/receipt_panel_blank.png",
+    "size": [
+      240,
+      300
+    ],
+    "sha": "2dd089ac4f4c",
+    "note": "blank receipt panel for dynamic text"
+  },
+  {
+    "type": "component_sheet",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components/component_sheet_01_chatgpt_image_2026_7_26_.png",
+    "size": [
+      1024,
+      682
+    ],
+    "sha": "8868e5ab4a0c",
+    "note": "optimized source sheet; use if auto crops need adjustment"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_01.png",
+    "size": [
+      520,
+      183
+    ],
+    "sha": "be0e427bc8ac",
+    "note": "auto-cropped component bbox=(6, 61, 761, 327) alpha_pixels=176208"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_02.png",
+    "size": [
+      144,
+      141
+    ],
+    "sha": "37d76ac2f82a",
+    "note": "auto-cropped component bbox=(807, 252, 951, 393) alpha_pixels=12596"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_03.png",
+    "size": [
+      233,
+      109
+    ],
+    "sha": "1a60ad92f38a",
+    "note": "auto-cropped component bbox=(547, 365, 780, 474) alpha_pixels=18955"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_04.png",
+    "size": [
+      272,
+      109
+    ],
+    "sha": "139ab294dde8",
+    "note": "auto-cropped component bbox=(4, 366, 276, 475) alpha_pixels=22613"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_05.png",
+    "size": [
+      242,
+      109
+    ],
+    "sha": "a5a94f165fb0",
+    "note": "auto-cropped component bbox=(287, 366, 529, 475) alpha_pixels=19867"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_06.png",
+    "size": [
+      352,
+      360
+    ],
+    "sha": "ca410fb515b0",
+    "note": "auto-cropped component bbox=(991, 376, 1511, 907) alpha_pixels=173530"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_07.png",
+    "size": [
+      365,
+      118
+    ],
+    "sha": "70ebd1e4a3af",
+    "note": "auto-cropped component bbox=(2, 502, 367, 620) alpha_pixels=34331"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_08.png",
+    "size": [
+      389,
+      118
+    ],
+    "sha": "576d946713db",
+    "note": "auto-cropped component bbox=(386, 502, 775, 620) alpha_pixels=36623"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_09.png",
+    "size": [
+      520,
+      66
+    ],
+    "sha": "db890475aa83",
+    "note": "auto-cropped component bbox=(2, 659, 781, 758) alpha_pixels=61992"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_10.png",
+    "size": [
+      303,
+      117
+    ],
+    "sha": "0fe57c74422a",
+    "note": "auto-cropped component bbox=(0, 787, 303, 904) alpha_pixels=27200"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/ChatGPT Image 2026年7月26日 04_04_56.png",
+    "export": "assets/ui_export/components_auto/sheet_01_component_11.png",
+    "size": [
+      498,
+      117
+    ],
+    "sha": "efcadf21befb",
+    "note": "auto-cropped component bbox=(316, 787, 814, 904) alpha_pixels=46572"
+  },
+  {
+    "type": "component_sheet",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components/component_sheet_02_ui_1.png",
+    "size": [
+      1024,
+      736
+    ],
+    "sha": "0ed21983d460",
+    "note": "optimized source sheet; use if auto crops need adjustment"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_01.png",
+    "size": [
+      520,
+      310
+    ],
+    "sha": "377ddaf980a4",
+    "note": "auto-cropped component bbox=(770, 95, 1402, 472) alpha_pixels=222376"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_02.png",
+    "size": [
+      520,
+      301
+    ],
+    "sha": "2a2d94715d68",
+    "note": "auto-cropped component bbox=(1468, 95, 2122, 474) alpha_pixels=231594"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_03.png",
+    "size": [
+      520,
+      327
+    ],
+    "sha": "0718a9e996ac",
+    "note": "auto-cropped component bbox=(104, 98, 729, 492) alpha_pixels=230202"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_04.png",
+    "size": [
+      381,
+      360
+    ],
+    "sha": "c46bc8f60139",
+    "note": "auto-cropped component bbox=(826, 481, 1289, 918) alpha_pixels=123902"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_05.png",
+    "size": [
+      428,
+      344
+    ],
+    "sha": "f49a19a062d1",
+    "note": "auto-cropped component bbox=(92, 496, 520, 840) alpha_pixels=98602"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_06.png",
+    "size": [
+      520,
+      217
+    ],
+    "sha": "d3d8faab92a4",
+    "note": "auto-cropped component bbox=(1558, 507, 2129, 746) alpha_pixels=117404"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_07.png",
+    "size": [
+      248,
+      225
+    ],
+    "sha": "73b070752f69",
+    "note": "auto-cropped component bbox=(2148, 518, 2396, 743) alpha_pixels=40811"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_08.png",
+    "size": [
+      242,
+      322
+    ],
+    "sha": "b3c3d09ff72d",
+    "note": "auto-cropped component bbox=(1302, 526, 1544, 848) alpha_pixels=50427"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_09.png",
+    "size": [
+      300,
+      307
+    ],
+    "sha": "545049387aa0",
+    "note": "auto-cropped component bbox=(437, 911, 737, 1218) alpha_pixels=81073"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_10.png",
+    "size": [
+      217,
+      95
+    ],
+    "sha": "24f8dc4b09a1",
+    "note": "auto-cropped component bbox=(1785, 937, 2002, 1032) alpha_pixels=14914"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_11.png",
+    "size": [
+      114,
+      95
+    ],
+    "sha": "ab7670e7d448",
+    "note": "auto-cropped component bbox=(2188, 937, 2302, 1032) alpha_pixels=6984"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_12.png",
+    "size": [
+      331,
+      301
+    ],
+    "sha": "1e0607097a65",
+    "note": "auto-cropped component bbox=(1852, 1149, 2183, 1450) alpha_pixels=50426"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_13.png",
+    "size": [
+      349,
+      280
+    ],
+    "sha": "8d50501a5200",
+    "note": "auto-cropped component bbox=(2218, 1152, 2567, 1432) alpha_pixels=75905"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_14.png",
+    "size": [
+      447,
+      343
+    ],
+    "sha": "4d2e3b517884",
+    "note": "auto-cropped component bbox=(1374, 1166, 1821, 1509) alpha_pixels=69013"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_15.png",
+    "size": [
+      307,
+      319
+    ],
+    "sha": "2600df5ff9c8",
+    "note": "auto-cropped component bbox=(103, 1226, 410, 1545) alpha_pixels=86175"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_16.png",
+    "size": [
+      109,
+      100
+    ],
+    "sha": "9509c834034b",
+    "note": "auto-cropped component bbox=(779, 1573, 888, 1673) alpha_pixels=7810"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合1.png",
+    "export": "assets/ui_export/components_auto/sheet_02_component_17.png",
+    "size": [
+      102,
+      96
+    ],
+    "sha": "d113333b3e6c",
+    "note": "auto-cropped component bbox=(131, 1575, 233, 1671) alpha_pixels=6880"
+  },
+  {
+    "type": "component_sheet",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components/component_sheet_03_ui_2.png",
+    "size": [
+      1024,
+      736
+    ],
+    "sha": "6b65cd485396",
+    "note": "optimized source sheet; use if auto crops need adjustment"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_01.png",
+    "size": [
+      435,
+      121
+    ],
+    "sha": "3d712e529d33",
+    "note": "auto-cropped component bbox=(638, 177, 1073, 298) alpha_pixels=42185"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_02.png",
+    "size": [
+      453,
+      121
+    ],
+    "sha": "763afe600f64",
+    "note": "auto-cropped component bbox=(1080, 177, 1533, 298) alpha_pixels=44181"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_03.png",
+    "size": [
+      520,
+      102
+    ],
+    "sha": "466ca59c8bc5",
+    "note": "auto-cropped component bbox=(1548, 177, 2200, 305) alpha_pixels=68940"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_04.png",
+    "size": [
+      435,
+      122
+    ],
+    "sha": "1e9e568a55de",
+    "note": "auto-cropped component bbox=(638, 308, 1073, 430) alpha_pixels=42255"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_05.png",
+    "size": [
+      453,
+      120
+    ],
+    "sha": "c4c01c8c7267",
+    "note": "auto-cropped component bbox=(1080, 310, 1533, 430) alpha_pixels=43617"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_06.png",
+    "size": [
+      520,
+      93
+    ],
+    "sha": "b04212fcfc4a",
+    "note": "auto-cropped component bbox=(1546, 313, 2200, 430) alpha_pixels=62381"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_07.png",
+    "size": [
+      520,
+      117
+    ],
+    "sha": "c740e6097654",
+    "note": "auto-cropped component bbox=(643, 590, 1278, 734) alpha_pixels=76292"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_08.png",
+    "size": [
+      493,
+      142
+    ],
+    "sha": "ee9db7a1069b",
+    "note": "auto-cropped component bbox=(1292, 592, 1785, 734) alpha_pixels=57308"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_09.png",
+    "size": [
+      520,
+      113
+    ],
+    "sha": "c33f5f6a6ba1",
+    "note": "auto-cropped component bbox=(639, 744, 1271, 882) alpha_pixels=72103"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_10.png",
+    "size": [
+      496,
+      135
+    ],
+    "sha": "214a33f35bc0",
+    "note": "auto-cropped component bbox=(1286, 747, 1782, 882) alpha_pixels=54517"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_11.png",
+    "size": [
+      416,
+      135
+    ],
+    "sha": "4a4d7a53e3a1",
+    "note": "auto-cropped component bbox=(1787, 747, 2203, 882) alpha_pixels=45149"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_12.png",
+    "size": [
+      520,
+      77
+    ],
+    "sha": "852c30ccedff",
+    "note": "auto-cropped component bbox=(1287, 904, 2206, 1041) alpha_pixels=106531"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_13.png",
+    "size": [
+      520,
+      69
+    ],
+    "sha": "6862b2d8bd58",
+    "note": "auto-cropped component bbox=(1290, 1068, 2216, 1192) alpha_pixels=94998"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_14.png",
+    "size": [
+      520,
+      102
+    ],
+    "sha": "72c6497c0617",
+    "note": "auto-cropped component bbox=(640, 1075, 1274, 1200) alpha_pixels=64295"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_15.png",
+    "size": [
+      269,
+      139
+    ],
+    "sha": "6c2278d49b8c",
+    "note": "auto-cropped component bbox=(1552, 1194, 1821, 1333) alpha_pixels=26009"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_16.png",
+    "size": [
+      520,
+      102
+    ],
+    "sha": "ef5e7b259e3c",
+    "note": "auto-cropped component bbox=(640, 1204, 1277, 1330) alpha_pixels=65809"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_17.png",
+    "size": [
+      380,
+      135
+    ],
+    "sha": "de2f480824cf",
+    "note": "auto-cropped component bbox=(1839, 1210, 2219, 1345) alpha_pixels=39756"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_18.png",
+    "size": [
+      93,
+      85
+    ],
+    "sha": "70421216fa04",
+    "note": "auto-cropped component bbox=(1291, 1232, 1384, 1317) alpha_pixels=3510"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_19.png",
+    "size": [
+      326,
+      178
+    ],
+    "sha": "7a7a51903e66",
+    "note": "auto-cropped component bbox=(1294, 1302, 1620, 1480) alpha_pixels=40761"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_20.png",
+    "size": [
+      236,
+      139
+    ],
+    "sha": "b79ab4e27bd1",
+    "note": "auto-cropped component bbox=(1619, 1335, 1855, 1474) alpha_pixels=21685"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_21.png",
+    "size": [
+      520,
+      114
+    ],
+    "sha": "038d7cdb25fb",
+    "note": "auto-cropped component bbox=(638, 1341, 1279, 1482) alpha_pixels=74935"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_22.png",
+    "size": [
+      204,
+      107
+    ],
+    "sha": "81dd7a067da7",
+    "note": "auto-cropped component bbox=(1565, 1500, 1769, 1607) alpha_pixels=14449"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_23.png",
+    "size": [
+      520,
+      119
+    ],
+    "sha": "a6593d6304ee",
+    "note": "auto-cropped component bbox=(638, 1517, 1279, 1664) alpha_pixels=78281"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_24.png",
+    "size": [
+      241,
+      133
+    ],
+    "sha": "03acb307a500",
+    "note": "auto-cropped component bbox=(1581, 1623, 1822, 1756) alpha_pixels=23519"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合2.png",
+    "export": "assets/ui_export/components_auto/sheet_03_component_25.png",
+    "size": [
+      520,
+      85
+    ],
+    "sha": "1390e45761f5",
+    "note": "auto-cropped component bbox=(642, 1677, 1277, 1782) alpha_pixels=53298"
+  },
+  {
+    "type": "component_sheet",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components/component_sheet_04_ui_3.png",
+    "size": [
+      1024,
+      736
+    ],
+    "sha": "57b2e80b9753",
+    "note": "optimized source sheet; use if auto crops need adjustment"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_01.png",
+    "size": [
+      520,
+      335
+    ],
+    "sha": "ac1eeeb13c0c",
+    "note": "auto-cropped component bbox=(80, 107, 977, 685) alpha_pixels=485288"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_02.png",
+    "size": [
+      520,
+      207
+    ],
+    "sha": "785ca0a485a3",
+    "note": "auto-cropped component bbox=(1042, 132, 1895, 473) alpha_pixels=265559"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_03.png",
+    "size": [
+      520,
+      94
+    ],
+    "sha": "3a3a17d06c48",
+    "note": "auto-cropped component bbox=(1944, 136, 2639, 262) alpha_pixels=71606"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_04.png",
+    "size": [
+      520,
+      89
+    ],
+    "sha": "55cd7ed57e6a",
+    "note": "auto-cropped component bbox=(1944, 272, 2638, 391) alpha_pixels=66981"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_05.png",
+    "size": [
+      520,
+      310
+    ],
+    "sha": "c98ecf293657",
+    "note": "auto-cropped component bbox=(1948, 421, 2642, 836) alpha_pixels=265740"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_06.png",
+    "size": [
+      520,
+      205
+    ],
+    "sha": "3d40ff931543",
+    "note": "auto-cropped component bbox=(1047, 499, 1892, 833) alpha_pixels=256086"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_07.png",
+    "size": [
+      493,
+      300
+    ],
+    "sha": "79c21abb5279",
+    "note": "auto-cropped component bbox=(86, 734, 579, 1034) alpha_pixels=131902"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_08.png",
+    "size": [
+      378,
+      297
+    ],
+    "sha": "ee07dce8d459",
+    "note": "auto-cropped component bbox=(604, 735, 982, 1032) alpha_pixels=99099"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_09.png",
+    "size": [
+      520,
+      83
+    ],
+    "sha": "a268dfe2abf7",
+    "note": "auto-cropped component bbox=(1055, 870, 1888, 1003) alpha_pixels=91976"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_10.png",
+    "size": [
+      520,
+      91
+    ],
+    "sha": "e225fe000644",
+    "note": "auto-cropped component bbox=(1944, 872, 2636, 994) alpha_pixels=68156"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_11.png",
+    "size": [
+      520,
+      85
+    ],
+    "sha": "fd0f311eec74",
+    "note": "auto-cropped component bbox=(1055, 1005, 1888, 1142) alpha_pixels=95316"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_12.png",
+    "size": [
+      520,
+      205
+    ],
+    "sha": "d06df20d16af",
+    "note": "auto-cropped component bbox=(86, 1051, 987, 1407) alpha_pixels=295251"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_13.png",
+    "size": [
+      520,
+      78
+    ],
+    "sha": "b3c4aef2f4af",
+    "note": "auto-cropped component bbox=(1053, 1141, 1887, 1267) alpha_pixels=86732"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_14.png",
+    "size": [
+      520,
+      310
+    ],
+    "sha": "981dbaea7baa",
+    "note": "auto-cropped component bbox=(1957, 1223, 2644, 1633) alpha_pixels=256292"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_15.png",
+    "size": [
+      443,
+      123
+    ],
+    "sha": "d9500d42ffef",
+    "note": "auto-cropped component bbox=(1066, 1299, 1509, 1422) alpha_pixels=42516"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_16.png",
+    "size": [
+      349,
+      117
+    ],
+    "sha": "c807b74bb2f4",
+    "note": "auto-cropped component bbox=(1529, 1306, 1878, 1423) alpha_pixels=30969"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_17.png",
+    "size": [
+      520,
+      150
+    ],
+    "sha": "67bd30e39055",
+    "note": "auto-cropped component bbox=(85, 1436, 986, 1696) alpha_pixels=210595"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合3.png",
+    "export": "assets/ui_export/components_auto/sheet_04_component_18.png",
+    "size": [
+      520,
+      60
+    ],
+    "sha": "ac36aa5cf5b3",
+    "note": "auto-cropped component bbox=(1060, 1614, 1882, 1710) alpha_pixels=62233"
+  },
+  {
+    "type": "component_sheet",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components/component_sheet_05_ui_4.png",
+    "size": [
+      1024,
+      736
+    ],
+    "sha": "660ec6896d01",
+    "note": "optimized source sheet; use if auto crops need adjustment"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_01.png",
+    "size": [
+      520,
+      133
+    ],
+    "sha": "ddc272ea83bc",
+    "note": "auto-cropped component bbox=(39, 149, 931, 378) alpha_pixels=177414"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_02.png",
+    "size": [
+      520,
+      126
+    ],
+    "sha": "f3ede3055fbe",
+    "note": "auto-cropped component bbox=(1853, 154, 2687, 357) alpha_pixels=144618"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_03.png",
+    "size": [
+      520,
+      119
+    ],
+    "sha": "77968f1576c2",
+    "note": "auto-cropped component bbox=(43, 396, 929, 599) alpha_pixels=155095"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_04.png",
+    "size": [
+      520,
+      114
+    ],
+    "sha": "d8b3e85fea6b",
+    "note": "auto-cropped component bbox=(55, 623, 911, 811) alpha_pixels=137503"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_05.png",
+    "size": [
+      461,
+      164
+    ],
+    "sha": "a1633cad10a8",
+    "note": "auto-cropped component bbox=(1333, 642, 1794, 806) alpha_pixels=60297"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_06.png",
+    "size": [
+      328,
+      163
+    ],
+    "sha": "a5eee508329d",
+    "note": "auto-cropped component bbox=(987, 643, 1315, 806) alpha_pixels=41024"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_07.png",
+    "size": [
+      181,
+      182
+    ],
+    "sha": "ba418e3b8a8f",
+    "note": "auto-cropped component bbox=(987, 857, 1168, 1039) alpha_pixels=21703"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_08.png",
+    "size": [
+      176,
+      182
+    ],
+    "sha": "f693effa3ead",
+    "note": "auto-cropped component bbox=(1176, 857, 1352, 1039) alpha_pixels=21145"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_09.png",
+    "size": [
+      184,
+      182
+    ],
+    "sha": "08cfcac9541f",
+    "note": "auto-cropped component bbox=(1362, 857, 1546, 1039) alpha_pixels=22230"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_10.png",
+    "size": [
+      185,
+      182
+    ],
+    "sha": "2f44ae1d6275",
+    "note": "auto-cropped component bbox=(1558, 857, 1743, 1039) alpha_pixels=22430"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_11.png",
+    "size": [
+      186,
+      184
+    ],
+    "sha": "1aed0bf072eb",
+    "note": "auto-cropped component bbox=(1755, 857, 1941, 1041) alpha_pixels=22528"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_12.png",
+    "size": [
+      184,
+      182
+    ],
+    "sha": "bbfb48c3cdc2",
+    "note": "auto-cropped component bbox=(2346, 857, 2530, 1039) alpha_pixels=22214"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_13.png",
+    "size": [
+      182,
+      182
+    ],
+    "sha": "b8ddbdf0cecb",
+    "note": "auto-cropped component bbox=(2534, 857, 2716, 1039) alpha_pixels=22013"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_14.png",
+    "size": [
+      399,
+      178
+    ],
+    "sha": "0a900faa20ba",
+    "note": "auto-cropped component bbox=(512, 1067, 911, 1245) alpha_pixels=56086"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_15.png",
+    "size": [
+      397,
+      176
+    ],
+    "sha": "5217b980d3bd",
+    "note": "auto-cropped component bbox=(49, 1106, 446, 1282) alpha_pixels=55282"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_16.png",
+    "size": [
+      280,
+      158
+    ],
+    "sha": "8d789167f08b",
+    "note": "auto-cropped component bbox=(988, 1115, 1268, 1273) alpha_pixels=32821"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_17.png",
+    "size": [
+      315,
+      156
+    ],
+    "sha": "dfadb399539e",
+    "note": "auto-cropped component bbox=(1279, 1115, 1594, 1271) alpha_pixels=37084"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_18.png",
+    "size": [
+      414,
+      155
+    ],
+    "sha": "2d85d078d5b3",
+    "note": "auto-cropped component bbox=(1652, 1117, 2066, 1272) alpha_pixels=50847"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_19.png",
+    "size": [
+      275,
+      153
+    ],
+    "sha": "08317239daa8",
+    "note": "auto-cropped component bbox=(2127, 1121, 2402, 1274) alpha_pixels=30849"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_20.png",
+    "size": [
+      277,
+      151
+    ],
+    "sha": "3f19f772ad21",
+    "note": "auto-cropped component bbox=(2422, 1121, 2699, 1272) alpha_pixels=30913"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_21.png",
+    "size": [
+      520,
+      189
+    ],
+    "sha": "a97c98a04dd9",
+    "note": "auto-cropped component bbox=(706, 1568, 1289, 1780) alpha_pixels=102164"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合4.png",
+    "export": "assets/ui_export/components_auto/sheet_05_component_22.png",
+    "size": [
+      520,
+      192
+    ],
+    "sha": "4e9adae879e5",
+    "note": "auto-cropped component bbox=(41, 1607, 615, 1820) alpha_pixels=100945"
+  },
+  {
+    "type": "component_sheet",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合5.png",
+    "export": "assets/ui_export/components/component_sheet_06_ui_5.png",
+    "size": [
+      1024,
+      736
+    ],
+    "sha": "54721ea692f3",
+    "note": "optimized source sheet; use if auto crops need adjustment"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合5.png",
+    "export": "assets/ui_export/components_auto/sheet_06_component_01.png",
+    "size": [
+      305,
+      360
+    ],
+    "sha": "b7444e3f3f4d",
+    "note": "auto-cropped component bbox=(821, 279, 1301, 845) alpha_pixels=182637"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合5.png",
+    "export": "assets/ui_export/components_auto/sheet_06_component_02.png",
+    "size": [
+      520,
+      267
+    ],
+    "sha": "a3ff39ace7a7",
+    "note": "auto-cropped component bbox=(1344, 594, 1908, 884) alpha_pixels=98955"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合5.png",
+    "export": "assets/ui_export/components_auto/sheet_06_component_03.png",
+    "size": [
+      433,
+      360
+    ],
+    "sha": "1c0f7e6ee153",
+    "note": "auto-cropped component bbox=(1877, 604, 2551, 1164) alpha_pixels=257790"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合5.png",
+    "export": "assets/ui_export/components_auto/sheet_06_component_04.png",
+    "size": [
+      345,
+      360
+    ],
+    "sha": "f726c8c0f075",
+    "note": "auto-cropped component bbox=(1153, 960, 1501, 1323) alpha_pixels=91502"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合5.png",
+    "export": "assets/ui_export/components_auto/sheet_06_component_05.png",
+    "size": [
+      375,
+      358
+    ],
+    "sha": "984afb33799c",
+    "note": "auto-cropped component bbox=(682, 963, 1057, 1321) alpha_pixels=89748"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合5.png",
+    "export": "assets/ui_export/components_auto/sheet_06_component_06.png",
+    "size": [
+      440,
+      360
+    ],
+    "sha": "d150d214215c",
+    "note": "auto-cropped component bbox=(1970, 1348, 2504, 1784) alpha_pixels=135140"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/UI组合5.png",
+    "export": "assets/ui_export/components_auto/sheet_06_component_07.png",
+    "size": [
+      366,
+      343
+    ],
+    "sha": "567078fe7641",
+    "note": "auto-cropped component bbox=(205, 1431, 571, 1774) alpha_pixels=84852"
+  },
+  {
+    "type": "component_sheet",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components/component_sheet_07_.png",
+    "size": [
+      1024,
+      736
+    ],
+    "sha": "55efb28c27b3",
+    "note": "optimized source sheet; use if auto crops need adjustment"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_01.png",
+    "size": [
+      520,
+      147
+    ],
+    "sha": "26327767d9d6",
+    "note": "auto-cropped component bbox=(117, 37, 993, 286) alpha_pixels=189079"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_02.png",
+    "size": [
+      520,
+      152
+    ],
+    "sha": "8cb2239c5382",
+    "note": "auto-cropped component bbox=(1051, 42, 1868, 282) alpha_pixels=168595"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_03.png",
+    "size": [
+      520,
+      167
+    ],
+    "sha": "aa646b90267c",
+    "note": "auto-cropped component bbox=(1940, 42, 2686, 283) alpha_pixels=151654"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_04.png",
+    "size": [
+      520,
+      175
+    ],
+    "sha": "aa277c39840f",
+    "note": "auto-cropped component bbox=(108, 328, 742, 542) alpha_pixels=114371"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_05.png",
+    "size": [
+      520,
+      178
+    ],
+    "sha": "043860eaebc1",
+    "note": "auto-cropped component bbox=(2054, 329, 2696, 549) alpha_pixels=117404"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_06.png",
+    "size": [
+      520,
+      210
+    ],
+    "sha": "71f0f44ad183",
+    "note": "auto-cropped component bbox=(1493, 332, 2013, 542) alpha_pixels=90426"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_07.png",
+    "size": [
+      520,
+      163
+    ],
+    "sha": "7ab102e55f20",
+    "note": "auto-cropped component bbox=(784, 333, 1443, 540) alpha_pixels=115110"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_08.png",
+    "size": [
+      468,
+      200
+    ],
+    "sha": "494ae668acf8",
+    "note": "auto-cropped component bbox=(102, 585, 570, 785) alpha_pixels=76765"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_09.png",
+    "size": [
+      443,
+      193
+    ],
+    "sha": "c3f633f6567a",
+    "note": "auto-cropped component bbox=(624, 589, 1067, 782) alpha_pixels=69815"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_10.png",
+    "size": [
+      419,
+      191
+    ],
+    "sha": "8dfed0000bdf",
+    "note": "auto-cropped component bbox=(1127, 591, 1546, 782) alpha_pixels=64377"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_11.png",
+    "size": [
+      520,
+      189
+    ],
+    "sha": "17628f02ecf2",
+    "note": "auto-cropped component bbox=(1595, 592, 2117, 782) alpha_pixels=82292"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_12.png",
+    "size": [
+      508,
+      181
+    ],
+    "sha": "ccb63efd65d7",
+    "note": "auto-cropped component bbox=(2167, 597, 2675, 778) alpha_pixels=75584"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_13.png",
+    "size": [
+      462,
+      205
+    ],
+    "sha": "6789b50036af",
+    "note": "auto-cropped component bbox=(91, 819, 553, 1024) alpha_pixels=77568"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_14.png",
+    "size": [
+      520,
+      189
+    ],
+    "sha": "18b74fe5395b",
+    "note": "auto-cropped component bbox=(594, 826, 1125, 1019) alpha_pixels=85619"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_15.png",
+    "size": [
+      519,
+      191
+    ],
+    "sha": "d8a8e6203e1c",
+    "note": "auto-cropped component bbox=(2179, 828, 2698, 1019) alpha_pixels=82376"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_16.png",
+    "size": [
+      488,
+      188
+    ],
+    "sha": "de7b45f155c5",
+    "note": "auto-cropped component bbox=(1156, 830, 1644, 1018) alpha_pixels=75401"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_17.png",
+    "size": [
+      479,
+      186
+    ],
+    "sha": "f3948b06454f",
+    "note": "auto-cropped component bbox=(1674, 831, 2153, 1017) alpha_pixels=73240"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_18.png",
+    "size": [
+      470,
+      184
+    ],
+    "sha": "d520a6ee4407",
+    "note": "auto-cropped component bbox=(91, 1059, 561, 1243) alpha_pixels=71209"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_19.png",
+    "size": [
+      520,
+      180
+    ],
+    "sha": "a9f4f5141ab4",
+    "note": "auto-cropped component bbox=(1131, 1062, 1657, 1245) alpha_pixels=79749"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_20.png",
+    "size": [
+      502,
+      179
+    ],
+    "sha": "bffb63558c9a",
+    "note": "auto-cropped component bbox=(593, 1063, 1095, 1242) alpha_pixels=74782"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_21.png",
+    "size": [
+      461,
+      180
+    ],
+    "sha": "942c41a5a3ab",
+    "note": "auto-cropped component bbox=(1698, 1064, 2159, 1244) alpha_pixels=68176"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_22.png",
+    "size": [
+      503,
+      181
+    ],
+    "sha": "46b288b441e8",
+    "note": "auto-cropped component bbox=(2195, 1064, 2698, 1245) alpha_pixels=75365"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_23.png",
+    "size": [
+      474,
+      176
+    ],
+    "sha": "63d35529d83f",
+    "note": "auto-cropped component bbox=(90, 1285, 564, 1461) alpha_pixels=68972"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_24.png",
+    "size": [
+      500,
+      176
+    ],
+    "sha": "6914f6379dcb",
+    "note": "auto-cropped component bbox=(605, 1286, 1105, 1462) alpha_pixels=72783"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_25.png",
+    "size": [
+      485,
+      175
+    ],
+    "sha": "9bba8ba0b9cc",
+    "note": "auto-cropped component bbox=(1157, 1287, 1642, 1462) alpha_pixels=69685"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_26.png",
+    "size": [
+      490,
+      175
+    ],
+    "sha": "306a5b399fe8",
+    "note": "auto-cropped component bbox=(1683, 1287, 2173, 1462) alpha_pixels=70575"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_27.png",
+    "size": [
+      469,
+      172
+    ],
+    "sha": "04d88d46b00f",
+    "note": "auto-cropped component bbox=(2213, 1290, 2682, 1462) alpha_pixels=65898"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_28.png",
+    "size": [
+      502,
+      177
+    ],
+    "sha": "3803e2c88bfd",
+    "note": "auto-cropped component bbox=(92, 1501, 594, 1678) alpha_pixels=73032"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_29.png",
+    "size": [
+      476,
+      179
+    ],
+    "sha": "b13b8f396ad3",
+    "note": "auto-cropped component bbox=(629, 1501, 1105, 1680) alpha_pixels=69942"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_30.png",
+    "size": [
+      494,
+      178
+    ],
+    "sha": "607953dc41cc",
+    "note": "auto-cropped component bbox=(1147, 1502, 1641, 1680) alpha_pixels=72369"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_31.png",
+    "size": [
+      470,
+      177
+    ],
+    "sha": "def26de4261c",
+    "note": "auto-cropped component bbox=(1684, 1504, 2154, 1681) alpha_pixels=67907"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_32.png",
+    "size": [
+      498,
+      179
+    ],
+    "sha": "d37b5eaefe73",
+    "note": "auto-cropped component bbox=(2202, 1504, 2700, 1683) alpha_pixels=73552"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_33.png",
+    "size": [
+      520,
+      170
+    ],
+    "sha": "d498a7a5f026",
+    "note": "auto-cropped component bbox=(88, 1717, 700, 1918) alpha_pixels=103042"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_34.png",
+    "size": [
+      520,
+      175
+    ],
+    "sha": "ad2315bde545",
+    "note": "auto-cropped component bbox=(746, 1724, 1310, 1914) alpha_pixels=89010"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/带文字的按钮.png",
+    "export": "assets/ui_export/components_auto/sheet_07_component_35.png",
+    "size": [
+      520,
+      81
+    ],
+    "sha": "8b4d20db03e7",
+    "note": "auto-cropped component bbox=(1434, 1724, 2663, 1916) alpha_pixels=205952"
+  },
+  {
+    "type": "component_sheet",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/气泡PNG.png",
+    "export": "assets/ui_export/components/component_sheet_08_png.png",
+    "size": [
+      1024,
+      736
+    ],
+    "sha": "a9cb02b483fa",
+    "note": "optimized source sheet; use if auto crops need adjustment"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/气泡PNG.png",
+    "export": "assets/ui_export/components_auto/sheet_08_component_01.png",
+    "size": [
+      455,
+      360
+    ],
+    "sha": "dd0980f294f2",
+    "note": "auto-cropped component bbox=(307, 188, 1172, 871) alpha_pixels=422774"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/气泡PNG.png",
+    "export": "assets/ui_export/components_auto/sheet_08_component_02.png",
+    "size": [
+      466,
+      360
+    ],
+    "sha": "3040e37e3de9",
+    "note": "auto-cropped component bbox=(1473, 495, 2206, 1061) alpha_pixels=291453"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/气泡PNG.png",
+    "export": "assets/ui_export/components_auto/sheet_08_component_03.png",
+    "size": [
+      477,
+      360
+    ],
+    "sha": "e675e59d83cd",
+    "note": "auto-cropped component bbox=(754, 1008, 1706, 1726) alpha_pixels=449329"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/气泡PNG.png",
+    "export": "assets/ui_export/components_auto/sheet_08_component_04.png",
+    "size": [
+      361,
+      360
+    ],
+    "sha": "6792f03caa10",
+    "note": "auto-cropped component bbox=(1801, 1212, 2314, 1723) alpha_pixels=189167"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/气泡PNG.png",
+    "export": "assets/ui_export/components_auto/sheet_08_component_05.png",
+    "size": [
+      397,
+      360
+    ],
+    "sha": "4c96c1dba7ea",
+    "note": "auto-cropped component bbox=(79, 1232, 724, 1816) alpha_pixels=244709"
+  },
+  {
+    "type": "component_sheet",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components/component_sheet_09_ui1.png",
+    "size": [
+      1024,
+      682
+    ],
+    "sha": "d4b9e13dcd16",
+    "note": "optimized source sheet; use if auto crops need adjustment"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_01.png",
+    "size": [
+      296,
+      347
+    ],
+    "sha": "f70e7a592c54",
+    "note": "auto-cropped component bbox=(167, 83, 463, 430) alpha_pixels=67115"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_02.png",
+    "size": [
+      289,
+      340
+    ],
+    "sha": "b1bb9e27042d",
+    "note": "auto-cropped component bbox=(466, 92, 755, 432) alpha_pixels=63080"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_03.png",
+    "size": [
+      339,
+      178
+    ],
+    "sha": "ed019a401e48",
+    "note": "auto-cropped component bbox=(774, 277, 1113, 455) alpha_pixels=34145"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_04.png",
+    "size": [
+      404,
+      337
+    ],
+    "sha": "4e0ed629fce1",
+    "note": "auto-cropped component bbox=(1088, 283, 1492, 620) alpha_pixels=89237"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_05.png",
+    "size": [
+      263,
+      230
+    ],
+    "sha": "e202d1b0f56a",
+    "note": "auto-cropped component bbox=(112, 491, 375, 721) alpha_pixels=34096"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_06.png",
+    "size": [
+      211,
+      220
+    ],
+    "sha": "15e3ded32cd8",
+    "note": "auto-cropped component bbox=(662, 493, 873, 713) alpha_pixels=31565"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_07.png",
+    "size": [
+      227,
+      217
+    ],
+    "sha": "71240e2aa9f5",
+    "note": "auto-cropped component bbox=(384, 495, 611, 712) alpha_pixels=30967"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_08.png",
+    "size": [
+      321,
+      263
+    ],
+    "sha": "1bcf1d6e7919",
+    "note": "auto-cropped component bbox=(1143, 722, 1464, 985) alpha_pixels=46674"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_09.png",
+    "size": [
+      194,
+      210
+    ],
+    "sha": "bd62d0023782",
+    "note": "auto-cropped component bbox=(638, 767, 832, 977) alpha_pixels=27970"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_10.png",
+    "size": [
+      216,
+      210
+    ],
+    "sha": "909e4d283514",
+    "note": "auto-cropped component bbox=(371, 768, 587, 978) alpha_pixels=30398"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_11.png",
+    "size": [
+      238,
+      206
+    ],
+    "sha": "d38ef4c67df3",
+    "note": "auto-cropped component bbox=(884, 770, 1122, 976) alpha_pixels=30704"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI1.png",
+    "export": "assets/ui_export/components_auto/sheet_09_component_12.png",
+    "size": [
+      223,
+      208
+    ],
+    "sha": "ef592430315c",
+    "note": "auto-cropped component bbox=(102, 771, 325, 979) alpha_pixels=29272"
+  },
+  {
+    "type": "component_sheet",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components/component_sheet_10_ui3.png",
+    "size": [
+      1024,
+      682
+    ],
+    "sha": "1bbb42ba332b",
+    "note": "optimized source sheet; use if auto crops need adjustment"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_01.png",
+    "size": [
+      520,
+      337
+    ],
+    "sha": "5851b972bc1e",
+    "note": "auto-cropped component bbox=(14, 34, 546, 379) alpha_pixels=166187"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_02.png",
+    "size": [
+      507,
+      207
+    ],
+    "sha": "fecd9e12d560",
+    "note": "auto-cropped component bbox=(577, 48, 1084, 255) alpha_pixels=90728"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_03.png",
+    "size": [
+      414,
+      81
+    ],
+    "sha": "f8c9437ab28e",
+    "note": "auto-cropped component bbox=(1105, 50, 1519, 131) alpha_pixels=24382"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_04.png",
+    "size": [
+      413,
+      77
+    ],
+    "sha": "70ae3829a146",
+    "note": "auto-cropped component bbox=(1106, 130, 1519, 207) alpha_pixels=22725"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_05.png",
+    "size": [
+      413,
+      250
+    ],
+    "sha": "2780e3ee579c",
+    "note": "auto-cropped component bbox=(1108, 218, 1521, 468) alpha_pixels=90947"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_06.png",
+    "size": [
+      501,
+      202
+    ],
+    "sha": "ff19f13ca41f",
+    "note": "auto-cropped component bbox=(580, 264, 1081, 466) alpha_pixels=87482"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_07.png",
+    "size": [
+      295,
+      182
+    ],
+    "sha": "c46069b09587",
+    "note": "auto-cropped component bbox=(17, 401, 312, 583) alpha_pixels=45197"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_08.png",
+    "size": [
+      227,
+      180
+    ],
+    "sha": "99ffae74c837",
+    "note": "auto-cropped component bbox=(321, 402, 548, 582) alpha_pixels=33804"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_09.png",
+    "size": [
+      494,
+      85
+    ],
+    "sha": "942ae3ce3d51",
+    "note": "auto-cropped component bbox=(585, 480, 1079, 565) alpha_pixels=31313"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_10.png",
+    "size": [
+      412,
+      78
+    ],
+    "sha": "a654f5f3e6f2",
+    "note": "auto-cropped component bbox=(1106, 482, 1518, 560) alpha_pixels=23266"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_11.png",
+    "size": [
+      494,
+      87
+    ],
+    "sha": "8ec0e21b5541",
+    "note": "auto-cropped component bbox=(585, 560, 1079, 647) alpha_pixels=32532"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_12.png",
+    "size": [
+      520,
+      209
+    ],
+    "sha": "5fe5ba800054",
+    "note": "auto-cropped component bbox=(17, 587, 551, 802) alpha_pixels=101268"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_13.png",
+    "size": [
+      494,
+      80
+    ],
+    "sha": "69e6036dc210",
+    "note": "auto-cropped component bbox=(584, 640, 1078, 720) alpha_pixels=29409"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_14.png",
+    "size": [
+      409,
+      246
+    ],
+    "sha": "2ba555885b68",
+    "note": "auto-cropped component bbox=(1113, 688, 1522, 934) alpha_pixels=87567"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_15.png",
+    "size": [
+      266,
+      79
+    ],
+    "sha": "e35ae4f8dce0",
+    "note": "auto-cropped component bbox=(591, 732, 857, 811) alpha_pixels=14474"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_16.png",
+    "size": [
+      210,
+      75
+    ],
+    "sha": "3be517ee98ea",
+    "note": "auto-cropped component bbox=(863, 736, 1073, 811) alpha_pixels=10519"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_17.png",
+    "size": [
+      520,
+      154
+    ],
+    "sha": "eb7b8dddb65f",
+    "note": "auto-cropped component bbox=(17, 812, 551, 971) alpha_pixels=72243"
+  },
+  {
+    "type": "component_auto",
+    "source": "/Users/beibeixv/Desktop/1.8尺寸UX UI/UI按键组合与气泡/组合UI3.png",
+    "export": "assets/ui_export/components_auto/sheet_10_component_18.png",
+    "size": [
+      487,
+      62
+    ],
+    "sha": "aab7d615905c",
+    "note": "auto-cropped component bbox=(588, 917, 1075, 979) alpha_pixels=21059"
+  }
+]

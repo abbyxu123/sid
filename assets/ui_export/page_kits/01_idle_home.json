@@ -1,0 +1,21 @@
+{
+  "page": "01_idle_home",
+  "title": "Home / voice wake",
+  "assets": [
+    "backgrounds/bg_01_home.png",
+    "characters/cat_chair_decision.png",
+    "components_auto/*button*",
+    "components/qr_placeholder.png"
+  ],
+  "backend_hooks": [
+    "POST /v1/input or /v1/voice",
+    "GET state idle"
+  ],
+  "buttons": [
+    "Pick my meal",
+    "Am I hungry",
+    "Food journal",
+    "Hold to talk"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

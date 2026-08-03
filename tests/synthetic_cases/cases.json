@@ -1,0 +1,1111 @@
+[
+ {
+  "case_id": "case_00",
+  "utterance": "帮我定个午饭吧，预算四十以内，我对虾过敏，辣度要中辣。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "虾"
+    ],
+    "diet_taboos": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "allergy_hard"
+  }
+ },
+ {
+  "case_id": "case_01",
+  "utterance": "想吃韩餐，不要太辣，预算四十，记得我对虾过敏就行。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "虾"
+    ],
+    "diet_taboos": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "mild",
+    "cuisines": [
+     "韩餐"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "allergy_hard"
+  }
+ },
+ {
+  "case_id": "case_02",
+  "utterance": "突然想吃云南菜，中辣，预算四十，但是鸡蛋过敏，你帮我看看能点啥。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "鸡蛋"
+    ],
+    "diet_taboos": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [
+     "云南"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "allergy_hard"
+  }
+ },
+ {
+  "case_id": "case_03",
+  "utterance": "想吃韩餐，要辣一点的，预算四十，海鲜和虾我都过敏，别踩雷。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "海鲜",
+     "虾"
+    ],
+    "diet_taboos": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [
+     "韩餐"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "allergy_hard"
+  }
+ },
+ {
+  "case_id": "case_04",
+  "utterance": "五十块以内，想吃辣，虾过敏，帮我随便挑一个。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "虾"
+    ],
+    "diet_taboos": [],
+    "budget_max": 50,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "allergy_hard"
+  }
+ },
+ {
+  "case_id": "case_05",
+  "utterance": "三十块以内，海鲜过敏，想吃辣的，赶紧给我推荐一个。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "海鲜"
+    ],
+    "diet_taboos": [],
+    "budget_max": 30,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "allergy_hard"
+  }
+ },
+ {
+  "case_id": "case_06",
+  "utterance": "想吃鲁菜，三十块以内，鸡蛋和花生都过敏，不挑辣。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "鸡蛋",
+     "花生"
+    ],
+    "diet_taboos": [],
+    "budget_max": 30,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": null,
+    "cuisines": [
+     "鲁菜"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "allergy_hard"
+  }
+ },
+ {
+  "case_id": "case_07",
+  "utterance": "海鲜过敏，预算五十，中辣，帮我看看中午吃啥。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "海鲜"
+    ],
+    "diet_taboos": [],
+    "budget_max": 50,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "allergy_hard"
+  }
+ },
+ {
+  "case_id": "case_08",
+  "utterance": "二十五块以内，二十五分钟能吃上，想吃湘菜或者鲁菜，要辣的，不吃生冷。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [
+     "生冷"
+    ],
+    "budget_max": 25,
+    "eat_by_minutes": 25,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [
+     "湘菜",
+     "鲁菜"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "conflict"
+  }
+ },
+ {
+  "case_id": "case_09",
+  "utterance": "三十分钟内要吃到，预算四十，中辣，鲁菜粤菜都行，但不吃面食。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [
+     "面食"
+    ],
+    "budget_max": 40,
+    "eat_by_minutes": 30,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [
+     "鲁菜",
+     "粤菜"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "conflict"
+  }
+ },
+ {
+  "case_id": "case_10",
+  "utterance": "二十五分钟内搞定，二十五块以内，云南菜或湘菜，中辣，别带生冷的。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [
+     "生冷"
+    ],
+    "budget_max": 25,
+    "eat_by_minutes": 25,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [
+     "云南",
+     "湘菜"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "conflict"
+  }
+ },
+ {
+  "case_id": "case_11",
+  "utterance": "四十块以内，二十五分钟吃上，辣一点的，不吃猪肉，帮我定。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [
+     "猪肉"
+    ],
+    "budget_max": 40,
+    "eat_by_minutes": 25,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "conflict"
+  }
+ },
+ {
+  "case_id": "case_12",
+  "utterance": "二十五块以内，二十五分钟能吃上，湘菜中辣，不吃面食。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [
+     "面食"
+    ],
+    "budget_max": 25,
+    "eat_by_minutes": 25,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [
+     "湘菜"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "conflict"
+  }
+ },
+ {
+  "case_id": "case_13",
+  "utterance": "三十块以内，二十五分钟吃上，东北菜或轻食都行，要辣，不要面食。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [
+     "面食"
+    ],
+    "budget_max": 30,
+    "eat_by_minutes": 25,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [
+     "东北菜",
+     "轻食"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "conflict"
+  }
+ },
+ {
+  "case_id": "case_14",
+  "utterance": "三十块以内，二十五分钟搞定，想吃辣的，炸物别给我推荐。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [
+     "炸物"
+    ],
+    "budget_max": 30,
+    "eat_by_minutes": 25,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "conflict"
+  }
+ },
+ {
+  "case_id": "case_15",
+  "utterance": "三十块以内，三十分钟吃上，中辣，不吃猪肉，你决定吧。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [
+     "猪肉"
+    ],
+    "budget_max": 30,
+    "eat_by_minutes": 30,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "conflict"
+  }
+ },
+ {
+  "case_id": "case_16",
+  "utterance": "我们三个人出去吃轻食，中辣，六十分钟以内能吃上，预算不限。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [
+     "轻食"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 3,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "category": "dine_in_queue"
+  }
+ },
+ {
+  "case_id": "case_17",
+  "utterance": "四个人出去吃，清淡一点，一个小时以内，你帮我找地方。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "mild",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 4,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "category": "dine_in_queue"
+  }
+ },
+ {
+  "case_id": "case_18",
+  "utterance": "四个人出去吃韩餐，中辣，一个小时左右，推荐一家吧。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [
+     "韩餐"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 4,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "category": "dine_in_queue"
+  }
+ },
+ {
+  "case_id": "case_19",
+  "utterance": "两个人出去吃日料，不辣，一个小时左右，帮我选一家。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": null,
+    "cuisines": [
+     "日料"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 2,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "category": "dine_in_queue"
+  }
+ },
+ {
+  "case_id": "case_20",
+  "utterance": "两个人出去吃，不辣，一个小时左右就行，吃啥你定。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": null,
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 2,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "category": "dine_in_queue"
+  }
+ },
+ {
+  "case_id": "case_21",
+  "utterance": "三个人出去吃云南菜，不辣，四十分钟以内能吃上，找一家。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": 40,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": null,
+    "cuisines": [
+     "云南"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 3,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "category": "dine_in_queue"
+  }
+ },
+ {
+  "case_id": "case_22",
+  "utterance": "两个人出去吃，清淡点，四十分钟搞定，你推荐。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": 40,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "mild",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 2,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "category": "dine_in_queue"
+  }
+ },
+ {
+  "case_id": "case_23",
+  "utterance": "三个人出去吃湘菜，要辣，一个小时左右，帮我找地儿。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [
+     "湘菜"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 3,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "category": "dine_in_queue"
+  }
+ },
+ {
+  "case_id": "case_24",
+  "utterance": "别让我选了，四十块以内，想吃湘菜或韩餐，辣的，快点定。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [
+     "湘菜",
+     "韩餐"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "low_patience",
+    "channel": "any"
+   },
+   "category": "one_shot"
+  }
+ },
+ {
+  "case_id": "case_25",
+  "utterance": "累了，四十块以内，中辣，帮我随便定一个吃的吧。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "tired",
+    "channel": "any"
+   },
+   "category": "one_shot"
+  }
+ },
+ {
+  "case_id": "case_26",
+  "utterance": "累死了，东北菜或湘菜都行，不辣，预算四十以内，你帮我定。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": null,
+    "cuisines": [
+     "东北菜",
+     "湘菜"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "tired",
+    "channel": "any"
+   },
+   "category": "one_shot"
+  }
+ },
+ {
+  "case_id": "case_27",
+  "utterance": "太累了，想吃韩餐或轻食，中辣，预算无所谓，你决定。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [
+     "韩餐",
+     "轻食"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "tired",
+    "channel": "any"
+   },
+   "category": "one_shot"
+  }
+ },
+ {
+  "case_id": "case_28",
+  "utterance": "快点帮我定，想吃辣的，别让我选了，预算不限。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "low_patience",
+    "channel": "any"
+   },
+   "category": "one_shot"
+  }
+ },
+ {
+  "case_id": "case_29",
+  "utterance": "累了，三十块以内，想吃粤菜，辣一点的，你帮我点。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": 30,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [
+     "粤菜"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "tired",
+    "channel": "any"
+   },
+   "category": "one_shot"
+  }
+ },
+ {
+  "case_id": "case_30",
+  "utterance": "别让我想了，想吃粤菜，清淡的，预算不限，赶紧定。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": "mild",
+    "cuisines": [
+     "粤菜"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "low_patience",
+    "channel": "any"
+   },
+   "category": "one_shot"
+  }
+ },
+ {
+  "case_id": "case_31",
+  "utterance": "三十块以内，日料，不辣，快点帮我决定吃啥。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": 30,
+    "eat_by_minutes": null,
+    "hated": []
+   },
+   "soft_preferences": {
+    "spicy": null,
+    "cuisines": [
+     "日料"
+    ],
+    "novelty": null
+   },
+   "context": {
+    "people": 1,
+    "state": "low_patience",
+    "channel": "any"
+   },
+   "category": "one_shot"
+  }
+ },
+ {
+  "case_id": "case_32",
+  "utterance": "想吃清淡点的，不吃牛肉，想换换口味但别太极端，你帮我挑。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": [
+     "牛肉"
+    ]
+   },
+   "soft_preferences": {
+    "spicy": "mild",
+    "cuisines": [],
+    "novelty": "balanced"
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "explore"
+  }
+ },
+ {
+  "case_id": "case_33",
+  "utterance": "中辣，不吃生冷的，想尝试点新鲜的但别太猎奇，推荐一个。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": [
+     "生冷"
+    ]
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [],
+    "novelty": "balanced"
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "explore"
+  }
+ },
+ {
+  "case_id": "case_34",
+  "utterance": "粤菜或轻食都行，不吃面食，不辣，想吃点不一样的但别太跳脱。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": [
+     "面食"
+    ]
+   },
+   "soft_preferences": {
+    "spicy": null,
+    "cuisines": [
+     "粤菜",
+     "轻食"
+    ],
+    "novelty": "balanced"
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "explore"
+  }
+ },
+ {
+  "case_id": "case_35",
+  "utterance": "不吃炸物，不辣，想换换口味但别太极端，你帮我决定。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": [
+     "炸物"
+    ]
+   },
+   "soft_preferences": {
+    "spicy": null,
+    "cuisines": [],
+    "novelty": "balanced"
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "explore"
+  }
+ },
+ {
+  "case_id": "case_36",
+  "utterance": "鸡蛋过敏，不吃面食，不辣，想吃点新鲜猎奇的，帮我挑一个。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "鸡蛋"
+    ],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": [
+     "面食"
+    ]
+   },
+   "soft_preferences": {
+    "spicy": null,
+    "cuisines": [],
+    "novelty": "bold"
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "explore"
+  }
+ },
+ {
+  "case_id": "case_37",
+  "utterance": "花生过敏，不吃猪肉，清淡口，想尝试点新东西但别太夸张。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "花生"
+    ],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": [
+     "猪肉"
+    ]
+   },
+   "soft_preferences": {
+    "spicy": "mild",
+    "cuisines": [],
+    "novelty": "balanced"
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "explore"
+  }
+ },
+ {
+  "case_id": "case_38",
+  "utterance": "西北菜或轻食都行，中辣，不吃炸物，想换换口味但别太极端。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": [
+     "炸物"
+    ]
+   },
+   "soft_preferences": {
+    "spicy": "medium",
+    "cuisines": [
+     "西北",
+     "轻食"
+    ],
+    "novelty": "balanced"
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "explore"
+  }
+ },
+ {
+  "case_id": "case_39",
+  "utterance": "鸡蛋过敏，不吃生冷的，想吃辣，想吃点新鲜刺激的，你帮我定。",
+  "ground_truth": {
+   "goal": "找一顿现在能吃的饭",
+   "hard_constraints": {
+    "allergens": [
+     "鸡蛋"
+    ],
+    "diet_taboos": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "hated": [
+     "生冷"
+    ]
+   },
+   "soft_preferences": {
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": "bold"
+   },
+   "context": {
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "category": "explore"
+  }
+ }
+]

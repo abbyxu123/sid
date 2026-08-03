@@ -1,0 +1,17 @@
+{
+  "page": "12_qr_order",
+  "title": "QR order handoff",
+  "assets": [
+    "backgrounds/bg_04_table.png",
+    "components/qr_placeholder.png",
+    "components/receipt_panel_blank.png"
+  ],
+  "backend_hooks": [
+    "POST /v1/confirm returns url/app_url; front-end renders QR"
+  ],
+  "buttons": [
+    "I ordered it",
+    "Back"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

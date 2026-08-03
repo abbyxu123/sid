@@ -1,0 +1,19 @@
+{
+  "page": "03_care_profile",
+  "title": "Care state and long-term preferences",
+  "assets": [
+    "backgrounds/bg_04_table.png",
+    "characters/cat_deal_alert.png"
+  ],
+  "backend_hooks": [
+    "profile/care fields; no medical diagnosis"
+  ],
+  "buttons": [
+    "Fitness",
+    "Dieting",
+    "Period care",
+    "Regular",
+    "Continue"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

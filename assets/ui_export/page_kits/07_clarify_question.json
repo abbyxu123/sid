@@ -1,0 +1,17 @@
+{
+  "page": "07_clarify_question",
+  "title": "Missing field repair",
+  "assets": [
+    "backgrounds/bg_04_table.png",
+    "characters/cat_chair_decision.png"
+  ],
+  "backend_hooks": [
+    "missing_fields extension needed or client-side fallback"
+  ],
+  "buttons": [
+    "Skip",
+    "Answer option",
+    "Continue"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

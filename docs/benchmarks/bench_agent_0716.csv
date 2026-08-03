@@ -1,0 +1,18 @@
+mode,concurrency,run,latency_avg_s,latency_max_s,total_tokens,agg_tok_s,json_ok_rate
+free,1,0,45.9,45.9,1200,26.1,0.00
+# sample: reasoning=2218ch content=5ch json_ok=False
+free,1,1,40.7,40.7,1095,26.9,1.00
+free,1,2,41.8,41.8,1132,27.1,1.00
+free,4,0,78.7,83.4,4422,53.0,0.75
+# sample: reasoning=2097ch content=256ch json_ok=False
+free,4,1,81.5,85.1,4425,52.0,1.00
+free,4,2,73.7,81.9,4145,50.6,0.75
+json_schema,1,0,46.4,46.4,1200,25.9,0.00
+# sample: reasoning=2166ch content=81ch json_ok=False
+json_schema,1,1,38.8,38.8,1053,27.1,1.00
+json_schema,1,2,43.7,43.7,1187,27.1,1.00
+json_schema,4,0,72.2,78.3,4138,52.8,1.00
+# sample: reasoning=1861ch content=274ch json_ok=True
+json_schema,4,1,74.0,79.0,4084,51.7,1.00
+json_schema,4,2,74.4,83.3,4139,49.7,0.75
+DONE

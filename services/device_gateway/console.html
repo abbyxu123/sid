@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>猫咪决策机</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>">
+<style>
+:root{--bg:#14141a;--card:#1f1f2a;--fg:#f2f2f6;--dim:#9a9ab0;--acc:#ffb74d;--ok:#66bb6a;--err:#ef5350;--purple:#9575cd}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font:16px/1.6 -apple-system,"PingFang SC",sans-serif;background:var(--bg);color:var(--fg)}
+.page{max-width:520px;margin:auto;padding:18px;min-height:100vh;display:none;flex-direction:column}
+.page.on{display:flex}
+h1{font-size:26px;margin:10px 0 4px}
+.sub{color:var(--dim);margin-bottom:14px}
+textarea{width:100%;font:inherit;font-size:17px;border-radius:14px;border:1px solid #333;background:var(--card);color:var(--fg);padding:14px;min-height:88px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chipgrp{width:100%;font-size:12px;color:var(--dim);margin-top:6px}
+.chip{background:var(--card);border:1px solid #333;border-radius:20px;padding:7px 14px;font-size:14px;color:var(--dim)}
+.chip.sel{background:var(--acc);color:#000;border-color:var(--acc);font-weight:600}
+.big{display:block;width:100%;border:0;border-radius:16px;padding:16px;font-size:18px;font-weight:700;background:var(--acc);color:#000;margin-top:12px}
+.big.sec{background:var(--card);color:var(--fg);border:1px solid #333}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.mini{color:var(--dim);font-size:13px;text-align:center;margin-top:10px}
+.catgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.catbox{background:var(--card);border-radius:14px;padding:12px;opacity:.35;transition:.3s}
+.catbox.on{opacity:1;box-shadow:0 0 0 2px var(--purple)}
+.catbox .nm{font-weight:700}.catbox .say{font-size:13px;color:var(--dim);min-height:38px}
+.auditor{background:var(--card);border-radius:14px;padding:12px;border-left:4px solid var(--err);font-size:14px}
+.dish{background:linear-gradient(160deg,#2a2118,#1f1f2a);border:1px solid #443;border-radius:20px;padding:22px;text-align:center;margin:12px 0}
+.dish .name{font-size:28px;font-weight:800}
+.dish .meta{font-size:20px;color:var(--acc);margin:6px 0}
+.dish .why{font-size:13px;color:var(--dim)}
+.ticket{background:#faf7ef;color:#222;border-radius:6px;padding:18px;font:14px/1.8 ui-monospace,monospace;margin:12px 0;box-shadow:0 8px 24px #0006}
+.ticket h3{margin:0;text-align:center;letter-spacing:4px}
+.tl{display:flex;justify-content:space-between}
+details{margin-top:auto;padding-top:14px}
+summary{color:var(--dim);font-size:13px}
+.badge{display:inline-block;background:var(--card);border-radius:8px;padding:4px 10px;margin:3px;font-size:12px;color:var(--dim)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#000c;padding:10px 18px;border-radius:20px;font-size:14px;display:none;pointer-events:none}
+.statebar{position:sticky;top:0;background:var(--bg);padding:8px 0;font-size:14px;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<!-- ① 输入 -->
+<div class="page on" id="p1">
+  <img src="/assets/hero_sofa.jpg" style="width:100%;border-radius:16px;display:block;cursor:pointer" onclick="document.getElementById('text').focus()">
+  <div class="sub" style="margin-top:8px">说给猫猫听（可用输入法🎤听写），或点下面的快捷标签</div>
+  <textarea id="text" placeholder="例：我想吃辣的，四十块以内，不吃面食，半小时内要吃到"></textarea>
+  <button class="big sec" id="micBtn" onclick="dictate()" style="display:none">🎤 直接说给猫听</button>
+  <!-- 三栏结构对齐设计稿：口味偏好 / 预算时间 / 忌口过敏 -->
+  <div class="chips" id="chips">
+    <div class="chipgrp">🌶 口味偏好</div>
+    <span class="chip" data-k="spicy" data-v="none">不辣</span>
+    <span class="chip" data-k="spicy" data-v="mild">微辣</span>
+    <span class="chip" data-k="spicy" data-v="medium">中辣</span>
+    <span class="chip" data-k="spicy" data-v="hot">重辣</span>
+    <div class="chipgrp">💰 预算 · 时间 · 状态</div>
+    <span class="chip" data-k="budget" data-v="20">¥20内</span>
+    <span class="chip" data-k="budget" data-v="30">¥30内</span>
+    <span class="chip" data-k="budget" data-v="40">¥40内</span>
+    <span class="chip" data-k="eatby" data-v="30">30分钟内</span>
+    <span class="chip" data-k="state" data-v="tired">累了🥱</span>
+    <span class="chip" data-k="state" data-v="low_patience">别让我选</span>
+    <span class="chip" data-k="state" data-v="indulge">放纵吃😋</span>
+    <div class="chipgrp">🚫 忌口 / 过敏</div>
+    <span class="chip" data-k="taboo" data-v="面食">不吃面</span>
+    <span class="chip" data-k="taboo" data-v="香菜">不要香菜</span>
+    <span class="chip" data-k="allergy" data-v="花生">花生过敏</span>
+    <span class="chip" data-k="allergy" data-v="海鲜">海鲜过敏</span>
+  </div>
+  <button class="big" onclick="go()">让猫咪们讨论 🐾</button>
+  <button class="big sec" onclick="saveProfile()" style="font-size:14px;padding:10px">💾 把上面的选择存为我的默认（过敏/忌口永久生效）</button>
+  <div class="row">
+    <button class="big sec" onclick="$('menu').click()">📷 拍菜单</button>
+    <button class="big sec" onclick="explore()">🍎 摇苹果树</button>
+    <button class="big sec" onclick="$('food').click()">🍱 算卡路里</button>
+    <button class="big sec" onclick="openJournal()">🐾 手账</button>
+  </div>
+  <button class="big sec" onclick="checkHungry()">📡 看你饿不饿</button>
+  <input id="menu" type="file" accept="image/*" hidden onchange="go()">
+  <input id="food" type="file" accept="image/*" hidden onchange="calorie()">
+  <div class="mini" id="calout"></div>
+  <details><summary>证据面板 · 技术状态</summary><div id="metrics"></div></details>
+</div>
+
+<!-- ② 议事会 -->
+<div class="page" id="p2">
+  <div class="statebar" id="stateTxt">🟣 猫咪议事会进行中…</div>
+  <img src="/assets/council_table.jpg" style="width:100%;border-radius:14px;display:block;margin-bottom:8px">
+  <div class="catgrid" id="catgrid"></div>
+  <div class="auditor" id="auditor" style="display:none"></div>
+</div>
+
+<!-- ③ 推荐 -->
+<div class="page" id="p3">
+  <div class="statebar">🍊 今日推荐</div>
+  <div class="dish">
+    <div class="name" id="dName">—</div>
+    <div class="meta" id="dMeta"></div>
+    <div class="why" id="dWhy"></div>
+  </div>
+  <button class="big" onclick="accept()">✅ 就这个，出喵单</button>
+  <div class="row">
+    <button class="big sec" onclick="blindBox()">🎁 外卖盲盒</button>
+    <button class="big sec" onclick="nextDish()">🔄 再来一个</button>
+  </div>
+  <div class="mini">自己挑就点确认；懒得选就开盲盒。板子左触=再来一个 · 右触=确认。</div>
+</div>
+
+<!-- ④ 喵单 -->
+<div class="page" id="p4">
+  <div class="statebar">🧾 喵单已出</div>
+  <div class="ticket">
+    <h3>喵 单</h3>
+    <div class="tl"><span id="tName">—</span><span id="tPrice"></span></div>
+    <div class="tl"><span>预计</span><span id="tEta"></span></div>
+    <div class="tl"><span>审核</span><span>✔ 硬约束 0 违规</span></div>
+    <div class="tl"><span>支付</span><span>去平台完成（本机不代付）</span></div>
+    <div style="text-align:center;margin-top:6px">≡≡≡≡≡ 喵~ ≡≡≡≡≡</div>
+  </div>
+  <a class="big" id="deeplink" style="text-align:center;text-decoration:none;color:#000">📱 打开淘宝 App 下单</a>
+  <a id="weblink" target="_blank" style="display:block;text-align:center;margin-top:8px;color:#888;font-size:13px;text-decoration:underline">App 打不开？用网页版 →</a>
+  <div id="wxTip" style="display:none;background:#FFF3CD;border-radius:8px;padding:8px 10px;font-size:13px;margin-top:8px">在微信里拉不起淘宝：点右上角 ··· 选「在浏览器打开」，再点上面按钮</div>
+  <div class="row" style="margin-top:10px">
+    <button class="big sec" onclick="fb(5,true)">👍 好吃还想吃</button>
+    <button class="big sec" onclick="fb(2,false)">👎 踩雷了</button>
+  </div>
+  <button class="big sec" onclick="reset()">重新选择 / 回到首页</button>
+</div>
+
+<!-- ⑤ 猫爪手账（记忆模式可视化：吃过什么、评价如何、复购意愿） -->
+<div class="page" id="p5">
+  <div class="statebar">🐾 猫爪手账 · 越用越懂你</div>
+  <div class="mini" id="jSummary" style="font-size:14px;margin:6px 0"></div>
+  <div id="jList" style="display:flex;flex-direction:column;gap:8px;overflow-y:auto"></div>
+  <button class="big sec" onclick="show('p1')" style="margin-top:12px">← 回去点餐</button>
+</div>
+
+<!-- ⑥ 毫米波饿不饿 -->
+<div class="page" id="p6">
+  <div class="statebar">📡 毫米波小检测 · 娱乐参考</div>
+  <div class="dish">
+    <div class="name" id="hTitle">检测中…</div>
+    <div class="meta" id="hMeta"></div>
+    <div class="why" id="hWhy"></div>
+  </div>
+  <div class="ticket">
+    <div class="tl"><span>心率</span><span id="hHeart">—</span></div>
+    <div class="tl"><span>呼吸</span><span id="hResp">—</span></div>
+    <div class="tl"><span>距离</span><span id="hDist">—</span></div>
+    <div class="tl"><span>数据</span><span id="hFresh">—</span></div>
+  </div>
+  <button class="big" onclick="go()">今天吃什么 →</button>
+  <button class="big sec" onclick="show('p1')">← 回首页</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const base = location.origin;
+let sid = new URLSearchParams(location.search).get('sid'), es = null;
+let curDish = null, dishes = [], cursor = 0;
+const $ = id => document.getElementById(id);
+const CATS = {taste:["口味猫","🌶"],budget:["预算猫","💰"],time:["时间猫","⏱"],memory:["记忆猫","📔"],novelty:["探索猫","🍎"]};
+const CATIMG = a => `/assets/noon_cat_${a}.jpg`;
+const picks = {};
+function toast(m){ const t=$('toast'); t.textContent=m; t.style.display='block'; setTimeout(()=>t.style.display='none',2500); }
+function show(p){ document.querySelectorAll('.page').forEach(x=>x.classList.remove('on')); $(p).classList.add('on'); }
+document.querySelectorAll('.chip').forEach(c => c.onclick = () => {
+  const k = c.dataset.k;
+  document.querySelectorAll(`.chip[data-k=${k}]`).forEach(x => { if (x!==c) x.classList.remove('sel'); });
+  c.classList.toggle('sel');
+  picks[k] = c.classList.contains('sel') ? c.dataset.v : null;
+});
+
+async function post(p, body){ const r = await fetch(base+p,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); if(!r.ok) throw new Error((await r.text()).slice(0,80)); return r.json(); }
+async function ensureSession(){ if(sid) return sid; const d = await post("/v1/session",{device_id:"phone"}); sid=d.session_id; return sid; }
+
+// —— 猫叫（WebAudio 合成，五猫独立声线）——
+let AC=null, spoken=new Set();
+function meow(pitch){ try{ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended")AC.resume();
+  let t=AC.currentTime+.02; const n=2+Math.floor(Math.random()*3);
+  for(let i=0;i<n;i++){ const d=.12+Math.random()*.14, p=pitch*(0.92+Math.random()*.16);
+    const o=AC.createOscillator(),g=AC.createGain(),v=AC.createOscillator(),vg=AC.createGain();
+    o.type="sawtooth"; o.frequency.setValueAtTime(520*p,t); o.frequency.exponentialRampToValueAtTime(780*p,t+d*.35); o.frequency.exponentialRampToValueAtTime(340*p,t+d);
+    v.frequency.value=24; vg.gain.value=18*p; v.connect(vg); vg.connect(o.frequency);
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.15,t+.02); g.gain.exponentialRampToValueAtTime(.001,t+d);
+    o.connect(g); g.connect(AC.destination); o.start(t); v.start(t); o.stop(t+d); v.stop(t+d); t+=d+.05; }
+}catch(e){} }
+const PITCH = {taste:1.7,budget:.65,time:1.25,memory:.9,novelty:1.5};
+
+function watch(){
+  if(es) es.close(); spoken.clear();
+  $('catgrid').innerHTML = Object.entries(CATS).map(([k,[n,e]]) =>
+    `<div class="catbox" id="cat_${k}"><img src="${CATIMG(k)}" style="width:56px;border-radius:14px;float:right"><div class="nm">${e} ${n}</div><div class="say"></div></div>`).join("");
+  es = new EventSource(`${base}/v1/session/${sid}/stream`);
+  es.onmessage = evt => {
+    const f = JSON.parse(evt.data);
+    if (["thinking","council"].includes(f.display_state)) { show('p2');
+      $('stateTxt').textContent = f.display_state==="thinking" ? "💭 猫猫在理解你的需求…" : "🟣 猫咪议事会进行中…"; }
+    Object.keys(f.agents||{}).forEach(a => { const box = $('cat_'+a); if (box && !box.classList.contains('on')) {
+      box.classList.add('on'); box.querySelector('.say').textContent = (f.agent_lines||{})[a] || "已交卷";
+      if(!spoken.has(a)){spoken.add(a); meow(PITCH[a]||1);} }
+      else if (box && (f.agent_lines||{})[a]) box.querySelector('.say').textContent = f.agent_lines[a]; });
+    if ((f.auditor_lines||[]).length){ $('auditor').style.display='block';
+      $('auditor').innerHTML = `<img src="${CATIMG('auditor')}" style="width:48px;border-radius:12px;float:right"> 🛡 <b>审核猫</b><br>` + f.auditor_lines.join("<br>"); }
+    if (f.state==="candidate" && f.candidate){ renderDish(f.candidate); show('p3'); }
+    if (f.state==="confirming") toast("再按一次确认 / 板子右触");
+    // 终态必须主动关流：EventSource 会在服务器断开后自动重连，
+    // 每次重连都会重收 done 帧 → 页面被反复拽回喵单页（"再来一顿"点不动）
+    if (f.state==="done") { fillTicket(); show('p4'); es.close(); }
+    if (f.state==="error") { toast("出错了：" + ((f.degraded||[])[0]||"请重试")); show('p1'); es.close(); }
+  };
+}
+function renderDish(c){
+  const d = dishes.find(x=>x.id===c.candidate_id) || curDish;
+  if (d){ curDish=d; $('dName').textContent=d.item; $('dMeta').textContent=`¥${d.price_total} · ${d.eta_minutes}分钟 · ${d.restaurant}`; }
+  $('dWhy').textContent = (c.reasons||[]).join(" · ");
+}
+async function refresh(d){ if(!d) return; dishes=d.candidates||[]; cursor=d.cursor||0;
+  if(d.final_choice){ const cur=dishes[cursor%dishes.length]; if(cur){curDish=cur; $('dName').textContent=cur.item; $('dMeta').textContent=`¥${cur.price_total} · ${cur.eta_minutes}分钟 · ${cur.restaurant}`; $('dWhy').textContent=(d.final_choice.reasons||[]).join(" · ");} show('p3'); } }
+
+function buildText(){
+  let t = $('text').value.trim(); const parts=[];
+  if(picks.budget) parts.push(picks.budget+"块以内"); if(picks.eatby) parts.push(picks.eatby+"分钟内要吃到");
+  const SPICY_TXT={none:"不要辣",mild:"来点微辣",medium:"想吃辣的",hot:"要重辣"};
+  if(picks.spicy) parts.push(SPICY_TXT[picks.spicy]); if(picks.taboo) parts.push("不吃"+picks.taboo);
+  if(picks.allergy) parts.push("对"+picks.allergy+"过敏");
+  if(picks.state==="tired") parts.push("有点累"); if(picks.state==="low_patience") parts.push("别让我选快点定");
+  if(picks.state==="indulge") parts.push("今天想放纵吃");
+  return [t, ...parts].filter(Boolean).join("，");
+}
+async function go(){ await ensureSession(); watch();
+  const text = buildText(); if(!text && !$('menu').files[0]) return toast("说点什么或选个标签～");
+  show('p2'); $('stateTxt').textContent="💭 猫猫在理解你的需求…";
+  const body={session_id:sid, text}; const mf=$('menu').files[0];
+  if(mf){ $('stateTxt').textContent="📷 猫猫在看菜单…(约30秒)";
+    body.menu_image_b64 = await new Promise(res=>{const r=new FileReader(); r.onload=()=>res(r.result.split(",")[1]); r.readAsDataURL(mf);}); }
+  try{ const d = await post("/v1/input", body);
+    if (d.followup) { toast("🐱 " + d.followup); meow(1.15); show('p1'); return; }
+    refresh(d);
+  } catch(e){ toast("失败:"+e.message); show('p1'); } }
+async function explore(){ await ensureSession(); watch(); show('p2');
+  try{ refresh(await post("/v1/input",{session_id:sid, soft_preferences:{novelty:"bold"}})); }catch(e){ toast(e.message); show('p1'); } }
+async function ev(e){ if(!sid) return; try{ await post("/v1/device/event",{device_id:"phone",session_id:sid,event:e,timestamp:Date.now()});
+  if(e==="left_ear"){ cursor=(cursor+1)%Math.max(dishes.length,1); const c=dishes[cursor]; if(c){curDish=c; $('dName').textContent=c.item; $('dMeta').textContent=`¥${c.price_total} · ${c.eta_minutes}分钟 · ${c.restaurant}`;} }
+  }catch(err){ toast(err.message); } }
+async function nextDish(){ await ev('left_ear'); toast("换一口，猫猫重新端上来"); meow(1.05); }
+async function blindBox(){
+  if(!dishes.length) return toast("还没有候选，先让猫咪们讨论");
+  const old = cursor;
+  if(dishes.length > 1){
+    for(let guard=0; guard<5 && cursor===old; guard++){
+      cursor = Math.floor(Math.random() * dishes.length);
+    }
+  }
+  curDish = dishes[cursor];
+  $('dName').textContent = curDish.item;
+  $('dMeta').textContent = `¥${curDish.price_total} · ${curDish.eta_minutes}分钟 · ${curDish.restaurant}`;
+  $('dWhy').textContent = "盲盒猫拍了拍盒子：就它吧，别再为难脑子了";
+  toast("🎁 盲盒已开：抽到 " + curDish.item);
+  meow(1.35);
+}
+
+async function checkHungry(){
+  show('p6'); $('hTitle').textContent="检测中…"; $('hMeta').textContent="让猫猫看一眼你的状态"; $('hWhy').textContent="";
+  try{
+    const r = await fetch(base+"/v1/hungry", {method:"POST"});
+    if(!r.ok) throw new Error(await r.text());
+    const d = await r.json(), s = d.sensor || {};
+    $('hTitle').textContent = d.title || "猫猫看完了";
+    $('hMeta').textContent = d.subtitle || "";
+    const hasSensor = !!(s.heart_bpm || s.respiration_bpm || s.distance_cm || s.target_count);
+    $('hWhy').textContent = s.fresh ? "结合毫米波和猫爪手账，仅作娱乐参考" : (hasSensor ? "已有毫米波历史样本，等待实时刷新" : "还没收到毫米波实时数据，先按手账判断");
+    $('hHeart').textContent = s.heart_bpm ? `${Math.round(s.heart_bpm)} bpm` : "—";
+    $('hResp').textContent = s.respiration_bpm ? `${Math.round(s.respiration_bpm)} /min` : "—";
+    $('hDist').textContent = s.distance_cm ? `${Math.round(s.distance_cm)} cm` : "—";
+    $('hFresh').textContent = s.fresh ? "实时" : (hasSensor ? "历史" : "未连接");
+  }catch(e){
+    $('hTitle').textContent="检测失败";
+    $('hMeta').textContent="先确认后端和毫米波桥接脚本在运行";
+  }
+}
+async function accept(){ if(!sid) return;
+  try{ await post("/v1/device/event",{device_id:"phone",session_id:sid,event:"right_ear",timestamp:Date.now()});
+    const d = await post("/v1/confirm",{session_id:sid,candidate_id:curDish && curDish.id});
+    setOrderLinks(d.order_url || d.url, d.app_url); fillTicket(); show('p4'); meow(1.2);
+  }catch(e){ toast("确认被拦: "+e.message); } }
+function fillTicket(){ if(!curDish) return; $('tName').textContent=curDish.item; $('tPrice').textContent="¥"+curDish.price_total; $('tEta').textContent=curDish.eta_minutes+"分钟"; }
+// 去下单：主按钮 href 直接用 tbopen scheme（浏览器对用户手点锚点最宽容），副链接=网页版兜底。
+// 微信内置浏览器封杀所有外部 scheme → 显示"浏览器打开"引导。
+function setOrderLinks(web, app){
+  const isWx = /MicroMessenger/i.test(navigator.userAgent);
+  $('weblink').href = web;
+  if (app && !isWx) { $('deeplink').href = app; $('deeplink').textContent = "📱 打开淘宝 App 下单"; }
+  else { $('deeplink').href = web; $('deeplink').target = "_blank"; $('deeplink').textContent = "去下单 →"; }
+  if (isWx) $('wxTip').style.display = 'block';
+}
+async function openJournal(){
+  try{
+    const d = await (await fetch(base + "/v1/journal")).json();
+    const fav = d.repeat_favorites.length ? "，想复购：" + d.repeat_favorites.join("、") : "";
+    $('jSummary').textContent = `记了 ${d.total} 顿，下单 ${d.confirmed} 次${fav}`;
+    $('jList').innerHTML = d.items.slice(0, 30).map(i => {
+      const day = new Date(i.ts * 1000); const dd = `${day.getMonth()+1}/${day.getDate()}`;
+      const stars = i.rating ? "★".repeat(i.rating) + "☆".repeat(5 - i.rating) : "未评价";
+      const tag = i.would_repeat === true ? "💚 还想吃" : i.would_repeat === false ? "🩶 踩雷" : "";
+      const modeCn = {direct:"直推",council:"议事会",explore:"探索",duel:"二选一"}[i.mode] || i.mode;
+      return `<div style="background:var(--card);border-radius:12px;padding:10px 14px">
+        <div style="display:flex;justify-content:space-between;font-size:15px">
+          <b>${i.item}</b><span style="color:var(--dim)">${dd}</span></div>
+        <div style="font-size:13px;color:var(--dim)">${i.restaurant}${i.price ? " · ¥" + i.price : ""} · ${modeCn}${i.confirmed ? " · 已下单" : ""}</div>
+        <div style="font-size:13px;margin-top:2px">${stars} ${tag} ${i.reject_reason || ""}</div>
+      </div>`;
+    }).join("") || '<div class="mini">还没记录，先决策一顿吧</div>';
+    show('p5');
+  }catch(e){ toast("手账加载失败 " + e.message); }
+}
+async function saveProfile(){
+  const prof = {};
+  if (picks.allergy) prof.allergens = [picks.allergy];
+  if (picks.taboo) prof.diet_taboos = [picks.taboo];
+  if (picks.budget) prof.budget_max = Number(picks.budget);
+  if (picks.eatby) prof.eat_by_minutes = Number(picks.eatby);
+  if (picks.spicy) prof.spicy = picks.spicy;
+  if (!Object.keys(prof).length) return toast("先点几个标签再存～");
+  try { await fetch(base + "/v1/profile", {method: "PUT",
+    headers: {"content-type": "application/json"}, body: JSON.stringify(prof)});
+    toast("记住了！以后每次决策自动带上 🐾");
+  } catch(e) { toast("保存失败 " + e.message); }
+}
+async function fb(r,rep){ try{ await post("/v1/feedback",{session_id:sid,rating:r,would_repeat:rep,reject_reason:rep?"":"不合口味"}); toast("已记进猫爪记忆 🐾"); }catch(e){} }
+async function reset(){ if(es) es.close(); const oldSid=sid; if(oldSid) { try{ await post("/v1/device/event",{device_id:"phone",session_id:oldSid,event:"cancel"}); }catch(e){} } sid=null; curDish=null; dishes=[]; document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel')); Object.keys(picks).forEach(k=>picks[k]=null); $('text').value=""; $('menu').value=""; show('p1'); }
+// 卡路里等待过场：台词轮播+呼吸点点，30 秒不冷场（分析在 local AI host 上跑，纯前端动画）
+const CAL_LINES = ["🐱 猫猫凑近看了看", "👀 唔…这是什么好吃的", "🍽 在数有几块肉",
+                   "📏 估一估分量", "🤔 油放得多不多呢", "🧮 掐指一算卡路里", "😺 快好了快好了"];
+let calTimer = null;
+function calAnimStart(){
+  let i = 0, dots = 0;
+  clearInterval(calTimer);
+  calTimer = setInterval(() => {
+    dots = (dots + 1) % 4;
+    if (dots === 0) i = (i + 1) % CAL_LINES.length;
+    $('calout').textContent = CAL_LINES[i] + "…".repeat(dots + 1);
+  }, 700);
+  meow(1.1);   // 开场喵一声就好，循环里叫会变轰炸
+}
+function calAnimStop(){ clearInterval(calTimer); calTimer = null; }
+async function calorie(){ const f=$('food').files[0]; if(!f) return; calAnimStart();
+  const b64=await new Promise(res=>{const r=new FileReader(); r.onload=()=>res(r.result.split(",")[1]); r.readAsDataURL(f);});
+  try{ const d=await post("/v1/calorie",{image_b64:b64}); calAnimStop(); $('calout').textContent="🐱 "+d.text; }
+  catch(e){ calAnimStop(); $('calout').textContent="😿 没看清，再拍一张试试"; } }
+// —— 浏览器原生语音（支持则显示按钮，iOS Safari 等不支持时自动隐藏走输入法听写）——
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SR) $('micBtn').style.display = 'block';
+let rec = null, listening = false;
+function dictate(){
+  if (listening) { rec.stop(); return; }
+  rec = new SR(); rec.lang = "zh-CN"; rec.interimResults = true; rec.continuous = false;
+  listening = true; $('micBtn').textContent = "🔴 在听…点击结束"; meow(1.3);
+  rec.onresult = e => { $('text').value = Array.from(e.results).map(r => r[0].transcript).join(""); };
+  rec.onend = () => { listening = false; $('micBtn').textContent = "🎤 直接说"; if ($('text').value.trim()) toast("说完了？点「让猫咪们讨论」"); };
+  rec.onerror = () => { listening = false; $('micBtn').textContent = "🎤 直接说"; toast("没听清，再试试或直接打字"); };
+  rec.start();
+}
+async function metrics(){ try{ const d=await (await fetch(base+"/v1/metrics")).json();
+  $('metrics').innerHTML=`<span class="badge">Step: ${d.model.step_3_7_flash}</span><span class="badge">学徒: ${d.model.kitten_local}</span><span class="badge">第三方API: ${d.safety.third_party_model_api_calls}</span><span class="badge">违规: ${d.safety.hard_constraint_violations_shipped}</span><span class="badge">审核拦截: ${d.safety.blocked_by_audit}</span><span class="badge">用户确认: ${d.safety.external_actions_user_confirmed}</span><span class="badge">决策: ${d.decisions_total}</span>`; }catch(e){} }
+setInterval(metrics, 5000); metrics();
+if (sid) { watch(); toast("已连接猫咪决策机 🐱");
+  fetch(base + "/v1/session/" + sid).then(r => r.json()).then(d => {
+    dishes = d.candidates || []; cursor = d.cursor || 0;
+    const cur = dishes[cursor % Math.max(dishes.length, 1)];
+    if (cur) { curDish = cur; $('dName').textContent = cur.item;
+      $('dMeta').textContent = `¥${cur.price_total} · ${cur.eta_minutes}分钟 · ${cur.restaurant}`; }
+    if (d.state === "done" && curDish) {
+      fillTicket();
+      if (d.action_result && d.action_result.url)
+        setOrderLinks(d.action_result.url, d.action_result.app_url);
+      show('p4');
+    } else if (d.state === "candidate" && curDish) show('p3');
+  }).catch(()=>{}); }
+</script>
+</body>
+</html>

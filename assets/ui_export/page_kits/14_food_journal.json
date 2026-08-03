@@ -1,0 +1,18 @@
+{
+  "page": "14_food_journal",
+  "title": "Food memory journal",
+  "assets": [
+    "backgrounds/bg_05_desk.png",
+    "characters/cat_memory_keeper.png",
+    "screen_refs/screen_ref_12_food_memory.png"
+  ],
+  "backend_hooks": [
+    "GET /v1/journal"
+  ],
+  "buttons": [
+    "Previous",
+    "Next",
+    "Back home"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

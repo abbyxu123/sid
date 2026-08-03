@@ -1,0 +1,16 @@
+{
+  "page": "08_cat_council",
+  "title": "Agent council",
+  "assets": [
+    "backgrounds/bg_06_council_room.png",
+    "characters/*.png"
+  ],
+  "backend_hooks": [
+    "SSE /v1/session/{id}/stream agent lines"
+  ],
+  "buttons": [
+    "Back",
+    "Thinking disabled"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

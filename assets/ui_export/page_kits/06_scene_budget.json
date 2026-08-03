@@ -1,0 +1,21 @@
+{
+  "page": "06_scene_budget",
+  "title": "People, channel, budget, time, distance",
+  "assets": [
+    "backgrounds/bg_02_sofa_idle.png",
+    "characters/cat_budget_accountant.png",
+    "characters/cat_time_manager.png"
+  ],
+  "backend_hooks": [
+    "POST /v1/input context"
+  ],
+  "buttons": [
+    "1/2/3-4/5+",
+    "Delivery/Dine out/Cook home",
+    "Budget",
+    "Max wait",
+    "Distance",
+    "Let cats think"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

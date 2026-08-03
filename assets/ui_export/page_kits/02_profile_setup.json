@@ -1,0 +1,19 @@
+{
+  "page": "02_profile_setup",
+  "title": "New user profile",
+  "assets": [
+    "backgrounds/bg_05_desk.png",
+    "characters/cat_memory_keeper.png",
+    "components_auto/speech bubbles"
+  ],
+  "backend_hooks": [
+    "profile extension needed",
+    "POST /v1/input with profile fields"
+  ],
+  "buttons": [
+    "Skip",
+    "Save and continue",
+    "Hold to talk"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

@@ -1,0 +1,6 @@
+// Device configuration. Copy to noon_config.h locally; do not commit secrets.
+#define WIFI_SSID "YOUR_WIFI"
+#define WIFI_PASS "YOUR_PASS"
+#define GW_HOST   "192.168.1.100"   // Local gateway IP on the same Wi-Fi.
+#define GW_PORT   8090
+#define DEVICE_ID "cat-square-01"

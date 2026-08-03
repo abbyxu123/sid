@@ -1,0 +1,18 @@
+{
+  "page": "15_hungry_check",
+  "title": "Hungry or craving check",
+  "assets": [
+    "backgrounds/bg_02_sofa_idle.png",
+    "characters/cat_time_manager.png",
+    "screen_refs/screen_ref_10_hunger_check.png"
+  ],
+  "backend_hooks": [
+    "POST /v1/hungry-check or demo fallback; mmWave is reference only"
+  ],
+  "buttons": [
+    "Go to recommendation",
+    "Drink water first",
+    "Back home"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

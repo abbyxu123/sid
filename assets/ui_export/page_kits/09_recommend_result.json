@@ -1,0 +1,19 @@
+{
+  "page": "09_recommend_result",
+  "title": "Best candidate card",
+  "assets": [
+    "backgrounds/bg_04_table.png",
+    "characters/cat_taste_food.png",
+    "foods/food_001.png",
+    "components/receipt_panel_blank.png"
+  ],
+  "backend_hooks": [
+    "candidate fields from /v1/input result"
+  ],
+  "buttons": [
+    "Eat this",
+    "Change one",
+    "Why this"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

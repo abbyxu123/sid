@@ -1,0 +1,17 @@
+{
+  "page": "11_blind_box",
+  "title": "Safe random pick",
+  "assets": [
+    "backgrounds/bg_10_doorway.png",
+    "characters/cat_forage_search.png",
+    "foods/food_003.png"
+  ],
+  "backend_hooks": [
+    "blind_box mode extension; can reuse candidate list"
+  ],
+  "buttons": [
+    "Open one",
+    "Back to list"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

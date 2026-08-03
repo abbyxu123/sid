@@ -1,0 +1,321 @@
+{
+ "summary": {
+  "n": 20,
+  "single_violation_rate": 0.25,
+  "multi_violation_rate": 0.0,
+  "single_t_avg": 70.0,
+  "multi_t_avg": 2.1
+ },
+ "rows": [
+  {
+   "case_id": "case_00",
+   "mode": "direct",
+   "single": {
+    "pick": "r01_kaoyu_s",
+    "violated": false,
+    "why": [],
+    "t": 28.2
+   },
+   "multi": {
+    "pick": "r10_gaifan",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_01",
+   "mode": "direct",
+   "single": {
+    "pick": "r11_015",
+    "violated": false,
+    "why": [],
+    "t": 58.8
+   },
+   "multi": {
+    "pick": "r03_lanzhou",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_02",
+   "mode": "direct",
+   "single": {
+    "pick": "r01_kaoyu_s",
+    "violated": false,
+    "why": [],
+    "t": 112.3
+   },
+   "multi": {
+    "pick": "r10_gaifan",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_03",
+   "mode": "direct",
+   "single": {
+    "pick": "r09_hanshi",
+    "violated": false,
+    "why": [],
+    "t": 21.2
+   },
+   "multi": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_04",
+   "mode": "direct",
+   "single": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "why": [],
+    "t": 45.5
+   },
+   "multi": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_05",
+   "mode": "direct",
+   "single": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "why": [],
+    "t": 78.9
+   },
+   "multi": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_06",
+   "mode": "direct",
+   "single": {
+    "pick": "r10_gaifan",
+    "violated": false,
+    "why": [],
+    "t": 45.2
+   },
+   "multi": {
+    "pick": "r10_gaifan",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_07",
+   "mode": "direct",
+   "single": {
+    "pick": "r10_gaifan",
+    "violated": false,
+    "why": [],
+    "t": 72.5
+   },
+   "multi": {
+    "pick": "r10_gaifan",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_08",
+   "mode": "council",
+   "single": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "why": [],
+    "t": 17.6
+   },
+   "multi": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "t": 14.7
+   }
+  },
+  {
+   "case_id": "case_09",
+   "mode": "direct",
+   "single": {
+    "pick": "r10_gaifan",
+    "violated": false,
+    "why": [],
+    "t": 30.0
+   },
+   "multi": {
+    "pick": "r10_gaifan",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_10",
+   "mode": "council",
+   "single": {
+    "pick": null,
+    "violated": true,
+    "why": [
+     "失败: ModelError"
+    ],
+    "t": 148.4
+   },
+   "multi": {
+    "pick": "r11_016",
+    "violated": false,
+    "t": 11.2
+   }
+  },
+  {
+   "case_id": "case_11",
+   "mode": "direct",
+   "single": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "why": [],
+    "t": 53.7
+   },
+   "multi": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_12",
+   "mode": "council",
+   "single": {
+    "pick": null,
+    "violated": true,
+    "why": [
+     "失败: ModelError"
+    ],
+    "t": 148.7
+   },
+   "multi": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "t": 4.9
+   }
+  },
+  {
+   "case_id": "case_13",
+   "mode": "council",
+   "single": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "why": [],
+    "t": 138.3
+   },
+   "multi": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "t": 11.3
+   }
+  },
+  {
+   "case_id": "case_14",
+   "mode": "direct",
+   "single": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "why": [],
+    "t": 61.2
+   },
+   "multi": {
+    "pick": "r04_shaguo",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_15",
+   "mode": "direct",
+   "single": {
+    "pick": "r10_gaifan",
+    "violated": false,
+    "why": [],
+    "t": 63.0
+   },
+   "multi": {
+    "pick": "r10_gaifan",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_16",
+   "mode": "direct",
+   "single": {
+    "pick": null,
+    "violated": true,
+    "why": [
+     "失败: ModelError"
+    ],
+    "t": 148.9
+   },
+   "multi": {
+    "pick": "r11_012",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_17",
+   "mode": "direct",
+   "single": {
+    "pick": "r11_013",
+    "violated": true,
+    "why": [
+     "渠道不符（需要dine_in）"
+    ],
+    "t": 67.8
+   },
+   "multi": {
+    "pick": "r11_014",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_18",
+   "mode": "direct",
+   "single": {
+    "pick": "r11_015",
+    "violated": true,
+    "why": [
+     "渠道不符（需要dine_in）"
+    ],
+    "t": 45.5
+   },
+   "multi": {
+    "pick": "r11_025",
+    "violated": false,
+    "t": 0.0
+   }
+  },
+  {
+   "case_id": "case_19",
+   "mode": "direct",
+   "single": {
+    "pick": "r06_riliao",
+    "violated": false,
+    "why": [],
+    "t": 14.5
+   },
+   "multi": {
+    "pick": "r11_014",
+    "violated": false,
+    "t": 0.0
+   }
+  }
+ ]
+}

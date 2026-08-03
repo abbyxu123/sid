@@ -1,0 +1,1497 @@
+{
+ "summary": {
+  "tag": "kitten_v2_nlu",
+  "model": "kitten-nlu",
+  "n": 40,
+  "json_ok_rate": 1.0,
+  "exact_match_rate": 0.7,
+  "field_acc": {
+   "allergens": 1.0,
+   "diet_taboos": 0.775,
+   "hated": 0.775,
+   "cuisines": 1.0,
+   "budget_max": 1.0,
+   "eat_by_minutes": 1.0,
+   "spicy": 1.0,
+   "novelty": 0.975,
+   "people": 1.0,
+   "state": 0.95,
+   "channel": 1.0
+  },
+  "avg_field_acc": 0.952,
+  "latency_avg_s": 2.17,
+  "latency_p95_s": 2.37,
+  "wall_s": 22.0
+ },
+ "results": [
+  {
+   "case_id": "case_00",
+   "latency": 2.094718338921666,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "虾"
+    ],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "spicy": "medium",
+    "cuisines": [],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 85
+  },
+  {
+   "case_id": "case_01",
+   "latency": 2.26612462697085,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "虾"
+    ],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "spicy": "mild",
+    "cuisines": [
+     "韩餐"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 89
+  },
+  {
+   "case_id": "case_02",
+   "latency": 2.1018209259491414,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "鸡蛋"
+    ],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "spicy": "medium",
+    "cuisines": [
+     "云南"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 87
+  },
+  {
+   "case_id": "case_03",
+   "latency": 2.377860158099793,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": false,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "海鲜",
+     "虾"
+    ],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "spicy": "hot",
+    "cuisines": [
+     "韩餐"
+    ],
+    "novelty": "balanced",
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 92
+  },
+  {
+   "case_id": "case_04",
+   "latency": 2.0632172588957474,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "虾"
+    ],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 50,
+    "eat_by_minutes": null,
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 85
+  },
+  {
+   "case_id": "case_05",
+   "latency": 2.128888519015163,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": false,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "海鲜"
+    ],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 30,
+    "eat_by_minutes": null,
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": null,
+    "people": 1,
+    "state": "low_patience",
+    "channel": "any"
+   },
+   "completion_tokens": 87
+  },
+  {
+   "case_id": "case_06",
+   "latency": 2.2234815009869635,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "鸡蛋",
+     "花生"
+    ],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 30,
+    "eat_by_minutes": null,
+    "spicy": null,
+    "cuisines": [
+     "鲁菜"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 90
+  },
+  {
+   "case_id": "case_07",
+   "latency": 2.015391207067296,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "海鲜"
+    ],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 50,
+    "eat_by_minutes": null,
+    "spicy": "medium",
+    "cuisines": [],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 85
+  },
+  {
+   "case_id": "case_08",
+   "latency": 2.3297418950824067,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "生冷"
+    ],
+    "hated": [],
+    "budget_max": 25,
+    "eat_by_minutes": 25,
+    "spicy": "hot",
+    "cuisines": [
+     "湘菜",
+     "鲁菜"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 95
+  },
+  {
+   "case_id": "case_09",
+   "latency": 2.3694687170209363,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "面食"
+    ],
+    "hated": [],
+    "budget_max": 40,
+    "eat_by_minutes": 30,
+    "spicy": "medium",
+    "cuisines": [
+     "鲁菜",
+     "粤菜"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 95
+  },
+  {
+   "case_id": "case_10",
+   "latency": 2.3430695199640468,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "生冷"
+    ],
+    "hated": [],
+    "budget_max": 25,
+    "eat_by_minutes": 25,
+    "spicy": "medium",
+    "cuisines": [
+     "云南",
+     "湘菜"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 94
+  },
+  {
+   "case_id": "case_11",
+   "latency": 2.0162977480795234,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "猪肉"
+    ],
+    "hated": [],
+    "budget_max": 40,
+    "eat_by_minutes": 25,
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 87
+  },
+  {
+   "case_id": "case_12",
+   "latency": 2.2207366939401254,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "面食"
+    ],
+    "hated": [],
+    "budget_max": 25,
+    "eat_by_minutes": 25,
+    "spicy": "medium",
+    "cuisines": [
+     "湘菜"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 91
+  },
+  {
+   "case_id": "case_13",
+   "latency": 2.412353378953412,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "面食"
+    ],
+    "hated": [],
+    "budget_max": 30,
+    "eat_by_minutes": 25,
+    "spicy": "hot",
+    "cuisines": [
+     "东北菜",
+     "轻食"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 95
+  },
+  {
+   "case_id": "case_14",
+   "latency": 2.063361449050717,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": false,
+    "hated": false,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [
+     "炸物"
+    ],
+    "budget_max": 30,
+    "eat_by_minutes": 25,
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 88
+  },
+  {
+   "case_id": "case_15",
+   "latency": 2.0845677320612594,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "猪肉"
+    ],
+    "hated": [],
+    "budget_max": 30,
+    "eat_by_minutes": 30,
+    "spicy": "medium",
+    "cuisines": [],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 87
+  },
+  {
+   "case_id": "case_16",
+   "latency": 2.239569564932026,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "spicy": "medium",
+    "cuisines": [
+     "轻食"
+    ],
+    "novelty": null,
+    "people": 3,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "completion_tokens": 88
+  },
+  {
+   "case_id": "case_17",
+   "latency": 2.086184242973104,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "spicy": "mild",
+    "cuisines": [],
+    "novelty": null,
+    "people": 4,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "completion_tokens": 86
+  },
+  {
+   "case_id": "case_18",
+   "latency": 2.1583535840036348,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "spicy": "medium",
+    "cuisines": [
+     "韩餐"
+    ],
+    "novelty": null,
+    "people": 4,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "completion_tokens": 88
+  },
+  {
+   "case_id": "case_19",
+   "latency": 2.156048245029524,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "spicy": "none",
+    "cuisines": [
+     "日料"
+    ],
+    "novelty": null,
+    "people": 2,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "completion_tokens": 88
+  },
+  {
+   "case_id": "case_20",
+   "latency": 2.097242366988212,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "spicy": "none",
+    "cuisines": [],
+    "novelty": null,
+    "people": 2,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "completion_tokens": 85
+  },
+  {
+   "case_id": "case_21",
+   "latency": 2.1460522529669106,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": 40,
+    "spicy": "none",
+    "cuisines": [
+     "云南"
+    ],
+    "novelty": null,
+    "people": 3,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "completion_tokens": 87
+  },
+  {
+   "case_id": "case_22",
+   "latency": 2.0918830529553816,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": 40,
+    "spicy": "mild",
+    "cuisines": [],
+    "novelty": null,
+    "people": 2,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "completion_tokens": 86
+  },
+  {
+   "case_id": "case_23",
+   "latency": 2.1813273769803345,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": 60,
+    "spicy": "hot",
+    "cuisines": [
+     "湘菜"
+    ],
+    "novelty": null,
+    "people": 3,
+    "state": "normal",
+    "channel": "dine_in"
+   },
+   "completion_tokens": 88
+  },
+  {
+   "case_id": "case_24",
+   "latency": 2.304222424980253,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "spicy": "hot",
+    "cuisines": [
+     "湘菜",
+     "韩餐"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "low_patience",
+    "channel": "any"
+   },
+   "completion_tokens": 92
+  },
+  {
+   "case_id": "case_25",
+   "latency": 2.020405981922522,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "spicy": "medium",
+    "cuisines": [],
+    "novelty": null,
+    "people": 1,
+    "state": "tired",
+    "channel": "any"
+   },
+   "completion_tokens": 84
+  },
+  {
+   "case_id": "case_26",
+   "latency": 2.25744871806819,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 40,
+    "eat_by_minutes": null,
+    "spicy": "none",
+    "cuisines": [
+     "东北菜",
+     "湘菜"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "tired",
+    "channel": "any"
+   },
+   "completion_tokens": 91
+  },
+  {
+   "case_id": "case_27",
+   "latency": 2.1943291099742055,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "medium",
+    "cuisines": [
+     "韩餐",
+     "轻食"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "tired",
+    "channel": "any"
+   },
+   "completion_tokens": 89
+  },
+  {
+   "case_id": "case_28",
+   "latency": 2.054289254010655,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": null,
+    "people": 1,
+    "state": "low_patience",
+    "channel": "any"
+   },
+   "completion_tokens": 83
+  },
+  {
+   "case_id": "case_29",
+   "latency": 2.145331042003818,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 30,
+    "eat_by_minutes": null,
+    "spicy": "hot",
+    "cuisines": [
+     "粤菜"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "tired",
+    "channel": "any"
+   },
+   "completion_tokens": 87
+  },
+  {
+   "case_id": "case_30",
+   "latency": 2.146214756066911,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": true,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "mild",
+    "cuisines": [
+     "粤菜"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "low_patience",
+    "channel": "any"
+   },
+   "completion_tokens": 87
+  },
+  {
+   "case_id": "case_31",
+   "latency": 2.1214274240192026,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": true,
+    "hated": true,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": false,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [],
+    "hated": [],
+    "budget_max": 30,
+    "eat_by_minutes": null,
+    "spicy": "none",
+    "cuisines": [
+     "日料"
+    ],
+    "novelty": null,
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 86
+  },
+  {
+   "case_id": "case_32",
+   "latency": 2.1028498869854957,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": false,
+    "hated": false,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "牛肉"
+    ],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "mild",
+    "cuisines": [],
+    "novelty": "balanced",
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 85
+  },
+  {
+   "case_id": "case_33",
+   "latency": 2.1022661940660328,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": false,
+    "hated": false,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "生冷"
+    ],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "medium",
+    "cuisines": [],
+    "novelty": "balanced",
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 85
+  },
+  {
+   "case_id": "case_34",
+   "latency": 2.333580890088342,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": false,
+    "hated": false,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "面食"
+    ],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "none",
+    "cuisines": [
+     "粤菜",
+     "轻食"
+    ],
+    "novelty": "balanced",
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 92
+  },
+  {
+   "case_id": "case_35",
+   "latency": 2.07536438992247,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": false,
+    "hated": false,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "炸物"
+    ],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "none",
+    "cuisines": [],
+    "novelty": "balanced",
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 85
+  },
+  {
+   "case_id": "case_36",
+   "latency": 2.15419084392488,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": false,
+    "hated": false,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "鸡蛋"
+    ],
+    "diet_taboos": [
+     "面食"
+    ],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "none",
+    "cuisines": [],
+    "novelty": "bold",
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 87
+  },
+  {
+   "case_id": "case_37",
+   "latency": 2.1205141950631514,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": false,
+    "hated": false,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "花生"
+    ],
+    "diet_taboos": [
+     "猪肉"
+    ],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "mild",
+    "cuisines": [],
+    "novelty": "balanced",
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 87
+  },
+  {
+   "case_id": "case_38",
+   "latency": 2.3241142249898985,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": false,
+    "hated": false,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [],
+    "diet_taboos": [
+     "炸物"
+    ],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "medium",
+    "cuisines": [
+     "西北",
+     "轻食"
+    ],
+    "novelty": "balanced",
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 91
+  },
+  {
+   "case_id": "case_39",
+   "latency": 2.1621547320391983,
+   "json_ok": true,
+   "fields": {
+    "allergens": true,
+    "diet_taboos": false,
+    "hated": false,
+    "cuisines": true,
+    "budget_max": true,
+    "eat_by_minutes": true,
+    "spicy": true,
+    "novelty": true,
+    "people": true,
+    "state": true,
+    "channel": true
+   },
+   "exact": false,
+   "pred": {
+    "goal": "找一顿现在能吃的饭",
+    "allergens": [
+     "鸡蛋"
+    ],
+    "diet_taboos": [
+     "生冷"
+    ],
+    "hated": [],
+    "budget_max": null,
+    "eat_by_minutes": null,
+    "spicy": "hot",
+    "cuisines": [],
+    "novelty": "bold",
+    "people": 1,
+    "state": "normal",
+    "channel": "any"
+   },
+   "completion_tokens": 87
+  }
+ ]
+}

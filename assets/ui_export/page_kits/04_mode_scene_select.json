@@ -1,0 +1,18 @@
+{
+  "page": "04_mode_scene_select",
+  "title": "Mode selection",
+  "assets": [
+    "backgrounds/bg_03_empty_sofa.png",
+    "characters/cat_chair_decision.png"
+  ],
+  "backend_hooks": [
+    "front-end mode flag: decide/blind_box/lucky/group"
+  ],
+  "buttons": [
+    "Decide dinner",
+    "Mystery box",
+    "Lucky food",
+    "Group meal"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

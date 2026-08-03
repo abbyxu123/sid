@@ -1,0 +1,19 @@
+{
+  "page": "13_receipt_done",
+  "title": "Meal ticket and feedback",
+  "assets": [
+    "backgrounds/bg_09_tea_sofa.png",
+    "characters/cat_chair_decision.png",
+    "components/receipt_panel_blank.png"
+  ],
+  "backend_hooks": [
+    "POST /v1/feedback"
+  ],
+  "buttons": [
+    "Like",
+    "So-so",
+    "Not for me",
+    "Food journal"
+  ],
+  "notes": "448x368 horizontal hardware screen; keep text dynamic and short."
+}

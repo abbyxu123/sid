@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NOON 板子模拟器 480×480</title>
+<style>
+  body{background:#1b1b22;color:#ddd;font-family:-apple-system,"PingFang SC",sans-serif;
+       display:flex;flex-direction:column;align-items:center;gap:14px;padding:18px;margin:0}
+  h1{font-size:15px;color:#888;font-weight:500;margin:0}
+  /* —— 与固件 1:1 的 480×480 屏 —— */
+  #screen{position:relative;width:480px;height:480px;background:#0A0A0E;border-radius:24px;
+          box-shadow:0 0 0 10px #000,0 8px 40px #0009;overflow:hidden;flex:none}
+  #state{position:absolute;top:18px;width:100%;text-align:center;font-size:26px;color:#FFB74D}
+  #cat{position:absolute;left:118px;top:84px}          /* gx=(480-364)/2=58? 14*26=364 → left 58 */
+  #cat div{position:absolute;width:26px;height:26px}
+  #title{position:absolute;top:352px;width:100%;text-align:center;font-size:46px;line-height:1.15;
+         color:#fff;font-weight:600;padding:0 10px;box-sizing:border-box;word-break:break-all}
+  #sub{position:absolute;top:414px;width:100%;text-align:center;font-size:32px;color:#aaa;
+       padding:0 12px;box-sizing:border-box;word-break:break-all}
+  #qr{position:absolute;top:96px;left:130px;width:220px;height:220px;background:#fff;display:none;
+      align-items:center;justify-content:center;text-align:center;color:#000;font-size:14px;
+      padding:8px;box-sizing:border-box;border-radius:6px}
+  /* —— 控制台 —— */
+  #panel{width:480px;display:flex;flex-direction:column;gap:10px}
+  .row{display:flex;gap:8px}
+  button{flex:1;padding:12px 8px;border:0;border-radius:10px;background:#33333d;color:#eee;
+         font-size:15px;cursor:pointer} button:active{background:#4a4a58}
+  button.warm{background:#7a4a12}
+  input{flex:2;padding:12px;border-radius:10px;border:0;background:#26262e;color:#eee;font-size:15px}
+  #log{width:480px;font-size:12px;color:#7a7a88;white-space:pre-wrap;max-height:180px;
+       overflow:auto;font-family:ui-monospace,monospace}
+</style>
+</head>
+<body>
+<h1>NOON 板子模拟器 · 与真板收同一路 WS 帧 · 前端可直接在此调 480×480 UI</h1>
+<div id="screen">
+  <div id="state">待命</div>
+  <div id="cat"></div>
+  <div id="qr"></div>
+  <div id="title">连接中...</div>
+  <div id="sub"></div>
+</div>
+<div id="panel">
+  <div class="row">
+    <input id="say" placeholder="想吃什么？（回车=对猫说话）">
+    <button class="warm" onclick="speak()">🎤 说话</button>
+  </div>
+  <div class="row">
+    <button onclick="ev('left_ear')">◀ 换一个</button>
+    <button onclick="ev('right_ear')">就吃这个 ▶</button>
+    <button onclick="ev('both_ears')">重新开会</button>
+    <button onclick="shake()">🍎 摇一摇</button>
+  </div>
+  <div class="row">
+    <button onclick="confirmOrder()">✅ 确认下单(confirming后)</button>
+    <button onclick="newSession()">🆕 新会话</button>
+    <button onclick="mute=!mute;log('mute='+mute)">🔇 静音切换</button>
+  </div>
+</div>
+<div id="log"></div>
+<script>
+const base = location.origin, $ = id => document.getElementById(id);
+let sid = null, curState = "idle", animFrame = 0, mute = false;
+const log = m => { $('log').textContent = (new Date().toLocaleTimeString()) + "  " + m + "\n" + $('log').textContent.slice(0, 4000); };
+
+/* ===== 像素猫（与固件逐字符一致）===== */
+const PGW = 14, PGH = 10, PCEL = 26;
+const CAT_IDLE = [".KK........KK.",".KOK......KOK.",".KOOKKKKKKOOK.",".KOOOOOOOOOOK.",".KOWWOOOOWWOK.",".KOKWOOOOKWOK.",".KOOOOKKOOOOK.",".KOOOPKKPOOOK.",".KOOOOOOOOOOK.","..KKKKKKKKKK.."];
+const CAT_LISTEN=["KK..........KK","KAK........KAK","KAOKKKKKKKKOAK",".KOOOOOOOOOOK.",".KOWWOOOOWWOK.",".KOKWOOOOKWOK.",".KOOOOKKOOOOK.",".KOOOKAAKOOOK.",".KOOOKAAKOOOK.","..KKKKKKKKKK.."];
+const CAT_THINK =[".KK........KK.",".KOK......KOK.",".KOOKKKKKKOOK.",".KOOOOOOOOOOK.",".KOOOOOOOOOOK.",".KOKKOOOOKKOK.",".KOOOOKKOOOOK.",".KOOOPKKPOOOK.",".KOOOOOOOOOOK.","..KKKKKKKKKK.."];
+const CAT_HAPPY =[".KK........KK.",".KOK......KOK.",".KOOKKKKKKOOK.",".KOOOOOOOOOOK.",".KOKWOOOOWKOK.",".KOWKOOOOKWOK.",".KOOOOKKOOOOK.",".KOOAKOOKAOOK.",".KOOOAAAAOOOK.","..KKKKKKKKKK.."];
+const CAT_ERROR =[".KK........KK.",".KOK......KOK.",".KOOKKKKKKOOK.",".KOOOOOOOOOOK.",".KOKWOOOOWKOK.",".KOWKOOOOKWOK.",".KOOOOKKOOOOK.",".KOOOKKKKOOOK.",".KOOKOOOOKOOK.","..KKKKKKKKKK.."];
+const cells = [];
+(function(){ const cat = $('cat');
+  for (let r = 0; r < PGH; r++) for (let c = 0; c < PGW; c++) {
+    const d = document.createElement('div');
+    d.style.left = c * PCEL + "px"; d.style.top = r * PCEL + "px";
+    cat.appendChild(d); cells.push(d);
+  }
+  $('cat').style.left = (480 - PGW * PCEL) / 2 + "px";
+})();
+function setPixCat(art, accent) {
+  $('cat').style.display = "";
+  for (let r = 0; r < PGH; r++) for (let c = 0; c < PGW; c++) {
+    const ch = art[r][c], d = cells[r * PGW + c];
+    if (ch === '.') { d.style.background = "transparent"; continue; }
+    d.style.background = ch === 'W' ? "#F5F0E8" : ch === 'K' ? "#2A2A33" :
+                         ch === 'P' ? "#EF9A9A" : ch === 'A' ? accent : "#FFB74D";
+  }
+}
+const stateBg = () => ({candidate:"#E65100",council:"#4527A0",confirming:"#2E7D32",
+                        error:"#B71C1C",done:"#00695C"}[curState] || "#FFB74D");
+const stateCn = s => ({idle:"待命",listening:"在听",structuring:"思考中",council:"议事会",
+  candidate:"今日推荐",confirming:"确认？",acting:"下单中",done:"完成",error:"出错",
+  offline:"重连中",explore:"安全探索"}[s] || s);
+
+function uiSet(st, title, sub) {
+  curState = st;
+  $('state').textContent = stateCn(st); $('state').style.color = stateBg();
+  $('title').textContent = title || ""; $('sub').textContent = sub || "";
+  if (st === "done") {                        // 喵单屏：猫让位给二维码
+    $('cat').style.display = "none";
+    $('qr').style.display = "flex";
+    const url = base + "/console" + (sid ? "?sid=" + sid : "");
+    $('qr').innerHTML = `<a href="${url}" target="_blank" style="color:#000">📱<br>（真板此处是二维码）<br>${url}</a>`;
+  } else { $('qr').style.display = "none"; }
+}
+
+/* 动画：与固件 animateCat 同节奏 400ms */
+setInterval(() => {
+  animFrame++;
+  if (curState === "done") return;
+  if (curState === "listening") setPixCat(animFrame % 2 ? CAT_LISTEN : CAT_IDLE, "#66BB6A");
+  else if (curState === "council") setPixCat(animFrame % 2 ? CAT_LISTEN : CAT_THINK, "#9575CD");
+  else if (curState === "structuring") setPixCat(animFrame % 4 === 3 ? CAT_IDLE : CAT_THINK, "#9575CD");
+  else if (curState === "candidate" || curState === "confirming")
+    setPixCat(CAT_HAPPY, animFrame % 2 ? "#FFB74D" : "#FFE082");
+  else if (curState === "error") setPixCat(CAT_ERROR, "#EF5350");
+  else setPixCat(animFrame % 7 === 6 ? CAT_THINK : CAT_IDLE, "#FFB74D");
+}, 400);
+
+/* ===== 喵叫合成（对应固件 playMeow/meowByCat）===== */
+let AC = null;
+function meow(f0, f1, ms, vol = 0.25) {
+  if (mute) return;
+  AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+  const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime;
+  o.type = "triangle";
+  o.frequency.setValueAtTime(f0, t); o.frequency.linearRampToValueAtTime(f1, t + ms / 1000);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + ms / 1000 * 0.1);
+  g.gain.exponentialRampToValueAtTime(0.001, t + ms / 1000);
+  o.connect(g).connect(AC.destination); o.start(t); o.stop(t + ms / 1000 + 0.05);
+}
+function meowByCat(t) {
+  if (t.includes("口味")) meow(900, 1250, 300);
+  else if (t.includes("预算")) meow(470, 610, 340);
+  else if (t.includes("时间")) { meow(760, 960, 150); setTimeout(() => meow(960, 800, 150), 170); }
+  else if (t.includes("记忆")) meow(600, 510, 430);
+  else if (t.includes("探索")) meow(640, 1120, 360);
+  else meow(700, 900, 250);
+}
+
+/* ===== 与真板同一路 WS ===== */
+let ws;
+(function connect() {
+  ws = new WebSocket(base.replace("http", "ws") + "/v1/device/stream");
+  ws.onopen = () => { uiSet("idle", "按住按钮 告诉我想吃什么", "短按开会 · 摇一摇碰手气"); log("WS 已连（与真板同帧）"); };
+  ws.onclose = () => { uiSet("offline", "重连中...", ""); setTimeout(connect, 3000); };
+  ws.onmessage = e => {
+    log("帧 " + e.data.slice(0, 110));
+    const d = JSON.parse(e.data);
+    const st = d.state || "idle", t = (d.display && d.display.title) || "", s = (d.display && d.display.subtitle) || "";
+    if (st === "done") { uiSet("done", "喵单已出", "扫码下单 · 拍照记卡路里"); meow(880, 1180, 200); setTimeout(() => meow(1180, 920, 240), 220); }
+    else if (st === "candidate") { uiSet("candidate", s, ""); meow(820, 1160, 300); }
+    else if (st === "council") { uiSet(st, t, s); meowByCat(t); }
+    else { uiSet(st, t, s); if (st === "error") meow(430, 300, 380); }
+  };
+})();
+
+/* ===== 事件/输入（与固件同协议）===== */
+async function post(p, b) {
+  const r = await fetch(base + p, {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify(b)});
+  if (!r.ok) throw new Error(r.status + " " + (await r.text()).slice(0, 120));
+  return r.json();
+}
+async function ensureSession() {
+  if (sid) return sid;
+  sid = (await post("/v1/session", {device_id: "sim-web"})).session_id;
+  log("会话 " + sid); return sid;
+}
+async function ev(name) {
+  try { await ensureSession();
+    await post("/v1/device/event", {device_id: "sim-web", session_id: sid, event: name, timestamp: Date.now()});
+    if (name === "right_ear" && curState === "confirming") confirmOrder();
+  } catch (e) { log("事件失败 " + e.message); }
+}
+async function speak() {
+  const text = $('say').value.trim(); if (!text) return;
+  try { await ensureSession(); uiSet("structuring", "猫猫在想…", "");
+    await post("/v1/input", {session_id: sid, text}); $('say').value = "";
+  } catch (e) { log("输入失败 " + e.message); uiSet("error", "没听清", "再说一次"); }
+}
+$('say').addEventListener("keydown", e => { if (e.key === "Enter") speak(); });
+async function shake() {
+  try { await ensureSession();
+    uiSet("explore", "摇一摇!", "安全探索中...");
+    await post("/v1/input", {session_id: sid, soft_preferences: {novelty: "bold"}});
+  } catch (e) { log("探索失败 " + e.message); }
+}
+async function confirmOrder() {
+  try { const d = await post("/v1/confirm", {session_id: sid}); log("下单深链 " + d.url); }
+  catch (e) { log("确认被拦 " + e.message); }
+}
+function newSession() { sid = null; ensureSession(); }
+</script>
+</body>
+</html>
