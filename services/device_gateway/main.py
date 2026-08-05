@@ -44,7 +44,7 @@ app.add_middleware(CORSMiddleware, allow_origins=_ORIGINS, allow_methods=["*"], 
 ledger = Ledger()
 router = ModelRouter()
 USE_MODEL = os.environ.get("USE_MODEL", "1") == "1"
-ASR_MODEL = os.environ.get("ASR_MODEL", "tiny")
+ASR_MODEL = os.environ.get("ASR_MODEL", "small")
 sessions: dict[str, DecisionSession] = {}
 device_sockets: list[WebSocket] = []
 seen_events: dict[str, float] = {}  # 幂等键 device_id:event:timestamp → 收到时间
@@ -557,6 +557,29 @@ async def submit_input(body: InputPayload):
                               {"stage": "structure", "reason": f"{e}; rule: {e2}"})
                 await push_state(session)
                 return session.model_dump()
+    elif body.text and body.hard_constraints is None:
+        try:
+            from skills.food.agents.extraction import rule_structure
+
+            goal, hard, soft, ctx = rule_structure(body.text)
+            if pending_ask.pop(session.session_id, False):
+                hard, soft = merge_constraints(session, hard, soft)
+            session.goal, session.hard_constraints, session.soft_preferences = goal, hard, soft
+            if body.context is None:
+                session.context = ctx
+                if ctx.channel == Channel.any and previous_context.channel != Channel.any:
+                    session.context.channel = previous_context.channel
+            ledger.append(session.session_id, "structured", {
+                "hard": hard.model_dump(), "soft": soft.model_dump(),
+                "ctx": ctx.model_dump(), "degraded": True,
+            })
+        except ValueError as exc:
+            session.risk_flags.append(f"structure_failed: rule: {exc}")
+            session.state = SessionState.error
+            ledger.append(session.session_id, "error",
+                          {"stage": "structure", "reason": f"rule: {exc}"})
+            await push_state(session)
+            return session.model_dump()
     prof = load_profile()
     if prof:
         h = session.hard_constraints
@@ -637,20 +660,6 @@ async def submit_input(body: InputPayload):
         council_lines[session.session_id] = ("探索猫", "摇苹果树...摇下一个好吃的喵！")
         await push_state(session)
         await _aio.sleep(1.2)
-        session.state = st_keep
-    # 直接推荐模式：评估瞬间完成，回放每只猫的结论（2.6s/猫 配打字机），讨论过程可见
-    if session.decision_mode and session.decision_mode.value == "direct" and session.agent_scores:
-        st_keep = session.state
-        session.state = SessionState.council
-        council_lines.pop(session.session_id, None)   # 开场帧：议事会 / 四只猫开会中...
-        await push_state(session)
-        await _aio.sleep(1.2)
-        agents_done = list(session.agent_scores)
-        for i, agent in enumerate(agents_done, 1):
-            name, line = cat_line(session, agent)
-            council_lines[session.session_id] = (name, f"{line}（{i}/{len(agents_done)}）")
-            await push_state(session)
-            await _aio.sleep(2.6)   # 打字机 ~1.2s + 阅读 ~1.4s
         session.state = st_keep
     session.audit = deterministic_audit(session)
     if session.audit and not session.audit.approve:
@@ -853,11 +862,14 @@ async def voice_input(request: Request, session_id: str = "", rate: int = 16000)
     if len(samples):
         peak = int(_np.max(_np.abs(samples)))
         rms = float(_np.sqrt(_np.mean(samples.astype(_np.float32) ** 2)))
+        span = int(_np.max(samples)) - int(_np.min(samples))
         dur = len(samples) / max(rate, 1)
         Path("/tmp/cattv_last_voice.pcm").write_bytes(pcm)
-        print(f"[ASR] pcm bytes={len(pcm)} dur={dur:.2f}s peak={peak} rms={rms:.1f}")
+        print(f"[ASR] pcm bytes={len(pcm)} dur={dur:.2f}s peak={peak} rms={rms:.1f} span={span}")
         if peak < 128 or rms < 8:
             raise HTTPException(422, "audio is silent")
+        if span < 64:
+            raise HTTPException(422, "audio signal invalid")
     import asyncio as _aio
     text = await _aio.get_event_loop().run_in_executor(None, _asr, pcm, rate)
     print(f"[ASR] text={text!r}")
@@ -874,7 +886,7 @@ async def voice_input(request: Request, session_id: str = "", rate: int = 16000)
         return await device_event(DeviceEvent(device_id="voice", session_id=session_id,
                                               event=DeviceEventType.left_ear, timestamp=0))
     # 闲聊拦截：没有任何吃饭信号（食物字/预算数字/饿）就不硬推荐，回一句猫式问候
-    _FOOD_SIGNAL = set("吃饿辣饭面米菜汤锅烤鱼肉鸡虾粥饼串炒蒸炸卤麻烫寿司沙拉轻食随便")
+    _FOOD_SIGNAL = set("吃饿辣饭面米菜汤锅烤鱼肉鸡虾粥饼串炒蒸炸卤麻烫寿司沙拉轻食随便外卖点单配送")
     if (len(compact) <= 14 and not any(ch.isdigit() for ch in compact)
             and not (_FOOD_SIGNAL & set(compact))):
         frame = DeviceStateFrame(state=SessionState.idle,

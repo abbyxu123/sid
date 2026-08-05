@@ -36,7 +36,6 @@ const uint32_t STANDBY_AFTER_MS = 15000;
 const uint32_t STANDBY_BLINK_MS = 2000;
 const uint32_t STANDBY_BLINK_CLOSE_MS = 160;
 bool pixelStandby = false;
-bool saverSwallow = false;              // 屏保唤醒的那次按键只用于唤醒, 不触发动作
 bool standbyBlinkClosed = false;
 uint32_t standbyBlinkAt = 0;
 
@@ -524,7 +523,7 @@ void spkInit() {
   }
   es8311_sample_frequency_config(h, REC_RATE * 256, REC_RATE);
   if (es8311_microphone_config(h, false) != ESP_OK) USBSerial.println("[MIC] es8311 mic config fail");
-  if (es8311_microphone_gain_set(h, ES8311_MIC_GAIN_36DB) != ESP_OK) USBSerial.println("[MIC] es8311 mic gain fail");
+  if (es8311_microphone_gain_set(h, ES8311_MIC_GAIN_18DB) != ESP_OK) USBSerial.println("[MIC] es8311 mic gain fail");
   es8311_voice_volume_set(h, 60, NULL);   // 音量: 88 太炸, 60 温和
   spkOk = true;
   USBSerial.println("[SPK] es8311 ok");
@@ -594,18 +593,21 @@ void checkKeys() {
   static int idle0 = -1;
   if (idle0 < 0) { idle0 = digitalRead(0); USBSerial.printf("[KEY] idle g0=%d\n", idle0); }
   // 1.8 板只有 BOOT 一颗用户键: 快点=就吃这个, 按住=说话; 换一个用触摸左半屏/语音
-  static bool aDown = false; static uint32_t aAt = 0;
+  static bool aDown = false; static uint32_t aAt = 0; static bool wokeWithKey = false;
   bool a = digitalRead(0) != idle0;
-  if (splash || tasteImg || saverSwallow) {        // 屏保/口味页: 按键只唤醒(=确认)
-    if (tasteImg && a) {
+  if ((splash || tasteImg) && a && !aDown) {
+    if (tasteImg) {
       uiSet("idle", "记住口味了喵！", "想吃什么？按住说话");
-      playMeow(800, 1050, 200); saverSwallow = true;
-    } else if (splash && a) {
-      uiSet("idle", "今天吃什么？", "长按说话 · 左换右定"); saverSwallow = true;
+      playMeow(800, 1050, 200);
+    } else {
+      uiSet("idle", "今天吃什么？", "长按说话 · 左换右定");
     }
-    if (saverSwallow) { if (!a) saverSwallow = false; aDown = false; return; }
-    if (splash || tasteImg) return;
+    aAt = millis();
+    aDown = true;
+    wokeWithKey = true;
+    USBSerial.println("[KEY] A down (wake)");
   }
+  if (splash || tasteImg) return;
   if (a && !aDown) { aAt = millis(); USBSerial.println("[KEY] A down"); }
   if (a && recording && recLen < REC_RATE * 2 * 2 * REC_MAX_S) {
     size_t got = i2s.readBytes((char *)recBuf + recLen, 2048); recLen += got;
@@ -618,9 +620,13 @@ void checkKeys() {
   if (!a && aDown) {
     if (recording) {
       recording = false;
+      wokeWithKey = false;
       USBSerial.printf("[REC] stop bytes=%u\n", recLen);
       if (recLen > REC_RATE * 2) sendVoice();   // 立体声字节流: 0.5 秒以上才发
       else uiSet("idle", "太短了", "按住再说一次");
+    } else if (wokeWithKey) {
+      wokeWithKey = false;
+      USBSerial.println("[KEY] A short -> wake only");
     } else {
       USBSerial.println("[KEY] A short -> right_ear");
       postEvent("right_ear");
