@@ -1047,5 +1047,12 @@ async def device_stream(ws: WebSocket):
         while True:
             await ws.receive_text()  # 心跳/ACK；内容暂不处理
     except WebSocketDisconnect:
+        pass
+    except RuntimeError as exc:
+        # Starlette may expose a peer disconnect as a RuntimeError after the
+        # disconnect frame has already changed the socket state.
+        if "WebSocket is not connected" not in str(exc):
+            raise
+    finally:
         if ws in device_sockets:
             device_sockets.remove(ws)

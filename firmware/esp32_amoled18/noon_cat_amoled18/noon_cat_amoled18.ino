@@ -355,7 +355,6 @@ void onWsEvent(WStype_t type, uint8_t *payload, size_t len) {
     if (!greeted) { greeted = true; playMeow(700, 1000, 180); playMeow(1000, 1320, 200); }
     return; }
   if (type == WStype_DISCONNECTED) {
-    wsStarted = false;
     if (!wsFailSince) wsFailSince = millis();
     uiSet("offline", "重连中...", "");
     return;
