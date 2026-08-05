@@ -1,6 +1,26 @@
 // Device configuration. Copy to noon_config.h locally; do not commit secrets.
-#define WIFI_SSID "YOUR_WIFI"
-#define WIFI_PASS "YOUR_PASS"
-#define GW_HOST   "192.168.1.100"   // Local gateway IP on the same Wi-Fi.
-#define GW_PORT   8090
+#pragma once
+
+#define LOCAL_WIFI_SSID "YOUR_2_4_GHZ_WIFI"
+#define LOCAL_WIFI_PASS "YOUR_WIFI_PASSWORD"
+#define LOCAL_GW_HOST   "192.168.1.100"
+#define LOCAL_GW_PORT   8090
+
+// The current firmware declares three profiles. They may share one local
+// network during development, while production provisioning is still pending.
+#define DEV_WIFI_SSID  LOCAL_WIFI_SSID
+#define DEV_WIFI_PASS  LOCAL_WIFI_PASS
+#define DEV_GW_HOST    LOCAL_GW_HOST
+#define DEV_GW_PORT    LOCAL_GW_PORT
+
+#define DEMO_WIFI_SSID LOCAL_WIFI_SSID
+#define DEMO_WIFI_PASS LOCAL_WIFI_PASS
+#define DEMO_GW_HOST   LOCAL_GW_HOST
+#define DEMO_GW_PORT   LOCAL_GW_PORT
+
+#define DEMO_ASCII_WIFI_SSID LOCAL_WIFI_SSID
+#define DEMO_ASCII_WIFI_PASS LOCAL_WIFI_PASS
+#define DEMO_ASCII_GW_HOST   LOCAL_GW_HOST
+#define DEMO_ASCII_GW_PORT   LOCAL_GW_PORT
+
 #define DEVICE_ID "cat-square-01"
