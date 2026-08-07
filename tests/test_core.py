@@ -27,6 +27,25 @@ def make_session(**kw) -> DecisionSession:
     return DecisionSession(session_id="t1", **kw)
 
 
+def test_device_session_starts_idle_for_pixel_standby():
+    import os
+
+    os.environ["USE_MODEL"] = "0"
+    from fastapi.testclient import TestClient
+
+    import services.device_gateway.main as gateway
+
+    client = TestClient(gateway.app)
+    sid = client.post("/v1/session", json={"device_id": "standby-test"}).json()[
+        "session_id"
+    ]
+
+    assert gateway.sessions[sid].state == SessionState.idle
+
+    gateway.sessions.pop(sid)
+    assert gateway.get_or_revive(sid).state == SessionState.idle
+
+
 def test_allergen_never_passes():
     hard = HardConstraints(allergens=["花生"])
     passed, rejected = filter_candidates(load(), hard)

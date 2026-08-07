@@ -95,10 +95,13 @@ def test_firmware_wifi_watch_does_not_interrupt_active_connection() -> None:
     start = source.index("void wifiWatch()")
     end = source.index("// 像素猫动画", start)
     wifi_watch = source[start:end]
+    ws_start = source.index("void onWsEvent(")
+    ws_end = source.index("// 触摸四分区", ws_start)
+    ws_event = source[ws_start:ws_end]
 
-    assert "status == WL_IDLE_STATUS" in wifi_watch
-    assert "WiFi.scanNetworks" not in wifi_watch
-    assert "WiFi.disconnect(false, false)" in wifi_watch
+    assert "wsFailSince && !ws.isConnected()" in wifi_watch
+    assert "if (type == WStype_TEXT) {" in ws_event
+    assert "wsFailSince = 0;" in ws_event
 
 
 def test_rule_structure_understands_chinese_hundreds_minutes_and_delivery() -> None:

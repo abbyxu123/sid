@@ -371,7 +371,11 @@ async def health():
 async def create_session(body: SessionCreate):
     global active_session_id
     sid = f"sess_{uuid.uuid4().hex[:12]}"
-    sessions[sid] = DecisionSession(session_id=sid, state=SessionState.listening)
+    sessions[sid] = DecisionSession(
+        session_id=sid,
+        state=SessionState.idle,
+        context=Context(channel=Channel.delivery),
+    )
     active_session_id = sid
     ledger.append(sid, "input", {"event": "session_created", "device_id": body.device_id})
     _prune_sessions()
@@ -396,7 +400,11 @@ def get_or_revive(sid: str) -> DecisionSession:
     """网关重启后板子/二维码持有的旧会话自动复活——会话 id 是客户端的稳定锚点。"""
     global active_session_id
     if sid not in sessions:
-        sessions[sid] = DecisionSession(session_id=sid, state=SessionState.listening)
+        sessions[sid] = DecisionSession(
+            session_id=sid,
+            state=SessionState.idle,
+            context=Context(channel=Channel.delivery),
+        )
         active_session_id = sid
         ledger.append(sid, "input", {"event": "session_revived"})
         _prune_sessions()

@@ -128,7 +128,7 @@
   "distance_m": 1500,
   "open_now": true,
   "queue_minutes": 20,
-  "channel": "dine_in"
+  "channel": "delivery"
  },
  {
   "id": "r07_xiangcai",
