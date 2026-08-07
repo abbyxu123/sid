@@ -30,10 +30,10 @@ NEGATIVE_PREFIXES = ("不吃", "不想吃", "不要", "别吃", "讨厌", "过�
 
 
 def ingredient_preferences(raw_input: str) -> list[str]:
-    """从原话提取明确想吃的食材，同时跳过否定表达。"""
+    """从原话提取明确想吃的食材；同一食材冲突时以最后一次表达为准。"""
     preferences: list[str] = []
     for item in INGREDIENT_PREFERENCES:
-        start = raw_input.find(item)
+        start = raw_input.rfind(item)
         if start < 0:
             continue
         prefix = raw_input[max(0, start - 4):start]
@@ -61,7 +61,10 @@ def focus_candidates_by_preference(
     session: DecisionSession, candidates: list[Candidate],
 ) -> list[Candidate]:
     """明确点名食材时，只在相关候选中评分和切换。"""
-    preferences = ingredient_preferences(session.raw_input)
+    preferences = list(dict.fromkeys([
+        *session.soft_preferences.wanted_ingredients,
+        *ingredient_preferences(session.raw_input),
+    ]))
     if not preferences:
         return candidates
     focused = [
@@ -164,8 +167,9 @@ def rule_based_scores(
         if cid:
             recent_ids.append(cid)
     hard = session.hard_constraints
-    scores: dict[str, list[AgentScore]] = {"taste": [], "budget": [], "time": [],
-                                           "memory": []}
+    scores: dict[str, list[AgentScore]] = {
+        "taste": [], "distance": [], "time": [], "memory": [], "budget": [],
+    }
     for c in candidates:
         levels = {"none": 0, "mild": 1, "medium": 2, "hot": 3}
         want = session.soft_preferences.spicy
@@ -179,6 +183,8 @@ def rule_based_scores(
         budget = 0.5
         if hard.budget_max:
             budget = max(0.0, min(1.0, 1.0 - c.price_total / hard.budget_max * 0.8))
+        distance_limit = hard.max_distance_m or 3000
+        distance = max(0.0, min(1.0, 1.0 - c.distance_m / distance_limit * 0.8))
         tscore = 0.5
         if hard.eat_by_minutes:
             tscore = max(0.0, min(1.0, 1.0 - c.eta_minutes / hard.eat_by_minutes * 0.8))
@@ -190,6 +196,7 @@ def rule_based_scores(
             mem, mev = 0.8, "好久没吃，想它了喵"
         for name, val, ev in (
             ("taste", taste, [f"{c.cuisine}/{c.spicy_level}"]),
+            ("distance", distance, [f"距离 {c.distance_m} 米"]),
             ("budget", budget, [f"总价 ¥{c.price_total:.0f}"]),
             ("time", tscore, [f"预计 {c.eta_minutes} 分钟"]),
             ("memory", mem, [mev]),
@@ -239,7 +246,14 @@ async def run_decision(
     weights = ScoringWeights.for_state(session.context.state)
     council_pool = passed
     if model is None or session.decision_mode == DecisionMode.direct:
-        session.agent_scores = rule_based_scores(session, passed, ledger_recent)
+        local_scores = rule_based_scores(session, passed, ledger_recent)
+        if on_agent:
+            session.agent_scores = {}
+            for agent in ("taste", "distance", "time", "memory", "budget"):
+                session.agent_scores[agent] = local_scores[agent]
+                await on_agent(agent)
+        else:
+            session.agent_scores = local_scores
     else:
         # 议事会前置粗筛：候选太多时用规则分先取前 6（直觉粗筛 → 深思终审），
         # 否则 Step 每只猫要为全部候选写评分，菜单拍照场景会拖到 5 分钟级
@@ -247,7 +261,7 @@ async def run_decision(
             pre = rank(passed, rule_based_scores(session, passed, ledger_recent), weights)
             council_pool = [r.candidate for r in pre[:6]]
             session.risk_flags.append(f"council_prefilter: {len(passed)} -> 6 规则预筛")
-        agents = ["taste", "budget", "time", "memory"]
+        agents = ["taste", "distance", "time", "memory", "budget"]
         try:
             session.agent_scores = {}
             await model.council(agents, session, council_pool,

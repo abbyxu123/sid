@@ -98,7 +98,10 @@ def test_no_feasible_candidate_is_error_not_hallucination():
 def test_weights_sum_reasonable():
     for state in ("normal", "tired", "low_patience", "fitness"):
         w = ScoringWeights.for_state(state)
-        total = w.w_taste + w.w_budget + w.w_time + w.w_memory + w.w_novelty
+        total = (
+            w.w_taste + w.w_distance + w.w_budget
+            + w.w_time + w.w_memory + w.w_novelty
+        )
         assert abs(total - 1.0) < 1e-6
 
 
@@ -121,6 +124,35 @@ def test_explore_mode_safe_random():
     )
     again = asyncio.run(run_decision(again, load(), model=None))
     assert again.final_choice.candidate_id == session.final_choice.candidate_id
+
+
+def test_shake_stays_inside_the_filtered_food_pool():
+    """摇一摇只能在本轮已经确认过的食物范围和忌口内随机。"""
+    session = make_session(
+        raw_input="我要吃鱼，不吃辣椒，多加香菜",
+        hard_constraints=HardConstraints(hated=["辣椒"]),
+        soft_preferences=SoftPreferences(
+            wanted_ingredients=["鱼"],
+            extra_ingredients=["香菜"],
+            novelty="bold",
+        ),
+    )
+
+    result = asyncio.run(run_decision(session, load(), model=None))
+
+    assert result.state == SessionState.candidate
+    assert result.candidates
+    assert all(
+        any(term in " ".join([
+            candidate.item, candidate.cuisine,
+            *candidate.ingredients, *candidate.tags,
+        ]) for term in ("鱼", "海鲜", "寿司", "刺身"))
+        for candidate in result.candidates
+    )
+    assert all(
+        "辣椒" not in " ".join([candidate.item, *candidate.ingredients, *candidate.tags])
+        for candidate in result.candidates
+    )
 
 
 def test_unflatten_tolerates_garbage():

@@ -44,6 +44,8 @@ app.add_middleware(CORSMiddleware, allow_origins=_ORIGINS, allow_methods=["*"], 
 ledger = Ledger()
 router = ModelRouter()
 USE_MODEL = os.environ.get("USE_MODEL", "1") == "1"
+ASR_MODEL = os.environ.get("ASR_MODEL", "tiny")
+PUBLIC_BASE_URL = os.environ.get("PUBLIC_BASE_URL", "").rstrip("/")
 sessions: dict[str, DecisionSession] = {}
 device_sockets: list[WebSocket] = []
 seen_events: dict[str, float] = {}  # 幂等键 device_id:event:timestamp → 收到时间
@@ -56,10 +58,11 @@ done_generations: dict[str, int] = {}  # 每轮 done 的序号，隔离旧二维
 decision_tasks: dict[str, object] = {}  # 每会话最多一个后台语音/议事会任务
 voice_generations: dict[str, int] = {}  # 丢弃被新输入/操作取代的旧 ASR 结果
 DONE_AUTO_IDLE_SECONDS = 30
-CAT_NAMES = {"taste": "口味猫", "budget": "预算猫", "time": "时间猫",
+CAT_NAMES = {"taste": "口味猫", "distance": "距离猫", "budget": "预算猫", "time": "时间猫",
              "memory": "记忆猫", "novelty": "探索猫"}
 # 台词字符必须在板载字库内（/tmp/charset.txt 校验过），否则显示为口
-CAT_TAIL = {"taste": "正合口味喵", "budget": "不超预算喵", "time": "不用久等喵",
+CAT_TAIL = {"taste": "正合口味喵", "distance": "离你很近喵",
+            "budget": "不超预算喵", "time": "不用久等喵",
             "memory": "最近没吃过喵", "novelty": "换个花样喵"}
 
 
@@ -108,6 +111,11 @@ def merge_constraints(session: DecisionSession, hard, soft):
         soft.spicy = os_.spicy
     if not soft.cuisines:
         soft.cuisines = os_.cuisines
+    if not soft.wanted_ingredients:
+        soft.wanted_ingredients = os_.wanted_ingredients
+    soft.extra_ingredients = list(dict.fromkeys([
+        *os_.extra_ingredients, *soft.extra_ingredients,
+    ]))
     if soft.novelty is None:
         soft.novelty = os_.novelty
     return hard, soft
@@ -178,13 +186,15 @@ def build_frame(session: DecisionSession) -> DeviceStateFrame:
         shown = session.candidates[session.cursor % len(session.candidates)] \
             if session.candidates else None
         frame.display = DeviceDisplay(
-            title="就吃这个？",
-            subtitle=board_text(f"{shown.item} · 再按一次确认" if shown else "再按一次确认", 42))
+            title="正在确认",
+            subtitle=board_text(shown.item if shown else "马上出喵单", 42))
         frame.haptic = "double"
         frame.audio = "meow_confirm"
     elif session.state == SessionState.error:
         frame.display = DeviceDisplay(title="出错了", subtitle="再按住说一次 · 长按B重开")
         frame.audio = "meow_error"
+    if session.state == SessionState.done and PUBLIC_BASE_URL:
+        frame.qr_url = f"{PUBLIC_BASE_URL}/console?sid={session.session_id}"
     return frame
 
 
@@ -280,12 +290,17 @@ async def hungry():
     frame = DeviceStateFrame(state=SessionState.idle,
                              display=DeviceDisplay(title=board_text(title, 12),
                                                    subtitle=board_text(sub_, 42)))
-    for w in list(device_sockets):
-        try:
-            await w.send_text(frame.model_dump_json())
-        except Exception:
-            pass
-    ledger.append("hungry", "input", {"event": "hungry_check", "title": title})
+    active = sessions.get(active_session_id)
+    interrupted = bool(active and active.state not in (SessionState.idle, SessionState.done))
+    if not interrupted:
+        for w in list(device_sockets):
+            try:
+                await w.send_text(frame.model_dump_json())
+            except Exception:
+                pass
+    ledger.append("hungry", "input", {
+        "event": "hungry_check", "title": title, "screen_push_skipped": interrupted,
+    })
     return {"title": title, "subtitle": sub_}
 
 
@@ -299,6 +314,31 @@ def load_profile() -> dict:
         return {}
 
 
+def apply_profile_defaults(session: DecisionSession, prof: dict) -> None:
+    """长期档案补默认值；本次明确条件优先，过敏/禁忌始终保留。"""
+    hard, soft = session.hard_constraints, session.soft_preferences
+    current_wants = set(soft.wanted_ingredients)
+    saved_hated = [item for item in prof.get("hated", []) if item not in current_wants]
+    hard.allergens = list(dict.fromkeys([*prof.get("allergens", []), *hard.allergens]))
+    hard.diet_taboos = list(dict.fromkeys([*prof.get("diet_taboos", []), *hard.diet_taboos]))
+    hard.hated = list(dict.fromkeys([*saved_hated, *hard.hated]))
+    if hard.budget_max is None:
+        hard.budget_max = prof.get("budget_max")
+    if hard.eat_by_minutes is None:
+        hard.eat_by_minutes = prof.get("eat_by_minutes")
+    if hard.max_distance_m is None:
+        hard.max_distance_m = prof.get("max_distance_m")
+    if soft.spicy is None and prof.get("spicy"):
+        soft.spicy = prof["spicy"]
+    if not soft.cuisines:
+        soft.cuisines = prof.get("cuisines", [])
+    if not soft.wanted_ingredients:
+        soft.wanted_ingredients = prof.get("wanted_ingredients", [])
+    soft.extra_ingredients = list(dict.fromkeys([
+        *prof.get("extra_ingredients", []), *soft.extra_ingredients,
+    ]))
+
+
 @app.get("/v1/profile")
 async def get_profile():
     """用户长期档案：过敏/忌口/默认预算——跨会话记住（CatTV MVP: UserProfile P1）。"""
@@ -308,7 +348,8 @@ async def get_profile():
 @app.put("/v1/profile")
 async def put_profile(body: dict):
     allowed = {"allergens", "diet_taboos", "hated", "budget_max",
-               "eat_by_minutes", "max_distance_m", "spicy"}
+               "eat_by_minutes", "max_distance_m", "spicy", "cuisines",
+               "wanted_ingredients", "extra_ingredients"}
     prof = load_profile()
     prof.update({k: v for k, v in body.items() if k in allowed})
     PROFILE_PATH.write_text(json.dumps(prof, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -491,18 +532,7 @@ async def submit_input(body: InputPayload):
             return session.model_dump()
     prof = load_profile()
     if prof:
-        h = session.hard_constraints
-        h.allergens = list(dict.fromkeys([*prof.get("allergens", []), *h.allergens]))
-        h.diet_taboos = list(dict.fromkeys([*prof.get("diet_taboos", []), *h.diet_taboos]))
-        h.hated = list(dict.fromkeys([*prof.get("hated", []), *h.hated]))
-        if h.budget_max is None:
-            h.budget_max = prof.get("budget_max")
-        if h.eat_by_minutes is None:
-            h.eat_by_minutes = prof.get("eat_by_minutes")
-        if h.max_distance_m is None:
-            h.max_distance_m = prof.get("max_distance_m")
-        if session.soft_preferences.spicy is None and prof.get("spicy"):
-            session.soft_preferences.spicy = prof["spicy"]
+        apply_profile_defaults(session, prof)
     # 缺字段追问(CatTV P1): 口述里预算和时间都没给(档案也没兜住) → 猫追问一句
     if (body.text and body.hard_constraints is None
             and session.hard_constraints.budget_max is None
@@ -548,9 +578,12 @@ async def submit_input(body: InputPayload):
     session_pools[session.session_id] = pool
 
     async def on_agent(agent: str):
+        import asyncio
+
         name, line = cat_line(session, agent)
-        council_lines[session.session_id] = (name, f"{line}（{len(session.agent_scores)}/4）")
+        council_lines[session.session_id] = (name, f"{line}（{len(session.agent_scores)}/5）")
         await push_state(session)
+        await asyncio.sleep(0.18)
 
     session = await run_decision(session, pool,
                                  model=router if USE_MODEL else None,
@@ -721,7 +754,6 @@ async def confirm(body: dict):
     session.human_confirmed = True
     session.state = SessionState.acting
     ledger.append(session.session_id, "confirm", {"human_confirmed": True})
-    await push_state(session)
 
     shown = session.candidates[session.cursor % len(session.candidates)]
     # 最终安全门：执行外部动作前用硬规则最后复核一次（纵深防御，任何上游失误到此为止）
@@ -783,7 +815,7 @@ async def feedback(body: dict):
     return {"ok": True}
 
 
-_ASR = {"model": None}
+_ASR = {"model": None, "name": None}
 
 
 @app.on_event("startup")
@@ -802,11 +834,15 @@ async def _warm_asr():
 
 
 def _asr(pcm_bytes: bytes, rate: int) -> str:
-    """CPU ASR（faster-whisper small, int8）——懒加载，不与 GPU 冲突。"""
+    """CPU ASR（默认 tiny/int8，可用 ASR_MODEL 切换）——懒加载。"""
+    import time
+
     import numpy as np
-    if _ASR["model"] is None:
+    started = time.perf_counter()
+    if _ASR["model"] is None or _ASR["name"] != ASR_MODEL:
         from faster_whisper import WhisperModel
-        _ASR["model"] = WhisperModel("small", device="cpu", compute_type="int8")
+        _ASR["model"] = WhisperModel(ASR_MODEL, device="cpu", compute_type="int8")
+        _ASR["name"] = ASR_MODEL
     audio = np.frombuffer(pcm_bytes, dtype=np.int16).astype(np.float32) / 32768.0
     if rate != 16000 and len(audio):
         idx = (np.arange(0, len(audio), rate / 16000)).astype(int)
@@ -819,6 +855,7 @@ def _asr(pcm_bytes: bytes, rate: int) -> str:
     text = "".join(seg.text for seg in segments).strip()
     for wrong, right in (("面试", "面食"), ("免税", "面食")):   # 实测误听映射
         text = text.replace(wrong, right)
+    print(f"[ASR] model={ASR_MODEL} seconds={time.perf_counter() - started:.2f} text={text!r}")
     return text
 
 

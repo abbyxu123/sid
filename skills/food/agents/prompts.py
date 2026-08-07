@@ -45,6 +45,11 @@ AGENT_ROLES = {
         "duty": "核对总价（含配送费）与预算的余量，评估超支风险，为每个候选打 0-1 分",
         "context_fields": ["hard_constraints"],
     },
+    "distance": {
+        "role": "定位距离猫",
+        "duty": "根据距离、配送或步行可达性评估便利度，为每个候选打 0-1 分",
+        "context_fields": ["hard_constraints", "context"],
+    },
     "time": {
         "role": "时间评估猫",
         "duty": "评估配送/路程/排队耗时与用户时间窗口的匹配度，为每个候选打 0-1 分",
@@ -73,6 +78,7 @@ def candidate_brief(c: Candidate) -> dict:
     return {
         "id": c.id, "restaurant": c.restaurant, "item": c.item,
         "price_total": c.price_total, "eta_minutes": c.eta_minutes,
+        "distance_m": c.distance_m,
         "cuisine": c.cuisine, "spicy": c.spicy_level,
         "queue_minutes": c.queue_minutes, "tags": c.tags,
     }

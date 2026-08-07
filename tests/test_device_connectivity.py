@@ -13,8 +13,9 @@ from core.decision_schema import (
     FinalChoice,
     HardConstraints,
     SessionState,
+    SoftPreferences,
 )
-from core.orchestrator import ingredient_preferences
+from core.orchestrator import ingredient_preferences, run_decision
 from services.device_gateway import main as gateway
 from skills.food.agents.extraction import rule_structure
 
@@ -104,6 +105,86 @@ def test_firmware_wifi_watch_does_not_interrupt_active_connection() -> None:
     assert "wsFailSince = 0;" in ws_event
 
 
+def test_latest_food_intent_overrides_an_earlier_asr_negation() -> None:
+    assert ingredient_preferences("不要吃鱼，我要吃鱼") == ["鱼"]
+    assert ingredient_preferences("我要吃鱼，后来不想吃鱼") == []
+
+
+def test_local_rules_stream_each_agent_without_an_external_model() -> None:
+    seen = []
+    session = DecisionSession(
+        session_id="local-agent-steps",
+        raw_input="我要吃鱼",
+        hard_constraints=HardConstraints(budget_max=150, eat_by_minutes=60),
+    )
+
+    async def on_agent(agent: str) -> None:
+        seen.append(agent)
+
+    result = asyncio.run(
+        run_decision(
+            session,
+            gateway.load_candidates(),
+            model=None,
+            ledger_recent=[],
+            on_agent=on_agent,
+        )
+    )
+
+    assert seen == ["taste", "distance", "time", "memory", "budget"]
+    assert result.state == SessionState.candidate
+    assert result.candidates
+    assert all("鱼" in [*candidate.ingredients, candidate.item]
+               for candidate in result.candidates)
+
+
+def test_done_frame_uses_configured_public_h5_url(monkeypatch) -> None:
+    monkeypatch.setattr(gateway, "PUBLIC_BASE_URL", "https://sid.example.com")
+    session = DecisionSession(session_id="public-h5", state=SessionState.done)
+
+    frame = gateway.build_frame(session)
+
+    assert frame.qr_url == "https://sid.example.com/console?sid=public-h5"
+
+
+def test_firmware_accepts_gateway_qr_url_with_local_fallback() -> None:
+    source = FIRMWARE.read_text(encoding="utf-8")
+
+    assert 'd["qr_url"]' in source
+    assert "currentQrUrl" in source
+    assert 'urlBase() + "/console?sid=" + sessionId' in source
+
+
+def test_firmware_confirms_a_candidate_with_one_right_press() -> None:
+    source = FIRMWARE.read_text(encoding="utf-8")
+    start = source.index("void postEvent(")
+    end = source.index("void postExplore()", start)
+
+    assert 'curState == "candidate" || curState == "confirming"' in source[start:end]
+
+
+def test_hungry_card_does_not_interrupt_an_active_decision(monkeypatch) -> None:
+    class Socket:
+        def __init__(self):
+            self.frames = []
+
+        async def send_text(self, frame):
+            self.frames.append(frame)
+
+    sid = "active-hungry-guard"
+    socket = Socket()
+    gateway.sessions[sid] = DecisionSession(session_id=sid, state=SessionState.candidate)
+    gateway.active_session_id = sid
+    gateway.device_sockets.append(socket)
+    monkeypatch.setattr(gateway.ledger, "append", lambda *_args, **_kwargs: None)
+    try:
+        asyncio.run(gateway.hungry())
+        assert socket.frames == []
+    finally:
+        gateway.device_sockets.remove(socket)
+        gateway.sessions.pop(sid, None)
+
+
 def test_rule_structure_understands_chinese_hundreds_minutes_and_delivery() -> None:
     _goal, hard, _soft, context = rule_structure(
         "外卖，一百五十元以内，六十分钟内"
@@ -112,6 +193,39 @@ def test_rule_structure_understands_chinese_hundreds_minutes_and_delivery() -> N
     assert hard.budget_max == 150
     assert hard.eat_by_minutes == 60
     assert context.channel.value == "delivery"
+
+
+def test_rule_structure_keeps_full_food_request() -> None:
+    _goal, hard, soft, context = rule_structure(
+        "我要吃鱼，不吃辣椒，多加香菜，不要折耳根，不要大蒜，不要葱，"
+        "两个人，外卖，六十分钟，二公里内"
+    )
+
+    assert soft.wanted_ingredients == ["鱼"]
+    assert soft.extra_ingredients == ["香菜"]
+    assert set(hard.hated) >= {"辣椒", "折耳根", "大蒜", "葱"}
+    assert hard.eat_by_minutes == 60
+    assert hard.max_distance_m == 2000
+    assert context.people == 2
+    assert context.channel.value == "delivery"
+
+
+def test_current_wanted_food_overrides_only_saved_dislike() -> None:
+    session = DecisionSession(
+        session_id="profile-priority",
+        hard_constraints=HardConstraints(),
+        soft_preferences=SoftPreferences(wanted_ingredients=["鱼"]),
+    )
+
+    gateway.apply_profile_defaults(session, {
+        "allergens": ["花生"],
+        "hated": ["鱼", "辣椒"],
+        "wanted_ingredients": ["牛肉"],
+    })
+
+    assert session.hard_constraints.allergens == ["花生"]
+    assert session.hard_constraints.hated == ["辣椒"]
+    assert session.soft_preferences.wanted_ingredients == ["鱼"]
 
 
 def test_voice_treats_chinese_numbers_as_food_intent(monkeypatch) -> None:

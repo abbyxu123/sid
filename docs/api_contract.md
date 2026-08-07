@@ -4,6 +4,8 @@
 
 > 2026-07-25 MVP 补充：本文是当前已实现的 V1.0 契约。新用户资料、补问、外卖盲盒、今日幸运食物、多人吃饭、微米波状态和 QR 前端交接等新增需求，先看 `docs/backend_gap_todo.md`，落地时再升级 schema/API 契约。
 
+> 2026-08-07 输入补充：`soft_preferences` 增加 `wanted_ingredients`（本次明确想吃）与 `extra_ingredients`（多加/多放）。当次明确条件优先于长期档案；档案过敏与饮食禁忌仍始终生效。摇一摇只在本轮硬约束与点名食物过滤后的候选池中随机。
+
 Device Gateway 默认端口 **8090**（网关 Wi-Fi IP `<GATEWAY_LAN_IP>`，开发板与网关需同一网段；
 远程开发可走 Tailscale `<GATEWAY_TAILSCALE_IP>`）。模型服务 llama-server 在 **8080**（alias `step-local`），
 固件**只连 8090**，永远不直连 8080。

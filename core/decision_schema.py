@@ -63,6 +63,8 @@ class HardConstraints(BaseModel):
 class SoftPreferences(BaseModel):
     spicy: Optional[str] = None          # none | mild | medium | hot
     cuisines: list[str] = Field(default_factory=list)
+    wanted_ingredients: list[str] = Field(default_factory=list)  # 本次明确想吃
+    extra_ingredients: list[str] = Field(default_factory=list)   # 多加/多放，不作为硬筛选
     temperature: Optional[str] = None    # hot | cold | any
     novelty: Optional[str] = None        # conservative | balanced | bold
 
@@ -182,3 +184,4 @@ class DeviceStateFrame(BaseModel):
     haptic: str = "none"                 # none | tap | double | long
     audio: str = "none"                  # none | meow_confirm | meow_error
     candidate: Optional[dict[str, Any]] = None  # {"id": ..., "confidence": ...}
+    qr_url: str = ""                     # 公网 H5 优先；空值时固件回退局域网地址

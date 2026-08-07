@@ -2,7 +2,7 @@
  * 猫咪决策机 · 方形终端 v0.2 — Waveshare ESP32-S3-Touch-AMOLED-2.16
  * 底座：官方 05_LVGL_Widgets 例程（CO5300 QSPI + CST92xx + LVGL8 + QMI8658）
  * 移植：noon-decision-os 设备协议（WS 状态流 + 事件上报 + 幂等 + 重连）
- * 交互：左半屏=换一个  右半屏=确认(confirming 态再点=下单)  顶栏=开会  底栏长按=取消
+ * 交互：左半屏=换一个  右半屏=确认并出二维码  顶栏=开会  底栏长按=取消
  *       摇一摇 = 安全探索(摇苹果树)
  */
 #include <lvgl.h>
@@ -136,6 +136,7 @@ void tick_cb(void *arg) { lv_tick_inc(TICK_MS); }
 // ==== 协议层 ====
 WebSocketsClient ws;
 String sessionId = "";
+String currentQrUrl = "";
 String curState = "boot";
 void playMeow(float f0, float f1, int ms, float vol = 0.55f);
 void meowByCat(const String &t);
@@ -242,7 +243,8 @@ void uiSet(const String &st, const char *title, const char *sub) {
   else setPixCat(CAT_IDLE, 0xFFB74D);
   if (qr) {
     if (st == "done" && sessionId.length()) {   // 喵单屏：扫码下单/拍照记卡路里
-      String url = urlBase() + "/console?sid=" + sessionId;
+      String url = currentQrUrl.length()
+          ? currentQrUrl : urlBase() + "/console?sid=" + sessionId;
       lv_qrcode_update(qr, url.c_str(), url.length());
       lv_obj_clear_flag(qr, LV_OBJ_FLAG_HIDDEN);
       for (int r = 0; r < PGH; r++) for (int c = 0; c < PGW; c++)
@@ -318,6 +320,7 @@ void beginWifiProfile(uint8_t slot) {
   wsStarted = false;
   wsFailSince = 0;
   sessionId = "";
+  currentQrUrl = "";
   ws.disconnect();
   WiFi.disconnect();
   delay(100);
@@ -337,7 +340,8 @@ void postEvent(const char *ev) {
   d["firmware_version"] = "amoled-0.2";
   String body; serializeJson(d, body);
   httpPostJson("/v1/device/event", body);
-  if (String(ev) == "right_ear" && curState == "confirming")
+  if (String(ev) == "right_ear" &&
+      (curState == "candidate" || curState == "confirming"))
     httpPostJson("/v1/confirm", String("{\"session_id\":\"") + sessionId + "\"}");
 }
 
@@ -365,6 +369,8 @@ void onWsEvent(WStype_t type, uint8_t *payload, size_t len) {
   StaticJsonDocument<1024> d;
   if (deserializeJson(d, payload, len)) return;
   String st = (const char *)(d["state"] | "idle");
+  String pushedQrUrl = (const char *)(d["qr_url"] | "");
+  if (pushedQrUrl.length()) currentQrUrl = pushedQrUrl;
   if (st == "done") {
     uiSet("done", "喵单已出", "扫码下单 · 拍照记卡路里");
     playMeow(880, 1180, 200); playMeow(1180, 920, 240);       // 出单开心两连叫

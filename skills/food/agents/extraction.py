@@ -10,7 +10,7 @@ import json
 from core.decision_schema import Context, HardConstraints, SoftPreferences
 
 SYSTEM_PROMPT = """你是猫咪决策机的需求结构化模块。把用户的话解析成 JSON，字段：
-goal(字符串), allergens(数组), diet_taboos(数组), hated(数组), budget_max(数字或null),
+goal(字符串), allergens(数组), diet_taboos(数组), hated(数组), wanted_ingredients(数组), extra_ingredients(数组), budget_max(数字或null),
 eat_by_minutes(数字或null), spicy("none"/"mild"/"medium"/"hot"/null), cuisines(数组),
 novelty("conservative"/"balanced"/"bold"/null), people(数字), state("normal"/"tired"/"low_patience"/"fitness"/"late_night"/"indulge"), channel("delivery"/"dine_in"/"any")。
 用户没提到的字段用 null/[]/默认值(people=1, state="normal", channel="any")。只输出 JSON。"""
@@ -53,6 +53,8 @@ def unflatten(flat: dict) -> tuple[str, HardConstraints, SoftPreferences, Contex
     soft = SoftPreferences(
         spicy=spicy if spicy in ("none", "mild", "medium", "hot") else None,
         cuisines=_list("cuisines"),
+        wanted_ingredients=_list("wanted_ingredients"),
+        extra_ingredients=_list("extra_ingredients"),
         novelty=flat.get("novelty") if flat.get("novelty") in ("conservative", "balanced", "bold") else None,
     )
     state = flat.get("state")
@@ -71,7 +73,7 @@ _CN_NUM = {"零": 0, "〇": 0, "一": 1, "二": 2, "两": 2, "三": 3,
 _CN_UNITS = {"十": 10, "百": 100, "千": 1000, "万": 10000}
 _CN_NUMBER_CHARS = "零〇一二两三四五六七八九十百千万"
 _FOOD_WORDS = ("面食", "面条", "米线", "米粉", "海鲜", "鱼", "虾", "蟹", "香菜",
-               "葱", "姜", "蒜", "牛肉", "猪肉", "羊肉", "鸡肉", "豆腐", "蔬菜",
+               "折耳根", "大蒜", "辣椒", "葱", "姜", "蒜", "牛肉", "猪肉", "羊肉", "鸡肉", "豆腐", "蔬菜",
                "沙拉", "轻食", "汉堡", "火锅", "烧烤", "内脏", "甜食", "油炸", "生冷", "辣")
 
 
@@ -88,10 +90,15 @@ def rule_structure(text: str):
                  if a and a[-1] not in _STOP and a not in _STOP]
     if "过敏" in text and not allergens:
         raise ValueError("检测到过敏表述但无法解析过敏原")
-    taboos, hated = [], []
+    taboos, hated, wanted, extras = [], [], [], []
     for w in _FOOD_WORDS:
         if re.search(rf"(不要|不吃|不想吃|别放|不能吃|忌){w}", text):
             (taboos if w in ("面食", "面条", "米线", "米粉", "海鲜", "内脏") else hated).append(w)
+            continue
+        if re.search(rf"(多加|加点|多放|加){w}", text):
+            extras.append(w)
+        elif re.search(rf"(想吃|要吃|想要|来份|来点){w}", text):
+            wanted.append(w)
     def _cn2num(s: str):
         if not s:
             return None
@@ -140,11 +147,13 @@ def rule_structure(text: str):
     elif "辣" in text:
         spicy = "hot"
     max_dist = None
-    m = re.search(r"(\d+)\s*米内", text)
+    m = re.search(rf"({number_pattern})\s*米内", text)
     if m:
-        max_dist = int(m.group(1))
-    elif re.search(r"(\d+)\s*公里内", text):
-        max_dist = int(re.search(r"(\d+)\s*公里内", text).group(1)) * 1000
+        parsed = _cn2num(m.group(1))
+        max_dist = int(parsed) if parsed is not None else None
+    elif re.search(rf"({number_pattern})\s*公里内", text):
+        parsed = _cn2num(re.search(rf"({number_pattern})\s*公里内", text).group(1))
+        max_dist = int(parsed * 1000) if parsed is not None else None
     elif "附近" in text:
         max_dist = 1000
     novelty = "bold" if re.search(r"随便|都行|来点新|试试新|尝鲜", text) else None
@@ -156,7 +165,10 @@ def rule_structure(text: str):
         channel = "any"
     hard = HardConstraints(allergens=allergens, diet_taboos=taboos, hated=hated,
                            budget_max=budget, eat_by_minutes=eat_by, max_distance_m=max_dist)
-    soft = SoftPreferences(spicy=spicy, cuisines=[], novelty=novelty)
-    ctx = Context(people=2 if re.search(r"两个人|俩人|双人", text) else 1,
+    soft = SoftPreferences(spicy=spicy, cuisines=[], wanted_ingredients=wanted,
+                           extra_ingredients=extras, novelty=novelty)
+    people_match = re.search(rf"({number_pattern})\s*(?:个)?人", text)
+    people_value = _cn2num(people_match.group(1)) if people_match else None
+    ctx = Context(people=max(1, int(people_value or 1)),
                   state="normal", channel=channel)
     return text[:40], hard, soft, ctx

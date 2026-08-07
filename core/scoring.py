@@ -12,6 +12,7 @@ from .decision_schema import AgentScore, Candidate, FinalChoice
 # Agent 名 → 权重键。新增 Agent 时同步更新这里与 ScoringWeights。
 AGENT_WEIGHT_KEY = {
     "taste": "w_taste",
+    "distance": "w_distance",
     "budget": "w_budget",
     "time": "w_time",
     "memory": "w_memory",
@@ -24,22 +25,27 @@ RISK_PENALTY_PER_FLAG = 0.05
 class ScoringWeights(BaseModel):
     """权重随用户偏好和当前状态调整（如低耐心 → w_time 提高）。"""
 
-    w_taste: float = 0.30
-    w_budget: float = 0.25
-    w_time: float = 0.25
+    w_taste: float = 0.27
+    w_distance: float = 0.15
+    w_budget: float = 0.18
+    w_time: float = 0.20
     w_memory: float = 0.15
     w_novelty: float = 0.05
 
     @classmethod
     def for_state(cls, state: str) -> "ScoringWeights":
         if state == "low_patience":
-            return cls(w_taste=0.20, w_budget=0.20, w_time=0.45, w_memory=0.10, w_novelty=0.05)
+            return cls(w_taste=0.18, w_distance=0.15, w_budget=0.15,
+                       w_time=0.37, w_memory=0.10, w_novelty=0.05)
         if state == "tired":
-            return cls(w_taste=0.25, w_budget=0.20, w_time=0.35, w_memory=0.15, w_novelty=0.05)
+            return cls(w_taste=0.22, w_distance=0.15, w_budget=0.15,
+                       w_time=0.28, w_memory=0.15, w_novelty=0.05)
         if state == "indulge":  # 放纵吃：口味压倒一切
-            return cls(w_taste=0.55, w_budget=0.10, w_time=0.15, w_memory=0.10, w_novelty=0.10)
+            return cls(w_taste=0.47, w_distance=0.10, w_budget=0.08,
+                       w_time=0.12, w_memory=0.10, w_novelty=0.13)
         if state == "fitness":
-            return cls(w_taste=0.35, w_budget=0.20, w_time=0.20, w_memory=0.20, w_novelty=0.05)
+            return cls(w_taste=0.30, w_distance=0.15, w_budget=0.15,
+                       w_time=0.15, w_memory=0.20, w_novelty=0.05)
         return cls()
 
 
