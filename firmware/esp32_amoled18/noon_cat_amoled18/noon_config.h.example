@@ -24,3 +24,9 @@
 #define DEMO_ASCII_GW_PORT   LOCAL_GW_PORT
 
 #define DEVICE_ID "cat-square-01"
+
+// Compatibility aliases used by the known-good firmware baseline.
+#define WIFI_SSID LOCAL_WIFI_SSID
+#define WIFI_PASS LOCAL_WIFI_PASS
+#define GW_HOST   LOCAL_GW_HOST
+#define GW_PORT   LOCAL_GW_PORT

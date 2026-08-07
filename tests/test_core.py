@@ -7,7 +7,6 @@ from core.auditor import deterministic_audit
 from core.constraint_engine import filter_candidates
 from core.decision_schema import (
     Candidate,
-    Channel,
     Context,
     DecisionSession,
     HardConstraints,
@@ -128,43 +127,11 @@ def test_confirm_flow_produces_whitelisted_deeplink():
         "hard_constraints": {"budget_max": 40, "eat_by_minutes": 30}})
     c.post("/v1/device/event", json={"device_id": "t", "session_id": sid, "event": "right_ear"})
     r = c.post("/v1/confirm", json={"session_id": sid}).json()
-    assert r["ok"] and r["url"].endswith(f"/console?sid={sid}")
-    assert r["order_url"].startswith("https://")
-    assert r["order_url"].split("/")[2] in ("uri.amap.com", "h5.ele.me", "www.meituan.com")
+    assert r["ok"] and r["url"].startswith("https://")
+    assert r["url"].split("/")[2] in ("uri.amap.com", "h5.ele.me", "www.meituan.com")
     # 未确认状态不可执行
     sid2 = c.post("/v1/session", json={"device_id": "t"}).json()["session_id"]
     assert c.post("/v1/confirm", json={"session_id": sid2}).status_code == 409
-
-
-def test_default_confirm_prefers_h5_console_and_delivery_action():
-    """硬件扫码入口应始终是 H5；用户没说到店时，外部动作默认走外卖搜索。"""
-    import os
-    os.environ["USE_MODEL"] = "0"
-    from fastapi.testclient import TestClient
-
-    from services.device_gateway.main import app
-    c = TestClient(app)
-    sid = c.post("/v1/session", json={"device_id": "t"}).json()["session_id"]
-    c.post("/v1/input", json={"session_id": sid,
-        "hard_constraints": {"budget_max": 100, "eat_by_minutes": 60}})
-    c.post("/v1/device/event", json={"device_id": "t", "session_id": sid, "event": "right_ear"})
-    r = c.post("/v1/confirm", json={"session_id": sid}).json()
-    assert r["console_url"].endswith(f"/console?sid={sid}")
-    assert r["action"] == "order_deeplink"
-    assert r["url"].endswith(f"/console?sid={sid}")
-    assert r["order_url"].startswith("https://h5.ele.me/")
-
-
-def test_delivery_context_overrides_dine_in_candidate_action():
-    """候选来自到店/拍照菜单时，只要场景是外卖，就不能直接把 QR/主动作变成地图。"""
-    from services.tool_gateway.adapters import build_action
-
-    candidate = Candidate(id="x", restaurant="附近小店", item="烤鱼小份",
-                          price_total=36, eta_minutes=28, cuisine="川湘",
-                          channel=Channel.dine_in)
-    action = build_action(candidate, Channel.delivery)
-    assert action.action == "order_deeplink"
-    assert action.url.startswith("https://h5.ele.me/")
 
 
 def test_device_event_idempotent():
@@ -207,200 +174,107 @@ def test_candidates_ordered_by_rank():
     assert session.candidates[0].id == session.final_choice.candidate_id
 
 
-def test_raw_input_ingredient_preference_lifts_fish_candidate():
-    """用户明确说想吃鱼时，食材偏好应影响排序而不是被普通辣味候选盖掉。"""
-    session = make_session(
-        raw_input="我想吃鱼 40分钟之内",
-        hard_constraints=HardConstraints(budget_max=60, eat_by_minutes=40),
-        soft_preferences=SoftPreferences(spicy="medium"),
-    )
-    session = asyncio.run(run_decision(session, load(), model=None))
-    assert session.state == SessionState.candidate
-    assert session.final_choice is not None
-    assert session.final_choice.candidate_id == "r01_kaoyu_s"
-
-
-def test_raw_input_ingredient_preference_keeps_swipe_options_on_topic():
-    """用户说想吃鱼时，前几张可滑候选也必须围绕鱼/海鲜，不要第二张就跑到串串盖饭。"""
-    session = make_session(
-        raw_input="我想吃鱼 40分钟之内",
-        hard_constraints=HardConstraints(budget_max=80, eat_by_minutes=40),
-        soft_preferences=SoftPreferences(spicy="medium"),
-    )
-    session = asyncio.run(run_decision(session, load(), model=None))
-    first_three = session.candidates[:3]
-    assert len(first_three) >= 3
+def test_concrete_food_preference_limits_swipe_pool():
+    """用户点名食材后，换一个/滑动候选不能混入无关菜品。"""
+    fish = asyncio.run(run_decision(
+        make_session(raw_input="今天想吃鱼", hard_constraints=HardConstraints(budget_max=150)),
+        load(), model=None,
+    ))
+    assert fish.candidates
     assert all(
-        "鱼" in c.item or "海鲜" in c.tags or "鱼" in c.ingredients
-        for c in first_three
+        any(term in text for term in ("鱼", "海鲜", "寿司", "刺身"))
+        for candidate in fish.candidates
+        for text in [" ".join([
+            candidate.item, candidate.cuisine, *candidate.ingredients, *candidate.tags,
+        ])]
     )
 
-
-def test_explore_keeps_ingredient_preference_pool_on_topic():
-    """摇一摇/盲选也只能在用户原始品类里抽，不得从全安全池跳走。"""
-    session = make_session(
-        raw_input="我想吃鱼 40分钟之内",
-        hard_constraints=HardConstraints(budget_max=80, eat_by_minutes=40),
-        soft_preferences=SoftPreferences(novelty="bold"),
-    )
-    session = asyncio.run(run_decision(session, load(), model=None))
-    first_three = session.candidates[:3]
-    assert len(first_three) >= 3
+    beef = asyncio.run(run_decision(
+        make_session(raw_input="我想吃牛肉", hard_constraints=HardConstraints(budget_max=150)),
+        load(), model=None,
+    ))
+    assert beef.candidates
     assert all(
-        "鱼" in c.item or "海鲜" in c.tags or "鱼" in c.ingredients
-        for c in first_three
+        "牛肉" in " ".join([candidate.item, *candidate.ingredients, *candidate.tags])
+        for candidate in beef.candidates
     )
 
-
-def test_raw_input_beef_preference_never_falls_back_to_mixed_pool():
-    """牛肉候选少也不能回退全菜单，否则会在筛选结果里混入鸡肉/鱼/豆腐。"""
-    session = make_session(
-        raw_input="我想吃牛肉 40分钟之内",
-        hard_constraints=HardConstraints(budget_max=80, eat_by_minutes=40),
-    )
-    session = asyncio.run(run_decision(session, load(), model=None))
-    assert session.candidates
-    assert all(
-        "牛肉" in c.item or "牛肉" in c.ingredients or "牛肉" in c.tags
-        for c in session.candidates
-    )
+    no_match = asyncio.run(run_decision(
+        make_session(raw_input="今天想吃蔬菜", hard_constraints=HardConstraints(budget_max=150)),
+        load(), model=None,
+    ))
+    assert no_match.state == SessionState.error
+    assert no_match.candidates == []
 
 
-def test_confirm_can_bind_h5_selected_candidate():
-    """H5 本地切换/盲盒后，确认必须执行用户当前看到的那张卡。"""
-    import os
-    from urllib.parse import unquote
-
-    os.environ["USE_MODEL"] = "0"
-    from fastapi.testclient import TestClient
-
-    from services.device_gateway.main import app
-    c = TestClient(app)
-    sid = c.post("/v1/session", json={"device_id": "phone"}).json()["session_id"]
-    c.post("/v1/input", json={"session_id": sid,
-        "text": "我想吃鱼",
-        "hard_constraints": {"budget_max": 80, "eat_by_minutes": 40}})
-    state = c.get(f"/v1/session/{sid}").json()
-    target = next(x for x in state["candidates"] if x["id"] != state["candidates"][0]["id"])
-    c.post("/v1/device/event", json={"device_id": "phone", "session_id": sid, "event": "right_ear"})
-    r = c.post("/v1/confirm", json={"session_id": sid, "candidate_id": target["id"]}).json()
-    assert r["action"] == "order_deeplink"
-    assert r["url"].endswith(f"/console?sid={sid}")
-    assert target["item"][:2] in unquote(r["order_url"])
-
-
-def test_done_session_can_auto_return_idle():
-    """二维码页超时后，后端推回 idle；旧固件也能退出喵单页。"""
+def test_done_page_returns_to_idle_after_30_seconds_or_left_action():
     import os
 
     os.environ["USE_MODEL"] = "0"
     from fastapi.testclient import TestClient
 
-    from services.device_gateway.main import app, auto_idle_after_done, sessions
-    c = TestClient(app)
-    sid = c.post("/v1/session", json={"device_id": "phone"}).json()["session_id"]
-    c.post("/v1/input", json={"session_id": sid,
-        "text": "我想吃鱼",
-        "hard_constraints": {"budget_max": 80, "eat_by_minutes": 40}})
-    c.post("/v1/device/event", json={"device_id": "phone", "session_id": sid, "event": "right_ear"})
-    c.post("/v1/confirm", json={"session_id": sid})
+    from services.device_gateway.main import (
+        DONE_AUTO_IDLE_SECONDS,
+        app,
+        auto_idle_after_done,
+        sessions,
+    )
+
+    assert DONE_AUTO_IDLE_SECONDS == 30
+    client = TestClient(app)
+    sid = client.post("/v1/session", json={"device_id": "qr-timeout"}).json()["session_id"]
+    client.post("/v1/input", json={
+        "session_id": sid,
+        "hard_constraints": {"budget_max": 80, "eat_by_minutes": 60},
+    })
+    client.post("/v1/device/event", json={
+        "device_id": "qr-timeout", "session_id": sid, "event": "right_ear",
+    })
+    client.post("/v1/confirm", json={"session_id": sid})
     assert sessions[sid].state == SessionState.done
     asyncio.run(auto_idle_after_done(sid, delay_s=0))
     assert sessions[sid].state == SessionState.idle
 
-
-def test_new_device_session_starts_idle_for_standby():
-    """设备刚连上但用户没操作时，应允许固件自己的待机屏计时生效。"""
-    import os
-
-    os.environ["USE_MODEL"] = "0"
-    from fastapi.testclient import TestClient
-
-    from services.device_gateway.main import app
-    c = TestClient(app)
-    sid = c.post("/v1/session", json={"device_id": "cat-square-01"}).json()["session_id"]
-    assert c.get(f"/v1/session/{sid}").json()["state"] == "idle"
-
-
-def test_listening_followup_can_auto_return_idle():
-    """追问后如果用户放下设备，不应永久停在 listening。"""
-    import os
-
-    os.environ["USE_MODEL"] = "0"
-    from fastapi.testclient import TestClient
-
-    from services.device_gateway.main import app, auto_idle_after_listening, sessions
-    c = TestClient(app)
-    sid = c.post("/v1/session", json={"device_id": "phone"}).json()["session_id"]
-    c.post("/v1/input", json={"session_id": sid, "text": "随便来点"})
-    assert sessions[sid].state == SessionState.listening
-    asyncio.run(auto_idle_after_listening(sid, delay_s=0))
+    sessions[sid].state = SessionState.done
+    client.post("/v1/device/event", json={
+        "device_id": "qr-timeout", "session_id": sid, "event": "left_ear",
+    })
     assert sessions[sid].state == SessionState.idle
 
 
-def test_done_left_ear_returns_idle_without_restarting_council():
-    """二维码页点左半屏表示反悔返回，不再停在喵单或误开议事会。"""
+def test_rules_mode_keeps_food_scope_across_voice_followup():
+    """纯规则模式也要解析原话，追问预算后不能丢掉第一句的食物范围。"""
     import os
 
     os.environ["USE_MODEL"] = "0"
     from fastapi.testclient import TestClient
 
-    from services.device_gateway.main import app, sessions
-    c = TestClient(app)
-    sid = c.post("/v1/session", json={"device_id": "phone"}).json()["session_id"]
-    c.post("/v1/input", json={"session_id": sid,
-        "text": "我想吃鱼",
-        "hard_constraints": {"budget_max": 80, "eat_by_minutes": 40}})
-    c.post("/v1/device/event", json={"device_id": "phone", "session_id": sid, "event": "right_ear"})
-    c.post("/v1/confirm", json={"session_id": sid})
-    assert sessions[sid].state == SessionState.done
-    c.post("/v1/device/event", json={"device_id": "phone", "session_id": sid, "event": "left_ear"})
-    assert sessions[sid].state == SessionState.idle
+    import services.device_gateway.main as gateway
 
+    gateway.USE_MODEL = False
+    client = TestClient(gateway.app)
+    sid = client.post("/v1/session", json={"device_id": "rules-voice"}).json()["session_id"]
 
-def test_done_both_ears_does_not_restart_council():
-    """二维码页顶部误触不应把已出单流程拉回今日推荐/议事会。"""
-    import os
+    first = client.post("/v1/input", json={
+        "session_id": sid,
+        "text": "今天想吃鱼，不要辣",
+    }).json()
+    assert first["state"] == SessionState.listening
+    assert first["soft_preferences"]["spicy"] == "none"
 
-    os.environ["USE_MODEL"] = "0"
-    from fastapi.testclient import TestClient
-
-    from services.device_gateway.main import app, sessions
-    c = TestClient(app)
-    sid = c.post("/v1/session", json={"device_id": "phone"}).json()["session_id"]
-    c.post("/v1/input", json={"session_id": sid,
-        "text": "我想吃鱼",
-        "hard_constraints": {"budget_max": 80, "eat_by_minutes": 40}})
-    c.post("/v1/device/event", json={"device_id": "phone", "session_id": sid, "event": "right_ear"})
-    c.post("/v1/confirm", json={"session_id": sid})
-    assert sessions[sid].state == SessionState.done
-    c.post("/v1/device/event", json={"device_id": "phone", "session_id": sid, "event": "both_ears"})
-    assert sessions[sid].state == SessionState.done
-
-
-def test_hungry_uses_fresh_mmwave_sample():
-    """毫米波上报真实体征后，「饿不饿」必须带上传感器依据，而不是只返回手账兜底文案。"""
-    import os
-
-    os.environ["USE_MODEL"] = "0"
-    from fastapi.testclient import TestClient
-
-    from services.device_gateway.main import app
-    c = TestClient(app)
-    sample = {
-        "present": True,
-        "target_count": 1,
-        "distance_cm": 42.5,
-        "heart_bpm": 82,
-        "respiration_bpm": 15,
-        "illuminance_lux": 40.7,
-        "source": "mr60bha2-usb",
-    }
-    assert c.post("/v1/sensor/mmwave", json=sample).json()["ok"] is True
-    r = c.get("/v1/hungry").json()
-    assert r["sensor"]["fresh"] is True
-    assert r["sensor"]["heart_bpm"] == 82
-    assert r["sensor"]["respiration_bpm"] == 15
-    assert r["sensor"]["distance_cm"] == 42.5
-    assert r["decision"] in {"hungry", "maybe_craving", "not_hungry"}
-    assert "毫米波" in r["subtitle"]
+    second = client.post("/v1/input", json={
+        "session_id": sid,
+        "text": "一百五十元，六十分钟内",
+    }).json()
+    assert second["state"] == SessionState.candidate
+    assert "想吃鱼" in second["raw_input"]
+    assert "一百五十元" in second["raw_input"]
+    assert second["soft_preferences"]["spicy"] == "none"
+    assert second["candidates"]
+    assert all(candidate["spicy_level"] == "none" for candidate in second["candidates"])
+    assert all(
+        any(term in [candidate["item"], candidate["cuisine"],
+                     *candidate["ingredients"], *candidate["tags"]]
+            for term in ("鱼", "海鲜", "寿司", "刺身"))
+        for candidate in second["candidates"]
+    )

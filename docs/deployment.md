@@ -1,4 +1,4 @@
-# 部署说明（local AI workstation, spark-b72e 实测口径）
+# 部署说明（本地 AI 工作站）
 
 ## 服务拓扑与端口
 
@@ -22,7 +22,7 @@ tmux new-window -t kitten -n serve \
    -ngl 99 -fa on -c 4096 -np 4 --port 8081 --alias kitten-nlu"
 
 # 3. 网关
-cd ~/hackathon/noon-decision-os
+cd /path/to/sid
 USE_MODEL=1 USE_KITTEN=1 KITTEN_MODEL=kitten-nlu \
   ~/kitten/venv/bin/python -m uvicorn services.device_gateway.main:app \
   --host 0.0.0.0 --port 8090

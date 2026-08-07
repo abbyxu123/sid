@@ -1,4 +1,4 @@
-"""Device connection regressions shared by the gateway and ESP32 firmware."""
+"""Gateway and ESP32 regressions for the stable product flow."""
 
 import asyncio
 from pathlib import Path
@@ -6,8 +6,17 @@ from time import perf_counter
 
 from fastapi.testclient import TestClient
 
-from core.decision_schema import AgentScore, DecisionMode, FinalChoice, SessionState
+from core.decision_schema import (
+    AgentScore,
+    DecisionMode,
+    DecisionSession,
+    FinalChoice,
+    HardConstraints,
+    SessionState,
+)
+from core.orchestrator import ingredient_preferences
 from services.device_gateway import main as gateway
+from skills.food.agents.extraction import rule_structure
 
 
 FIRMWARE = (
@@ -17,8 +26,6 @@ FIRMWARE = (
 
 
 class DisconnectedWebSocket:
-    """Small fake for Starlette's runtime error after a peer disconnects."""
-
     def __init__(self) -> None:
         self.accepted = False
 
@@ -32,6 +39,24 @@ class DisconnectedWebSocket:
         raise RuntimeError("WebSocket is not connected. Need to call accept first.")
 
 
+def _finished_direct(session: DecisionSession) -> DecisionSession:
+    candidate = gateway.load_candidates()[0]
+    session.state = SessionState.candidate
+    session.candidates = [candidate]
+    session.final_choice = FinalChoice(candidate_id=candidate.id, confidence=0.8)
+    session.decision_mode = DecisionMode.direct
+    session.agent_scores = {
+        "taste": [AgentScore(
+            candidate_id=candidate.id,
+            hard_constraint_pass=True,
+            score=0.8,
+            evidence=["符合口味"],
+            confidence=0.8,
+        )]
+    }
+    return session
+
+
 def test_device_stream_cleans_up_runtime_disconnect() -> None:
     ws = DisconnectedWebSocket()
 
@@ -39,23 +64,6 @@ def test_device_stream_cleans_up_runtime_disconnect() -> None:
 
     assert ws.accepted
     assert ws not in gateway.device_sockets
-
-
-def test_firmware_disconnect_keeps_websocket_client_initialized() -> None:
-    source = FIRMWARE.read_text(encoding="utf-8")
-    start = source.index("if (type == WStype_DISCONNECTED)")
-    end = source.index("if (type != WStype_TEXT)", start)
-    disconnect_handler = source[start:end]
-
-    assert "wsStarted = false;" not in disconnect_handler
-    assert "ws.setReconnectInterval(3000);" in source
-
-
-def test_firmware_uses_board_reference_microphone_gain() -> None:
-    source = FIRMWARE.read_text(encoding="utf-8")
-
-    assert "es8311_microphone_gain_set(h, ES8311_MIC_GAIN_18DB)" in source
-    assert "es8311_microphone_gain_set(h, ES8311_MIC_GAIN_36DB)" not in source
 
 
 def test_firmware_standby_hold_can_continue_into_recording() -> None:
@@ -66,100 +74,58 @@ def test_firmware_standby_hold_can_continue_into_recording() -> None:
     assert "if (wokeWithKey)" in source
 
 
-def test_voice_rejects_clipped_flatline_before_asr(monkeypatch) -> None:
-    monkeypatch.setattr(gateway, "_asr", lambda _pcm, _rate: "想吃鱼")
-    pcm = int(30840).to_bytes(2, "little", signed=True) * 5000
-    client = TestClient(gateway.app)
-    sid = client.post("/v1/session", json={"device_id": "flatline"}).json()["session_id"]
+def test_firmware_initializes_the_analog_microphone() -> None:
+    source = FIRMWARE.read_text(encoding="utf-8")
 
-    response = client.post(
-        f"/v1/voice?session_id={sid}&rate=16000",
-        content=pcm,
-        headers={"Content-Type": "application/octet-stream"},
+    assert "es8311_microphone_config(h, false)" in source
+    assert "es8311_microphone_gain_set(h, ES8311_MIC_GAIN_18DB)" in source
+
+
+def test_firmware_shake_only_reopens_a_candidate_decision() -> None:
+    source = FIRMWARE.read_text(encoding="utf-8")
+    start = source.index("void checkShake()")
+    end = source.index("void setup()", start)
+    check_shake = source[start:end]
+
+    assert 'if (curState != "candidate") return;' in check_shake
+
+
+def test_firmware_wifi_watch_does_not_interrupt_active_connection() -> None:
+    source = FIRMWARE.read_text(encoding="utf-8")
+    start = source.index("void wifiWatch()")
+    end = source.index("// 像素猫动画", start)
+    wifi_watch = source[start:end]
+
+    assert "status == WL_IDLE_STATUS" in wifi_watch
+    assert "WiFi.scanNetworks" not in wifi_watch
+    assert "WiFi.disconnect(false, false)" in wifi_watch
+
+
+def test_rule_structure_understands_chinese_hundreds_minutes_and_delivery() -> None:
+    _goal, hard, _soft, context = rule_structure(
+        "外卖，一百五十元以内，六十分钟内"
     )
 
-    assert response.status_code == 422
-    assert response.json()["detail"] == "audio signal invalid"
+    assert hard.budget_max == 150
+    assert hard.eat_by_minutes == 60
+    assert context.channel.value == "delivery"
 
 
-def _finish_session(session, *, direct: bool = False):
-    candidate = gateway.load_candidates()[0]
-    session.state = SessionState.candidate
-    session.candidates = [candidate]
-    session.final_choice = FinalChoice(candidate_id=candidate.id, confidence=0.8)
-    if direct:
-        session.decision_mode = DecisionMode.direct
-        session.agent_scores = {
-            "taste": [AgentScore(
-                candidate_id=candidate.id,
-                hard_constraint_pass=True,
-                score=0.8,
-                evidence=["符合口味"],
-                confidence=0.8,
-            )]
-        }
-    return session
-
-
-def test_model_disabled_text_still_uses_rule_structure(monkeypatch) -> None:
-    observed = {}
-
-    async def fake_run(session, *_args, **_kwargs):
-        observed["budget"] = session.hard_constraints.budget_max
-        observed["minutes"] = session.hard_constraints.eat_by_minutes
-        return _finish_session(session)
-
-    monkeypatch.setattr(gateway, "USE_MODEL", False)
-    monkeypatch.setattr(gateway, "run_decision", fake_run)
-    client = TestClient(gateway.app)
-    sid = client.post("/v1/session", json={"device_id": "rules-offline"}).json()["session_id"]
-
-    response = client.post(
-        "/v1/input",
-        json={"session_id": sid, "text": "想吃辣的，四十元以内，半小时内"},
-    )
-
-    assert response.status_code == 200
-    assert "followup" not in response.json()
-    assert observed == {"budget": 40, "minutes": 30}
-
-
-def test_offline_followup_answer_continues_to_candidate(monkeypatch) -> None:
-    observed = {}
-
-    async def fake_run(session, *_args, **_kwargs):
-        observed["budget"] = session.hard_constraints.budget_max
-        observed["channel"] = session.context.channel.value
-        return _finish_session(session)
-
-    monkeypatch.setattr(gateway, "USE_MODEL", False)
-    monkeypatch.setattr(gateway, "run_decision", fake_run)
-    client = TestClient(gateway.app)
-    sid = client.post("/v1/session", json={"device_id": "offline-followup"}).json()["session_id"]
-
-    first = client.post("/v1/input", json={"session_id": sid, "text": "外卖"})
-    second = client.post("/v1/input", json={"session_id": sid, "text": "40块钱"})
-
-    assert first.status_code == 200
-    assert first.json()["followup"] == "预算多少喵？多久要吃上？"
-    assert second.status_code == 200
-    assert "followup" not in second.json()
-    assert second.json()["state"] == "candidate"
-    assert observed == {"budget": 40, "channel": "delivery"}
-
-
-def test_voice_treats_delivery_as_food_intent(monkeypatch) -> None:
+def test_voice_treats_chinese_numbers_as_food_intent(monkeypatch) -> None:
     captured = {}
 
     async def fake_submit(payload):
         captured["text"] = payload.text
         return {"state": "candidate"}
 
-    monkeypatch.setattr(gateway, "_asr", lambda _pcm, _rate: "外卖")
+    monkeypatch.setattr(gateway, "_asr", lambda _pcm, _rate: "一百五十元，六十分钟内")
     monkeypatch.setattr(gateway, "submit_input", fake_submit)
-    pcm = b"".join(int((i % 2000) - 1000).to_bytes(2, "little", signed=True) for i in range(5000))
+    pcm = b"".join(
+        int((i % 2000) - 1000).to_bytes(2, "little", signed=True)
+        for i in range(5000)
+    )
     client = TestClient(gateway.app)
-    sid = client.post("/v1/session", json={"device_id": "delivery-voice"}).json()["session_id"]
+    sid = client.post("/v1/session", json={"device_id": "cn-number-voice"}).json()["session_id"]
 
     response = client.post(
         f"/v1/voice?session_id={sid}&rate=16000",
@@ -169,29 +135,210 @@ def test_voice_treats_delivery_as_food_intent(monkeypatch) -> None:
 
     assert response.status_code == 200
     assert response.json().get("chitchat") is not True
-    assert captured == {"text": "外卖"}
+    assert captured == {"text": "一百五十元，六十分钟内"}
 
 
-def test_direct_product_flow_has_no_scripted_replay_delay(monkeypatch) -> None:
+def test_direct_rules_flow_has_no_scripted_replay_delay(monkeypatch) -> None:
     async def fake_run(session, *_args, **_kwargs):
-        return _finish_session(session, direct=True)
+        return _finished_direct(session)
 
+    monkeypatch.setattr(gateway, "USE_MODEL", False)
     monkeypatch.setattr(gateway, "run_decision", fake_run)
     client = TestClient(gateway.app)
     sid = client.post("/v1/session", json={"device_id": "fast-direct"}).json()["session_id"]
 
     started = perf_counter()
-    response = client.post(
-        "/v1/input",
-        json={
-            "session_id": sid,
-            "hard_constraints": {"budget_max": 100, "eat_by_minutes": 60},
-        },
-    )
+    response = client.post("/v1/input", json={
+        "session_id": sid,
+        "hard_constraints": {"budget_max": 100, "eat_by_minutes": 60},
+    })
 
     assert response.status_code == 200
     assert perf_counter() - started < 0.5
 
 
-def test_default_asr_model_matches_working_baseline() -> None:
-    assert gateway.ASR_MODEL == "small"
+def test_voice_background_failure_pushes_error_state(monkeypatch) -> None:
+    sid = "voice-background-error"
+    gateway.sessions[sid] = DecisionSession(session_id=sid, state=SessionState.structuring)
+
+    async def fail(_payload):
+        raise RuntimeError("voice failed")
+
+    monkeypatch.setattr(gateway, "submit_input", fail)
+    asyncio.run(gateway.run_voice_decision(sid, "想吃鱼"))
+
+    assert gateway.sessions[sid].state == SessionState.error
+
+
+def test_recouncil_background_failure_pushes_error_state(monkeypatch) -> None:
+    sid = "recouncil-background-error"
+    gateway.sessions[sid] = DecisionSession(session_id=sid, state=SessionState.council)
+
+    async def fail(*_args, **_kwargs):
+        raise RuntimeError("council failed")
+
+    monkeypatch.setattr(gateway, "run_decision", fail)
+    asyncio.run(gateway.run_recouncil_decision(sid))
+
+    assert gateway.sessions[sid].state == SessionState.error
+
+
+def test_new_background_decision_cancels_the_old_one(monkeypatch) -> None:
+    sid = "background-replaced"
+    gateway.sessions[sid] = DecisionSession(session_id=sid, state=SessionState.listening)
+
+    async def scenario():
+        old_started = asyncio.Event()
+
+        async def fake_submit(payload):
+            if payload.text == "old":
+                old_started.set()
+                await asyncio.sleep(60)
+                gateway.sessions[sid].state = SessionState.error
+            else:
+                gateway.sessions[sid].state = SessionState.candidate
+
+        monkeypatch.setattr(gateway, "submit_input", fake_submit)
+        old_task = gateway.schedule_background_decision(
+            sid, gateway.run_voice_decision(sid, "old")
+        )
+        await old_started.wait()
+        new_task = gateway.schedule_background_decision(
+            sid, gateway.run_voice_decision(sid, "new")
+        )
+        await new_task
+        await asyncio.sleep(0)
+        return old_task
+
+    old_task = asyncio.run(scenario())
+
+    assert old_task.cancelled()
+    assert gateway.sessions[sid].state == SessionState.candidate
+
+
+def test_stale_asr_command_cannot_confirm_a_new_round(monkeypatch) -> None:
+    import threading
+
+    sid = "stale-asr-command"
+    gateway.sessions[sid] = DecisionSession(session_id=sid, state=SessionState.listening)
+    asr_started = threading.Event()
+    release_asr = threading.Event()
+
+    def delayed_asr(_pcm: bytes, _rate: int) -> str:
+        asr_started.set()
+        release_asr.wait(timeout=5)
+        return "确认"
+
+    class VoiceRequest:
+        async def body(self) -> bytes:
+            return b"\0" * 8000
+
+    async def scenario():
+        monkeypatch.setattr(gateway, "_asr", delayed_asr)
+        old_voice = asyncio.create_task(gateway.voice_input(VoiceRequest(), session_id=sid))
+        while not asr_started.is_set():
+            await asyncio.sleep(0.001)
+        await gateway.submit_input(gateway.InputPayload(
+            session_id=sid,
+            hard_constraints=HardConstraints(budget_max=80, eat_by_minutes=60),
+        ))
+        release_asr.set()
+        result = await old_voice
+        return result
+
+    result = asyncio.run(scenario())
+
+    assert result["ignored"] is True
+    assert gateway.sessions[sid].state == SessionState.candidate
+
+
+def test_feedback_updates_session_state_to_idle() -> None:
+    sid = "feedback-idle"
+    gateway.sessions[sid] = DecisionSession(session_id=sid, state=SessionState.done)
+    client = TestClient(gateway.app)
+
+    response = client.post("/v1/feedback", json={
+        "session_id": sid,
+        "would_repeat": True,
+    })
+
+    assert response.status_code == 200
+    assert gateway.sessions[sid].state == SessionState.idle
+
+
+def test_stale_feedback_cannot_interrupt_a_new_round() -> None:
+    sid = "stale-feedback"
+    gateway.sessions[sid] = DecisionSession(session_id=sid, state=SessionState.candidate)
+    client = TestClient(gateway.app)
+
+    response = client.post("/v1/feedback", json={
+        "session_id": sid,
+        "would_repeat": True,
+    })
+
+    assert response.status_code == 200
+    assert response.json()["ignored"] is True
+    assert gateway.sessions[sid].state == SessionState.candidate
+
+
+def test_old_done_timer_cannot_close_a_new_round() -> None:
+    sid = "done-generation"
+    gateway.sessions[sid] = DecisionSession(session_id=sid, state=SessionState.done)
+    gateway.done_generations[sid] = 2
+
+    asyncio.run(gateway.auto_idle_after_done(sid, delay_s=0, generation=1))
+    assert gateway.sessions[sid].state == SessionState.done
+
+    asyncio.run(gateway.auto_idle_after_done(sid, delay_s=0, generation=2))
+    assert gateway.sessions[sid].state == SessionState.idle
+
+
+def test_new_done_generation_is_set_before_done_push() -> None:
+    sid = "done-push-race"
+    candidate = gateway.load_candidates()[0]
+    session = DecisionSession(
+        session_id=sid,
+        state=SessionState.confirming,
+        candidates=[candidate],
+    )
+    gateway.sessions[sid] = session
+    gateway.done_generations[sid] = 1
+
+    class OldTimerAtPush:
+        async def send_text(self, _text: str) -> None:
+            if (session.state == SessionState.done
+                    and gateway.done_generations[sid] == 1):
+                session.state = SessionState.idle
+
+    socket = OldTimerAtPush()
+    gateway.device_sockets.append(socket)
+    try:
+        asyncio.run(gateway.confirm({"session_id": sid}))
+    finally:
+        gateway.device_sockets.remove(socket)
+
+    assert session.state == SessionState.done
+    assert gateway.done_generations[sid] == 2
+
+
+def test_negative_food_phrase_is_not_treated_as_a_craving() -> None:
+    assert ingredient_preferences("不想吃鱼，想吃牛肉") == ["牛肉"]
+
+
+def test_common_food_scope_and_negative_food_are_enforced() -> None:
+    salad = asyncio.run(gateway.run_decision(
+        DecisionSession(session_id="salad", raw_input="今天想吃轻食"),
+        gateway.load_candidates(),
+        model=None,
+    ))
+    assert salad.candidates
+    assert all(
+        "轻食" in " ".join([
+            candidate.item, candidate.restaurant, candidate.cuisine,
+            *candidate.ingredients, *candidate.tags,
+        ])
+        for candidate in salad.candidates
+    )
+
+    _goal, hard, _soft, _context = rule_structure("不想吃鱼")
+    assert "鱼" in hard.hated

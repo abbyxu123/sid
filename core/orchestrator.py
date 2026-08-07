@@ -23,9 +23,52 @@ from .scoring import ScoringWeights, rank, to_final_choice
 
 INGREDIENT_PREFERENCES = (
     "鱼", "牛肉", "猪肉", "鸡肉", "鸡", "虾", "蟹", "豆腐", "蔬菜",
-    "青菜", "生菜", "米饭", "寿司", "烤串", "串串", "面", "粥",
+    "青菜", "生菜", "羊肉", "海鲜", "米饭", "寿司", "沙拉", "轻食",
+    "汉堡", "火锅", "烧烤", "烤串", "串串", "米线", "米粉", "面条", "面", "粥",
 )
-NEGATIVE_PREFIXES = ("不吃", "不要", "别吃", "讨厌", "过敏", "不能吃")
+NEGATIVE_PREFIXES = ("不吃", "不想吃", "不要", "别吃", "讨厌", "过敏", "不能吃")
+
+
+def ingredient_preferences(raw_input: str) -> list[str]:
+    """从原话提取明确想吃的食材，同时跳过否定表达。"""
+    preferences: list[str] = []
+    for item in INGREDIENT_PREFERENCES:
+        start = raw_input.find(item)
+        if start < 0:
+            continue
+        prefix = raw_input[max(0, start - 4):start]
+        if any(negative in prefix for negative in NEGATIVE_PREFIXES):
+            continue
+        preferences.append(item)
+    return preferences
+
+
+def candidate_matches_preference(candidate: Candidate, preference: str) -> bool:
+    haystack = [
+        candidate.item, candidate.restaurant, candidate.cuisine,
+        *candidate.ingredients, *candidate.tags,
+    ]
+    if preference == "鱼":
+        return any(
+            term in text
+            for term in ("鱼", "海鲜", "寿司", "刺身")
+            for text in haystack
+        )
+    return any(preference in text or text in preference for text in haystack)
+
+
+def focus_candidates_by_preference(
+    session: DecisionSession, candidates: list[Candidate],
+) -> list[Candidate]:
+    """明确点名食材时，只在相关候选中评分和切换。"""
+    preferences = ingredient_preferences(session.raw_input)
+    if not preferences:
+        return candidates
+    focused = [
+        candidate for candidate in candidates
+        if any(candidate_matches_preference(candidate, pref) for pref in preferences)
+    ]
+    return focused
 
 
 class ModelClient(Protocol):
@@ -72,44 +115,6 @@ def _has_conflict(session: DecisionSession, passed: list[Candidate]) -> bool:
     return False
 
 
-def ingredient_preferences(raw_input: str) -> list[str]:
-    """Extract lightweight ingredient cravings from the user's original wording."""
-    prefs: list[str] = []
-    for item in INGREDIENT_PREFERENCES:
-        start = raw_input.find(item)
-        if start < 0:
-            continue
-        prefix = raw_input[max(0, start - 4):start]
-        if any(neg in prefix for neg in NEGATIVE_PREFIXES):
-            continue
-        prefs.append(item)
-    return prefs
-
-
-def candidate_matches_preference(candidate: Candidate, pref: str) -> bool:
-    if pref == "鱼":
-        terms = ("鱼", "海鲜", "寿司", "刺身")
-        haystack = [candidate.item, candidate.cuisine, *candidate.ingredients, *candidate.tags]
-        return any(term in text for term in terms for text in haystack)
-    if pref in candidate.item or pref in candidate.cuisine:
-        return True
-    return any(pref in x or x in pref for x in [*candidate.ingredients, *candidate.tags])
-
-
-def focus_candidates_by_preference(
-    session: DecisionSession, candidates: list[Candidate],
-) -> list[Candidate]:
-    """Keep swipe options on-topic when the user states a concrete craving."""
-    prefs = ingredient_preferences(session.raw_input)
-    if not prefs:
-        return candidates
-    focused = [
-        c for c in candidates
-        if any(candidate_matches_preference(c, pref) for pref in prefs)
-    ]
-    return focused if focused else candidates
-
-
 def _explore(session: DecisionSession, passed: list[Candidate],
              ledger_recent: list | None) -> DecisionSession:
     """安全探索（文档 09 节）：过敏/禁忌/预算/时间过滤后的安全池内随机；
@@ -122,7 +127,6 @@ def _explore(session: DecisionSession, passed: list[Candidate],
         if final.get("candidate_id"):
             recent_items.add(final["candidate_id"])
     fresh = [c for c in passed if c.id not in recent_items] or passed
-    fresh = focus_candidates_by_preference(session, fresh)
     rng = random.Random(session.session_id)  # 会话内确定，可重放审计
     level = session.soft_preferences.novelty or "balanced"
     if level == "conservative":
@@ -160,7 +164,6 @@ def rule_based_scores(
         if cid:
             recent_ids.append(cid)
     hard = session.hard_constraints
-    ingredient_prefs = ingredient_preferences(session.raw_input)
     scores: dict[str, list[AgentScore]] = {"taste": [], "budget": [], "time": [],
                                            "memory": []}
     for c in candidates:
@@ -173,11 +176,6 @@ def rule_based_scores(
             taste = 0.5
         if session.soft_preferences.cuisines and c.cuisine in session.soft_preferences.cuisines:
             taste = min(1.0, taste + 0.15)
-        matched_prefs = [p for p in ingredient_prefs if candidate_matches_preference(c, p)]
-        if matched_prefs:
-            taste = 1.0
-        elif ingredient_prefs:
-            taste = min(taste, 0.35)
         budget = 0.5
         if hard.budget_max:
             budget = max(0.0, min(1.0, 1.0 - c.price_total / hard.budget_max * 0.8))
@@ -191,7 +189,7 @@ def rule_based_scores(
         else:
             mem, mev = 0.8, "好久没吃，想它了喵"
         for name, val, ev in (
-            ("taste", taste, matched_prefs[:1] or [f"{c.cuisine}/{c.spicy_level}"]),
+            ("taste", taste, [f"{c.cuisine}/{c.spicy_level}"]),
             ("budget", budget, [f"总价 ¥{c.price_total:.0f}"]),
             ("time", tscore, [f"预计 {c.eta_minutes} 分钟"]),
             ("memory", mem, [mev]),
@@ -220,6 +218,12 @@ async def run_decision(
     session.risk_flags = session.risk_flags + [
         f"{cid}: {'; '.join(rs)}" for cid, rs in rejected.items()]
     if not passed:
+        session.state = SessionState.error
+        return session
+    passed = focus_candidates_by_preference(session, passed)
+    if not passed:
+        session.risk_flags.append("food_preference_no_match: 没有符合点名食材的候选")
+        session.candidates = []
         session.state = SessionState.error
         return session
 
@@ -263,14 +267,7 @@ async def run_decision(
         ranked = rank(passed, session.agent_scores, weights)
     session.final_choice = to_final_choice(ranked)
     # 展示/执行顺序必须与评分结果一致：candidates[0] 就是最终选择，左耳按排名向后换
-    ordered = [r.candidate for r in ranked] or passed
-    session.candidates = focus_candidates_by_preference(session, ordered)
-    if session.final_choice and session.candidates:
-        ids = {c.id for c in session.candidates}
-        if session.final_choice.candidate_id not in ids:
-            session.final_choice.candidate_id = session.candidates[0].id
-        if len(session.candidates) > 1:
-            session.final_choice.backup_id = session.candidates[1].id
+    session.candidates = [r.candidate for r in ranked] or passed
     session.state = SessionState.candidate if session.final_choice else SessionState.error
     session.cursor = 0
     return session

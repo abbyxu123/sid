@@ -19,72 +19,20 @@
 #include <WebSocketsClient.h>
 #include <ArduinoJson.h>
 #include "HWCDC.h"
-#include "noon_config.h"   // DEV/DEMO Wi-Fi profiles + DEVICE_ID
+#include "noon_config.h"   // WIFI_SSID / WIFI_PASS / GW_HOST / GW_PORT / DEVICE_ID
 LV_FONT_DECLARE(noon_font_cn_46);
 LV_FONT_DECLARE(noon_font_cn_32);  // 定制中文字库(覆盖演示数据全字符)
-extern const lv_img_dsc_t splash_sofa;  // 备用开机封面(沙发猫插画, splash_sofa.c)
-extern const lv_img_dsc_t standby_face_open;
-extern const lv_img_dsc_t standby_face_closed;
+extern const lv_img_dsc_t splash_sofa;  // 开机封面+待机屏保(沙发猫插画, splash_sofa.c)
 extern const lv_img_dsc_t council_img;  // 议事会开庭定场图(圆桌插画, council_img.c)
 extern const lv_img_dsc_t taste_img;    // 口味选择引导页(开机问一次, 按键即确认)
 lv_obj_t *splash = nullptr;
 lv_obj_t *cImg = nullptr;
 lv_obj_t *tasteImg = nullptr;
 bool tasteAsked = false; uint32_t tasteAt = 0;
-uint32_t lastUiAt = 0;                  // 最后一次画面变化, 待机计时使用
-const uint32_t STANDBY_AFTER_MS = 15000;
-const uint32_t STANDBY_BLINK_MS = 2000;
-const uint32_t STANDBY_BLINK_CLOSE_MS = 160;
-bool pixelStandby = false;
-bool standbyBlinkClosed = false;
-uint32_t standbyBlinkAt = 0;
+uint32_t lastUiAt = 0;                  // 最后一次画面变化, 60s 无动静回到沙发猫
 
 HWCDC USBSerial;
 #define TICK_MS 2
-
-struct NetProfile {
-  const char *label;
-  const char *ssid;
-  const char *pass;
-  const char *host;
-  uint16_t port;
-};
-
-const NetProfile NETS[] = {
-  {"DEV",  DEV_WIFI_SSID,  DEV_WIFI_PASS,  DEV_GW_HOST,  DEV_GW_PORT},
-  {"DEMO", DEMO_WIFI_SSID, DEMO_WIFI_PASS, DEMO_GW_HOST, DEMO_GW_PORT},
-  {"DEMO-ASCII", DEMO_ASCII_WIFI_SSID, DEMO_ASCII_WIFI_PASS, DEMO_ASCII_GW_HOST, DEMO_ASCII_GW_PORT},
-};
-uint8_t netOrder[] = {2};                // demo safe mode: lock to the current ASCII hotspot
-uint8_t activeNetSlot = 0;
-bool wsStarted = false;
-uint32_t wsFailSince = 0;
-uint32_t lastWifiStatusLog = 0;
-
-const NetProfile &net() { return NETS[netOrder[activeNetSlot]]; }
-
-void onWiFiEvent(WiFiEvent_t event, WiFiEventInfo_t info) {
-  switch (event) {
-    case ARDUINO_EVENT_WIFI_STA_START:
-      USBSerial.println("[WIFI] sta start");
-      break;
-    case ARDUINO_EVENT_WIFI_STA_CONNECTED:
-      USBSerial.printf("[WIFI] sta connected ssid=%s\n", net().ssid);
-      break;
-    case ARDUINO_EVENT_WIFI_STA_GOT_IP:
-      USBSerial.printf("[WIFI] got ip=%s gw=%s rssi=%d\n",
-                       WiFi.localIP().toString().c_str(),
-                       WiFi.gatewayIP().toString().c_str(),
-                       WiFi.RSSI());
-      break;
-    case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
-      USBSerial.printf("[WIFI] sta disconnected reason=%d status=%d\n",
-                       info.wifi_sta_disconnected.reason, WiFi.status());
-      break;
-    default:
-      break;
-  }
-}
 
 // ==== 显示/触摸/IMU（与官方例程一致） ====
 Arduino_DataBus *bus = new Arduino_ESP32QSPI(
@@ -142,41 +90,36 @@ void meowByCat(const String &t);
 lv_obj_t *scr, *lblState, *lblTitle, *lblSub, *lblHint, *qr = nullptr;
 
 
-// ==== 像素猫脸（14x10 网格，纯代码无资源）====
+// ==== 像素猫（14x10 网格，纯代码无资源）====
 #define PGW 14
 #define PGH 10
 #define PCEL 22   // 448x368 横屏下猫缩到 308x220
 static lv_obj_t *pixgrid[PGH][PGW];
 // . 空  O 橙毛  W 白  K 深灰描边  P 粉  A 状态强调色
 static const char *CAT_IDLE[PGH] = {
-  "..............", "..............", "..AA......AA..", ".A..A....A..A.",
-  "..AA......AA..", "..............", "...A......A...", "....A.AA.A....",
-  ".....AAAA.....", "..............",
+  ".KK........KK.", ".KOK......KOK.", ".KOOKKKKKKOOK.", ".KOOOOOOOOOOK.",
+  ".KOWWOOOOWWOK.", ".KOKWOOOOKWOK.", ".KOOOOKKOOOOK.", ".KOOOPKKPOOOK.",
+  ".KOOOOOOOOOOK.", "..KKKKKKKKKK..",
 };
 static const char *CAT_LISTEN[PGH] = {
-  "..............", "..AA......AA..", ".AAAA....AAAA.", "..AA......AA..",
-  "..............", "...A......A...", "......AA......", ".....AAAA.....",
-  "......AA......", "..............",
+  "KK..........KK", "KAK........KAK", "KAOKKKKKKKKOAK", ".KOOOOOOOOOOK.",
+  ".KOWWOOOOWWOK.", ".KOKWOOOOKWOK.", ".KOOOOKKOOOOK.", ".KOOOKAAKOOOK.",
+  ".KOOOKAAKOOOK.", "..KKKKKKKKKK..",
 };
 static const char *CAT_THINK[PGH] = {
-  "..............", "..............", "..AAAA..AAAA..", ".A........A...",
-  "..............", "...A......A...", "......AA......", "....AAAAAA....",
-  "..............", "..............",
+  ".KK........KK.", ".KOK......KOK.", ".KOOKKKKKKOOK.", ".KOOOOOOOOOOK.",
+  ".KOOOOOOOOOOK.", ".KOKKOOOOKKOK.", ".KOOOOKKOOOOK.", ".KOOOPKKPOOOK.",
+  ".KOOOOOOOOOOK.", "..KKKKKKKKKK..",
 };
 static const char *CAT_HAPPY[PGH] = {
-  "..............", "..............", "..AA......AA..", ".A..A....A..A.",
-  "..............", "..P........P..", "...A......A...", "....A....A....",
-  ".....AAAA.....", "..............",
+  ".KK........KK.", ".KOK......KOK.", ".KOOKKKKKKOOK.", ".KOOOOOOOOOOK.",
+  ".KOKWOOOOWKOK.", ".KOWKOOOOKWOK.", ".KOOOOKKOOOOK.", ".KOOAKOOKAOOK.",
+  ".KOOOAAAAOOOK.", "..KKKKKKKKKK..",
 };
 static const char *CAT_ERROR[PGH] = {
-  "..............", ".AA.A....A.AA.", "..AA......AA..", ".AA.A....A.AA.",
-  "..............", "...A......A...", "......AA......", "....AAAAAA....",
-  "..............", "..............",
-};
-static const char *CAT_STANDBY[PGH] = {
-  "..............", "..............", "..AAA....AAA..", ".A...A..A...A.",
-  "..AAA....AAA..", "..............", "...P......P...", ".....A..A.....",
-  "......AA......", "..............",
+  ".KK........KK.", ".KOK......KOK.", ".KOOKKKKKKOOK.", ".KOOOOOOOOOOK.",
+  ".KOKWOOOOWKOK.", ".KOWKOOOOKWOK.", ".KOOOOKKOOOOK.", ".KOOOKKKKOOOK.",
+  ".KOOKOOOOKOOK.", "..KKKKKKKKKK..",
 };
 
 void setPixCat(const char **art, uint32_t accent) {
@@ -229,7 +172,6 @@ void uiSet(const String &st, const char *title, const char *sub) {
   if (splash) { lv_obj_del(splash); splash = nullptr; }   // 真实画面到来时撤下封面/屏保
   if (cImg) { lv_obj_del(cImg); cImg = nullptr; }         // 撤下开庭定场图
   if (tasteImg) { lv_obj_del(tasteImg); tasteImg = nullptr; }
-  pixelStandby = false;
   lastUiAt = millis();
   twTarget = "";                                          // 普通刷屏取消打字机
   curState = st;
@@ -255,44 +197,7 @@ void uiSet(const String &st, const char *title, const char *sub) {
   lv_label_set_text(lblSub, sub);
 }
 
-void enterPixelStandby() {
-  pixelStandby = false;
-  curState = "idle";
-  if (cImg) { lv_obj_del(cImg); cImg = nullptr; }
-  if (tasteImg) { lv_obj_del(tasteImg); tasteImg = nullptr; }
-  if (!splash) {
-    splash = lv_img_create(scr);
-    lv_obj_align(splash, LV_ALIGN_CENTER, 0, 0);
-  }
-  lv_img_set_src(splash, &standby_face_open);
-  lv_obj_move_foreground(splash);
-  standbyBlinkClosed = false;
-  standbyBlinkAt = millis();
-  for (int r = 0; r < PGH; r++) for (int c = 0; c < PGW; c++)
-    lv_obj_add_flag(pixgrid[r][c], LV_OBJ_FLAG_HIDDEN);
-  lv_obj_add_flag(lblHint, LV_OBJ_FLAG_HIDDEN);
-  lv_obj_add_flag(qr, LV_OBJ_FLAG_HIDDEN);
-  lv_label_set_text(lblState, "");
-  lv_label_set_text(lblTitle, "");
-  lv_label_set_text(lblSub, "");
-  lastUiAt = millis();
-}
-
-void tickStandbyBlink() {
-  if (!splash || curState != "idle") return;
-  uint32_t now = millis();
-  if (!standbyBlinkClosed && now - standbyBlinkAt >= STANDBY_BLINK_MS) {
-    standbyBlinkClosed = true;
-    standbyBlinkAt = now;
-    lv_img_set_src(splash, &standby_face_closed);
-  } else if (standbyBlinkClosed && now - standbyBlinkAt >= STANDBY_BLINK_CLOSE_MS) {
-    standbyBlinkClosed = false;
-    standbyBlinkAt = now;
-    lv_img_set_src(splash, &standby_face_open);
-  }
-}
-
-String urlBase() { return String("http://") + net().host + ":" + net().port; }
+String urlBase() { return String("http://") + GW_HOST + ":" + GW_PORT; }
 
 bool httpPostJson(const String &path, const String &body, String *resp = nullptr) {
   HTTPClient http;
@@ -311,22 +216,6 @@ void ensureSession() {
     StaticJsonDocument<128> d;
     if (!deserializeJson(d, resp)) sessionId = (const char *)d["session_id"];
   }
-}
-
-void beginWifiProfile(uint8_t slot) {
-  activeNetSlot = slot % (sizeof(netOrder) / sizeof(netOrder[0]));
-  wsStarted = false;
-  wsFailSince = 0;
-  sessionId = "";
-  ws.disconnect();
-  WiFi.disconnect();
-  delay(100);
-  USBSerial.printf("[WIFI] connect %s ssid=%s gw=%s:%u\n",
-                   net().label, net().ssid, net().host, net().port);
-  uiSet("offline", (String("连接: ") + net().label).c_str(), net().ssid);
-  WiFi.mode(WIFI_STA);
-  WiFi.setSleep(false);
-  WiFi.begin(net().ssid, net().pass);
 }
 
 void postEvent(const char *ev) {
@@ -349,15 +238,17 @@ void postExplore() {  // 摇一摇 = 摇苹果树
 
 void onWsEvent(WStype_t type, uint8_t *payload, size_t len) {
   if (type == WStype_TEXT) USBSerial.printf("[WS] %.*s\n", (int)min(len,(size_t)150), payload);
-  if (type == WStype_CONNECTED) { wsFailSince = 0; uiSet("idle", "今天吃什么？", "长按说话 · 左换右定");
+  if (type == WStype_CONNECTED) { uiSet("idle", "想吃什么？", "按住说话 · 点左边换 · 摇一摇");
     static bool greeted = false;                                     // 只在开机首连打招呼, 重连不叫
-    if (!greeted) { greeted = true; playMeow(700, 1000, 180); playMeow(1000, 1320, 200); }
+    if (!greeted) { greeted = true; playMeow(700, 1000, 180); playMeow(1000, 1320, 200);
+      if (!tasteAsked) {                     // 开机问一次口味(引导页, 任意键确认)
+        tasteAsked = true; tasteAt = millis();
+        tasteImg = lv_img_create(scr);
+        lv_img_set_src(tasteImg, &taste_img);
+        lv_obj_align(tasteImg, LV_ALIGN_CENTER, 0, 0);
+      } }
     return; }
-  if (type == WStype_DISCONNECTED) {
-    if (!wsFailSince) wsFailSince = millis();
-    uiSet("offline", "重连中...", "");
-    return;
-  }
+  if (type == WStype_DISCONNECTED) { uiSet("offline", "重连中...", ""); return; }
   if (type != WStype_TEXT) return;
   StaticJsonDocument<1024> d;
   if (deserializeJson(d, payload, len)) return;
@@ -392,14 +283,10 @@ void scr_event_cb(lv_event_t *e) {
   lv_event_code_t code = lv_event_get_code(e);
   lv_indev_t *indev = lv_indev_get_act();
   if (!indev) return;
-  if (pixelStandby && code == LV_EVENT_RELEASED) {
-    uiSet("idle", "今天吃什么？", "按住左键说话 · 点底部测饿不饿");
-    return;
-  }
   if (splash || tasteImg) {                       // 屏保/口味页: 触摸只唤醒(=确认)
     if (code == LV_EVENT_RELEASED) {
       if (tasteImg) { uiSet("idle", "记住口味了喵！", "想吃什么？按住说话"); playMeow(800, 1050, 200); }
-      else uiSet("idle", "今天吃什么？", "长按说话 · 左换右定");
+      else uiSet("idle", "想吃什么？", "按住说话 · 点左边换 · 摇一摇");
     }
     return;
   }
@@ -411,11 +298,6 @@ void scr_event_cb(lv_event_t *e) {
     if (pressPt.x < 26 || pressPt.x > SCR_W - 26) return;  // 左右边缘死区(握持防误触)
     if (millis() - lastEventAt < 600) return;
     const char *evName = nullptr;
-    if ((curState == "offline" || curState == "error") && pressPt.y > SCR_H - 60 && held > 800) {
-      beginWifiProfile(activeNetSlot + 1);
-      lastEventAt = millis();
-      return;
-    }
     if (pressPt.y > SCR_H - 48 && held > 800)    evName = "cancel";
     else if (pressPt.y > SCR_H - 60) {           // 底部轻点 = 我饿了吗(记忆猫彩蛋)
       httpPostJson("/v1/hungry", "{}"); lastEventAt = millis(); return; }
@@ -473,8 +355,8 @@ void buildUi() {
   lv_label_set_text(lblState, "启动");
   lv_label_set_text(lblTitle, "猫咪决策机");
   lv_label_set_text(lblSub, "连接中...");
-  splash = lv_img_create(scr);                   // 开机/待机封面: 像素猫表情
-  lv_img_set_src(splash, &standby_face_open);    // WiFi/WS 连上后第一帧 uiSet 撤下
+  splash = lv_img_create(scr);                   // 开机封面: 沙发猫「今天吃什么?」
+  lv_img_set_src(splash, &splash_sofa);          // WiFi/WS 连上后第一帧 uiSet 撤下
   lv_obj_align(splash, LV_ALIGN_CENTER, 0, 0);
 }
 
@@ -569,19 +451,10 @@ void sendVoice() {
   http.begin(urlBase() + "/v1/voice?session_id=" + sessionId + "&rate=16000");
   http.addHeader("Content-Type", "application/octet-stream");
   http.setTimeout(120000);
-  // ES8311 出来是立体声帧, 左右混成单声道后再发(网关 /v1/voice 期望 16k 单声道)
+  // ES8311 出来是立体声帧, 取单声道后再发(网关 /v1/voice 期望 16k 单声道)
   int16_t *pcm = (int16_t *)recBuf;
   size_t frames = recLen / 4;
-  int lPeak = 0, rPeak = 0, mPeak = 0;
-  for (size_t i = 0; i < frames; i++) {
-    int16_t l = pcm[i * 2], r = pcm[i * 2 + 1];
-    int32_t m = ((int32_t)l + (int32_t)r) / 2;
-    pcm[i] = (int16_t)m;
-    lPeak = max(lPeak, abs((int)l));
-    rPeak = max(rPeak, abs((int)r));
-    mPeak = max(mPeak, abs((int)m));
-  }
-  USBSerial.printf("[VOICE] frames=%u peak L/R/M=%d/%d/%d\n", frames, lPeak, rPeak, mPeak);
+  for (size_t i = 0; i < frames; i++) pcm[i] = pcm[i * 2];
   recLen = frames * 2;
   int code = http.POST(recBuf, recLen);
   USBSerial.printf("[VOICE] http=%d resp=%s\n", code, http.getString().substring(0, 120).c_str());
@@ -600,7 +473,7 @@ void checkKeys() {
       uiSet("idle", "记住口味了喵！", "想吃什么？按住说话");
       playMeow(800, 1050, 200);
     } else {
-      uiSet("idle", "今天吃什么？", "长按说话 · 左换右定");
+      uiSet("idle", "想吃什么？", "按住说话 · 点左边换 · 摇一摇");
     }
     aAt = millis();
     aDown = true;
@@ -684,18 +557,7 @@ void setup() {
   // 全屏双缓冲(PSRAM): 整屏刷新, 从根上绕开 CO5300 局部窗口对齐的花屏
   lv_color_t *b1 = (lv_color_t *)heap_caps_malloc(W * H * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
   lv_color_t *b2 = (lv_color_t *)heap_caps_malloc(W * H * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-  USBSerial.printf("[BOOT] lv fullbuf native=%p b1=%p b2=%p (%lux%lu)\n", nativeFrame, b1, b2, W, H);
-  if (!nativeFrame || !b1 || !b2) {
-    USBSerial.println("[BOOT] fatal: PSRAM frame buffers unavailable");
-    gfx->fillScreen(0xF800);
-    gfx->setTextColor(0xFFFF);
-    gfx->setTextSize(2);
-    gfx->setCursor(24, 80);
-    gfx->println("PSRAM FAIL");
-    gfx->setCursor(24, 120);
-    gfx->println("Reflash OPI");
-    while (true) delay(1000);
-  }
+  USBSerial.printf("[BOOT] lv fullbuf %p %p (%lux%lu)\n", b1, b2, W, H);
   lv_disp_draw_buf_init(&draw_buf, b1, b2, W * H);
   static lv_disp_drv_t disp_drv;
   lv_disp_drv_init(&disp_drv);
@@ -720,24 +582,19 @@ void setup() {
   spkInit();
   USBSerial.println("[BOOT] audio ok");
 
-  WiFi.onEvent(onWiFiEvent);
-  beginWifiProfile(0);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
   USBSerial.println("[BOOT] wifi begin");
 }
 
+bool wsStarted = false;
 uint32_t lastWifiTry = 0;
 void wifiWatch() {
-  if (WiFi.status() == WL_CONNECTED) {
-    if (wsFailSince && millis() - wsFailSince > 20000) {
-      USBSerial.printf("[WS] gateway timeout on %s, switch profile\n", net().label);
-      beginWifiProfile(activeNetSlot + 1);
-      lastWifiTry = millis();
-      return;
-    }
+  int status = WiFi.status();
+  if (status == WL_CONNECTED) {
     if (!wsStarted) {
-      uiSet("idle", "今天吃什么？", "长按说话 · 左换右定");
+      uiSet("idle", "想吃什么？", "按住说话 · 点左边换 · 摇一摇");
       ensureSession();
-      ws.begin(net().host, net().port, "/v1/device/stream");
+      ws.begin(GW_HOST, GW_PORT, "/v1/device/stream");
       ws.onEvent(onWsEvent);
       ws.setReconnectInterval(3000);
       ws.enableHeartbeat(15000, 3000, 2);   // 15s ping; 链路悄死 ~21s 内检出并自动重连
@@ -745,39 +602,24 @@ void wifiWatch() {
     }
     return;
   }
-  if (millis() - lastWifiTry < 15000) return;
-  if (millis() - lastWifiStatusLog > 5000) {
-    lastWifiStatusLog = millis();
-    USBSerial.printf("[WIFI] waiting %s status=%d\n", net().label, WiFi.status());
-  }
+  if (millis() - lastWifiTry < 30000) return;
   lastWifiTry = millis();
-  // 连不上：扫描周围 WiFi 显示在屏上（现场排查神器），然后重试
+  if (status == WL_IDLE_STATUS) {
+    USBSerial.println("[WIFI] still connecting");
+    return;
+  }
+  USBSerial.printf("[WIFI] reconnect status=%d\n", status);
+  uiSet("offline", "网络重连中...", "请稍等");
   WiFi.disconnect(false, false);
   delay(300);
-  int n = WiFi.scanNetworks(false, true);
-  USBSerial.printf("[WIFI] scan n=%d while connecting %s\n", n, net().label);
-  String list = "";
-  for (int i = 0; i < n && i < 6; i++) {
-    USBSerial.printf("[WIFI] seen ssid=%s rssi=%d ch=%d\n",
-                     WiFi.SSID(i).c_str(), WiFi.RSSI(i), WiFi.channel(i));
-    list += WiFi.SSID(i) + " (" + String(WiFi.RSSI(i)) +
-            (WiFi.channel(i) <= 14 ? " 2.4G" : " 5G") + ")\n";
-  }
-  uiSet("error", (String("找不到: ") + net().ssid).c_str(),
-        list.length() ? list.c_str() : "扫描不到网络");
-  beginWifiProfile(activeNetSlot + 1);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
 }
 
 // 像素猫动画：400ms 一帧
 uint32_t animAt = 0; int animFrame = 0;
 void animateCat() {
-  if (splash || tasteImg) return;
   if (millis() - animAt < 400) return;
   animAt = millis(); animFrame++;
-  if (pixelStandby) {
-    setPixCat(CAT_STANDBY, animFrame % 12 == 0 ? 0xFF80C8 : 0x66D9EF);
-    return;
-  }
   if (curState == "done") return;                       // 喵单屏无猫
   if (curState == "listening" && recording)
     setPixCat(animFrame % 2 ? CAT_LISTEN : CAT_IDLE, 0x66BB6A);          // 张嘴/闭嘴
@@ -796,14 +638,17 @@ void animateCat() {
 uint32_t dbgAt = 0;
 void loop() {
   animateCat();
-  tickStandbyBlink();
   twTick();                                                  // 议事会台词打字机
   // 口味引导页 30s 没人按 → 自动进待命(演示时不卡流程)
   if (tasteImg && millis() - tasteAt > 30000)
     uiSet("idle", "想吃什么？", "按住说话 · 点左边换 · 摇一摇");
-  if (!splash && !tasteImg && !recording && curState == "idle" &&
-      millis() - lastUiAt > STANDBY_AFTER_MS)
-    enterPixelStandby();
+  // 待机屏保: 60s 无画面变化回到沙发猫(也防 AMOLED 烧屏); 录音中不启动
+  if (!splash && !tasteImg && !recording && lastUiAt && millis() - lastUiAt > 60000) {
+    splash = lv_img_create(scr);
+    lv_img_set_src(splash, &splash_sofa);
+    lv_obj_align(splash, LV_ALIGN_CENTER, 0, 0);
+    lastUiAt = millis();
+  }
   if (paOffAt && millis() > paOffAt) { digitalWrite(PA, LOW); paOffAt = 0; }  // 功放待机降噪
   if (millis() - dbgAt > 300) {   // 按键探测: 底行实时显示 GPIO0 电平
     dbgAt = millis();

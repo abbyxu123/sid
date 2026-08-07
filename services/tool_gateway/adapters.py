@@ -27,9 +27,7 @@ def build_action(candidate: Candidate, channel: Channel,
     用 App 里已登录的会话，绕开网页端登录墙；打不开（未装 App）由前端回落 url。
     """
     app_url = ""
-    if channel == Channel.dine_in or (
-        channel == Channel.any and candidate.channel == Channel.dine_in
-    ):
+    if channel == Channel.dine_in or candidate.channel == Channel.dine_in:
         url = (f"https://uri.amap.com/search?keyword={quote(candidate.restaurant)}"
                f"&view=map&src=noon-decision-os")
         action = "map_deeplink"

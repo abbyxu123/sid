@@ -1,7 +1,7 @@
 """结构化抽取任务定义：系统提示 + 扁平/嵌套转换。
 
 这是 Step 与 kitten 共用的任务契约；training/train_kitten.py 内嵌了同一份
-SYSTEM_PROMPT（local AI host 上独立运行），改动必须双向同步并重训。
+SYSTEM_PROMPT（Spark 上独立运行），改动必须双向同步并重训。
 """
 from __future__ import annotations
 
@@ -66,10 +66,13 @@ def unflatten(flat: dict) -> tuple[str, HardConstraints, SoftPreferences, Contex
 
 
 # ---- 规则降级解析（模型全部不可用时的最后一道）----
-_CN_NUM = {"一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5,
-           "六": 6, "七": 7, "八": 8, "九": 9, "十": 10, "半": 0.5}
-_FOOD_WORDS = ("面食", "面条", "米线", "米粉", "海鲜", "香菜", "葱", "姜", "蒜",
-               "牛肉", "猪肉", "羊肉", "鸡肉", "内脏", "甜食", "油炸", "生冷", "辣")
+_CN_NUM = {"零": 0, "〇": 0, "一": 1, "二": 2, "两": 2, "三": 3,
+           "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+_CN_UNITS = {"十": 10, "百": 100, "千": 1000, "万": 10000}
+_CN_NUMBER_CHARS = "零〇一二两三四五六七八九十百千万"
+_FOOD_WORDS = ("面食", "面条", "米线", "米粉", "海鲜", "鱼", "虾", "蟹", "香菜",
+               "葱", "姜", "蒜", "牛肉", "猪肉", "羊肉", "鸡肉", "豆腐", "蔬菜",
+               "沙拉", "轻食", "汉堡", "火锅", "烧烤", "内脏", "甜食", "油炸", "生冷", "辣")
 
 
 def rule_structure(text: str):
@@ -87,38 +90,51 @@ def rule_structure(text: str):
         raise ValueError("检测到过敏表述但无法解析过敏原")
     taboos, hated = [], []
     for w in _FOOD_WORDS:
-        if re.search(rf"(不要|不吃|别放|不能吃|忌){w}", text):
+        if re.search(rf"(不要|不吃|不想吃|别放|不能吃|忌){w}", text):
             (taboos if w in ("面食", "面条", "米线", "米粉", "海鲜", "内脏") else hated).append(w)
     def _cn2num(s: str):
         if not s:
             return None
         if s.isdigit():
             return float(s)
-        n, unit = 0, 0
-        if "十" in s:
-            a, _, b = s.partition("十")
-            n = _CN_NUM.get(a, 1) * 10 + (_CN_NUM.get(b, 0) if b else 0)
-        else:
-            n = _CN_NUM.get(s, 0)
-        return float(n) if n else None
+        total = section = number = 0
+        for char in s:
+            if char in _CN_NUM:
+                number = _CN_NUM[char]
+                continue
+            unit = _CN_UNITS.get(char)
+            if unit is None:
+                return None
+            if unit == 10000:
+                total += (section + number) * unit
+                section = number = 0
+            else:
+                section += (number or 1) * unit
+                number = 0
+        value = total + section + number
+        return float(value) if value else None
 
     budget = None
-    m = re.search(r"([\d一二两三四五六七八九十]+)\s*(?:块|元)", text) or \
-        re.search(r"([\d一二两三四五六七八九十]+)\s*以内", text)
+    number_pattern = rf"[\d{_CN_NUMBER_CHARS}]+"
+    m = re.search(rf"({number_pattern})\s*(?:块|元)", text) or \
+        re.search(rf"({number_pattern})\s*以内", text)
     if m:
         budget = _cn2num(m.group(1))
     eat_by = None
-    m = re.search(r"(\d+)\s*分钟", text)
+    m = re.search(rf"({number_pattern})\s*分钟", text)
     if m:
-        eat_by = int(m.group(1))
+        parsed = _cn2num(m.group(1))
+        eat_by = int(parsed) if parsed is not None else None
     elif "半小时" in text or "半个小时" in text:
         eat_by = 30
-    elif re.search(r"[一1]\s*(?:个)?小时", text):
-        eat_by = 60
+    else:
+        m = re.search(rf"({number_pattern})\s*(?:个)?小时", text)
+        if m:
+            parsed = _cn2num(m.group(1))
+            eat_by = int(parsed * 60) if parsed is not None else None
     spicy = None
     if re.search(r"不(?:要|吃|能吃)辣|不辣", text):
         spicy = "none"
-        hated = [h for h in hated if h != "辣"]
     elif "微辣" in text:
         spicy = "mild"
     elif "辣" in text:
@@ -132,7 +148,12 @@ def rule_structure(text: str):
     elif "附近" in text:
         max_dist = 1000
     novelty = "bold" if re.search(r"随便|都行|来点新|试试新|尝鲜", text) else None
-    channel = "dine_in" if re.search(r"到店|堂食|附近吃|出去吃", text) else "any"
+    if re.search(r"到店|堂食|附近吃|出去吃", text):
+        channel = "dine_in"
+    elif re.search(r"外卖|配送|送到", text):
+        channel = "delivery"
+    else:
+        channel = "any"
     hard = HardConstraints(allergens=allergens, diet_taboos=taboos, hated=hated,
                            budget_max=budget, eat_by_minutes=eat_by, max_distance_m=max_dist)
     soft = SoftPreferences(spicy=spicy, cuisines=[], novelty=novelty)

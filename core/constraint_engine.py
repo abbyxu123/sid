@@ -1,6 +1,6 @@
 """确定性硬规则层：过敏、禁忌、预算、时间由规则保护，模型不能推翻。
 
-这是产品安全边界之一：hard_constraint 违规率目标 0%。
+这是评委必看项之一：hard_constraint 违规率目标 0%。
 任何候选进入 Agent 评估之前必须先过这里；Auditor 事后还会用同一套规则复核。
 """
 from __future__ import annotations

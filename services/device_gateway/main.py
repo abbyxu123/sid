@@ -44,7 +44,6 @@ app.add_middleware(CORSMiddleware, allow_origins=_ORIGINS, allow_methods=["*"], 
 ledger = Ledger()
 router = ModelRouter()
 USE_MODEL = os.environ.get("USE_MODEL", "1") == "1"
-ASR_MODEL = os.environ.get("ASR_MODEL", "small")
 sessions: dict[str, DecisionSession] = {}
 device_sockets: list[WebSocket] = []
 seen_events: dict[str, float] = {}  # 幂等键 device_id:event:timestamp → 收到时间
@@ -53,8 +52,10 @@ session_pools: dict[str, list[Candidate]] = {}  # 本轮候选池（含拍照菜
 council_lines: dict[str, tuple[str, str]] = {}  # 议事会实时台词 sid → (猫名, 台词)
 asked_once: dict[str, bool] = {}    # 缺字段追问: 每会话只问一次
 pending_ask: dict[str, bool] = {}   # 追问中: 下一句并入而非覆盖约束
-DONE_AUTO_IDLE_SECONDS = 2
-LISTENING_AUTO_IDLE_SECONDS = 10
+done_generations: dict[str, int] = {}  # 每轮 done 的序号，隔离旧二维码定时任务
+decision_tasks: dict[str, object] = {}  # 每会话最多一个后台语音/议事会任务
+voice_generations: dict[str, int] = {}  # 丢弃被新输入/操作取代的旧 ASR 结果
+DONE_AUTO_IDLE_SECONDS = 30
 CAT_NAMES = {"taste": "口味猫", "budget": "预算猫", "time": "时间猫",
              "memory": "记忆猫", "novelty": "探索猫"}
 # 台词字符必须在板载字库内（/tmp/charset.txt 校验过），否则显示为口
@@ -129,25 +130,20 @@ async def push_state(session: DecisionSession) -> None:
         device_sockets.remove(ws)
 
 
-async def auto_idle_after_done(sid: str, delay_s: float = DONE_AUTO_IDLE_SECONDS) -> None:
-    """二维码页只停留一小段时间，防止设备看起来卡在喵单页。"""
-    import asyncio as _aio
+async def auto_idle_after_done(
+    session_id: str, delay_s: float = DONE_AUTO_IDLE_SECONDS,
+    generation: int | None = None,
+) -> None:
+    """二维码页最多停留 30 秒；用户已操作到别的状态时不覆盖。"""
+    import asyncio
 
-    await _aio.sleep(delay_s)
-    session = sessions.get(sid)
-    if not session or session.state != SessionState.done:
-        return
-    session.state = SessionState.idle
-    await push_state(session)
-
-
-async def auto_idle_after_listening(sid: str, delay_s: float = LISTENING_AUTO_IDLE_SECONDS) -> None:
-    """追问/在听状态如果没有后续输入，自动退回待命，让板端待机屏接管。"""
-    import asyncio as _aio
-
-    await _aio.sleep(delay_s)
-    session = sessions.get(sid)
-    if not session or session.state != SessionState.listening:
+    expected_generation = (
+        done_generations.get(session_id, 0) if generation is None else generation
+    )
+    await asyncio.sleep(delay_s)
+    session = sessions.get(session_id)
+    if (not session or session.state != SessionState.done
+            or done_generations.get(session_id, 0) != expected_generation):
         return
     session.state = SessionState.idle
     await push_state(session)
@@ -252,9 +248,6 @@ async def console():
 
 
 presence = {"present": None, "ts": 0.0}   # mmWave 人体存在（可选传感器, CatTV P2 预留）
-mmwave = {"sample": {}, "ts": 0.0}        # MR60BHA2/XIAO 最新样本（开发期 USB 串口桥接）
-MMWAVE_FRESH_SECONDS = 180.0
-MMWAVE_PATH = Path("data/mmwave_latest.json")
 
 
 @app.post("/v1/sensor/presence")
@@ -266,69 +259,6 @@ async def sensor_presence(body: dict):
     return {"ok": True}
 
 
-def _num(v, default=None):
-    try:
-        return float(v)
-    except (TypeError, ValueError):
-        return default
-
-
-def mmwave_snapshot(now=None) -> dict:
-    import time as _t
-
-    now = _t.time() if now is None else now
-    try:
-        stored = json.loads(MMWAVE_PATH.read_text(encoding="utf-8"))
-        if float(stored.get("ts") or 0) > float(mmwave.get("ts") or 0):
-            mmwave["sample"] = stored.get("sample") or {}
-            mmwave["ts"] = float(stored.get("ts") or 0)
-    except Exception:
-        pass
-    ts = float(mmwave.get("ts") or 0.0)
-    sample = dict(mmwave.get("sample") or {})
-    age = now - ts if ts else None
-    fresh = bool(sample) and age is not None and 0 <= age <= MMWAVE_FRESH_SECONDS
-    return {
-        "fresh": fresh,
-        "age_seconds": round(age, 1) if age is not None else None,
-        "present": sample.get("present"),
-        "target_count": sample.get("target_count"),
-        "distance_cm": sample.get("distance_cm"),
-        "heart_bpm": sample.get("heart_bpm"),
-        "respiration_bpm": sample.get("respiration_bpm"),
-        "illuminance_lux": sample.get("illuminance_lux"),
-        "source": sample.get("source", "unknown"),
-    }
-
-
-@app.post("/v1/sensor/mmwave")
-async def sensor_mmwave(body: dict):
-    """MR60BHA2/XIAO 上报: presence/distance/heart/respiration/lux。"""
-    import time as _t
-
-    target_count = int(_num(body.get("target_count"), 0) or 0)
-    present = bool(body.get("present", target_count > 0))
-    sample = {
-        "present": present,
-        "target_count": target_count,
-        "distance_cm": _num(body.get("distance_cm")),
-        "heart_bpm": _num(body.get("heart_bpm")),
-        "respiration_bpm": _num(body.get("respiration_bpm")),
-        "illuminance_lux": _num(body.get("illuminance_lux")),
-        "source": str(body.get("source") or "mr60bha2"),
-    }
-    mmwave["sample"] = {k: v for k, v in sample.items() if v is not None}
-    mmwave["ts"] = _t.time()
-    MMWAVE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    MMWAVE_PATH.write_text(
-        json.dumps({"ts": mmwave["ts"], "sample": mmwave["sample"]}, ensure_ascii=False),
-        encoding="utf-8",
-    )
-    presence["present"] = present
-    presence["ts"] = mmwave["ts"]
-    return {"ok": True, "sensor": mmwave_snapshot(mmwave["ts"])}
-
-
 @app.api_route("/v1/hungry", methods=["GET", "POST"])
 async def hungry():
     """「我饿了吗」彩蛋: 基于手账的上一顿时间, 记忆猫给个俏皮判断。"""
@@ -336,8 +266,6 @@ async def hungry():
     rows = ledger.journal(2)
     last = next((r for r in rows if r.get("confirmed")), rows[0] if rows else None)
     name_of = {c.id: c.item for c in load_candidates()}
-    decision = "maybe_craving"
-    sensor = mmwave_snapshot()
     if not last:
         title, sub_ = "我饿了吗？", "还没记录过 · 先来一顿喵"
     else:
@@ -349,27 +277,6 @@ async def hungry():
             title, sub_ = "有点饿了吧？", f"上一顿是{item} · 来一顿？"
         else:
             title, sub_ = "早就饿了吧！", "按住说话 来一顿喵"
-    if sensor["fresh"] and sensor["present"]:
-        heart = _num(sensor.get("heart_bpm"), None)
-        resp = _num(sensor.get("respiration_bpm"), None)
-        dist = _num(sensor.get("distance_cm"), None)
-        last_minutes = None if not last else int((_t.time() - last["ts"]) / 60)
-        signal_parts = []
-        if heart is not None:
-            signal_parts.append(f"心率{int(heart)}")
-        if resp is not None:
-            signal_parts.append(f"呼吸{int(resp)}")
-        if dist is not None:
-            signal_parts.append(f"距离{int(dist)}cm")
-        signal = "毫米波: " + " ".join(signal_parts) if signal_parts else "毫米波已接入"
-        if last_minutes is not None and last_minutes < 120:
-            title, sub_, decision = "更像是馋了", f"{signal} · {last_minutes}分钟前刚吃过", "not_hungry"
-        elif (heart is not None and heart >= 80) or (resp is not None and resp >= 14):
-            title, sub_, decision = "可能真饿了", f"{signal} · 状态有点被食物唤醒", "hungry"
-        else:
-            title, sub_, decision = "先别急着点", f"{signal} · 像是在想吃但不一定饿", "maybe_craving"
-    elif sensor["fresh"] and not sensor["present"]:
-        title, sub_, decision = "猫没看到你", "毫米波暂时没检测到稳定目标", "not_hungry"
     frame = DeviceStateFrame(state=SessionState.idle,
                              display=DeviceDisplay(title=board_text(title, 12),
                                                    subtitle=board_text(sub_, 42)))
@@ -379,7 +286,7 @@ async def hungry():
         except Exception:
             pass
     ledger.append("hungry", "input", {"event": "hungry_check", "title": title})
-    return {"title": title, "subtitle": sub_, "decision": decision, "sensor": sensor}
+    return {"title": title, "subtitle": sub_}
 
 
 PROFILE_PATH = Path("data/profile.json")
@@ -464,11 +371,7 @@ async def health():
 async def create_session(body: SessionCreate):
     global active_session_id
     sid = f"sess_{uuid.uuid4().hex[:12]}"
-    sessions[sid] = DecisionSession(
-        session_id=sid,
-        state=SessionState.idle,
-        context=Context(channel=Channel.delivery),
-    )
+    sessions[sid] = DecisionSession(session_id=sid, state=SessionState.listening)
     active_session_id = sid
     ledger.append(sid, "input", {"event": "session_created", "device_id": body.device_id})
     _prune_sessions()
@@ -482,19 +385,18 @@ def _prune_sessions() -> None:
     """演示长跑保护：会话/池子字典有界，淘汰最旧的（Ledger 里永久记录不受影响）。"""
     while len(sessions) > MAX_SESSIONS:
         oldest = next(iter(sessions))
+        cancel_background_decision(oldest)
         sessions.pop(oldest, None)
         session_pools.pop(oldest, None)
+        done_generations.pop(oldest, None)
+        voice_generations.pop(oldest, None)
 
 
 def get_or_revive(sid: str) -> DecisionSession:
     """网关重启后板子/二维码持有的旧会话自动复活——会话 id 是客户端的稳定锚点。"""
     global active_session_id
     if sid not in sessions:
-        sessions[sid] = DecisionSession(
-            session_id=sid,
-            state=SessionState.idle,
-            context=Context(channel=Channel.delivery),
-        )
+        sessions[sid] = DecisionSession(session_id=sid, state=SessionState.listening)
         active_session_id = sid
         ledger.append(sid, "input", {"event": "session_revived"})
         _prune_sessions()
@@ -503,6 +405,8 @@ def get_or_revive(sid: str) -> DecisionSession:
 
 @app.post("/v1/input")
 async def submit_input(body: InputPayload):
+    advance_voice_generation(body.session_id)
+    cancel_background_decision(body.session_id)
     session = get_or_revive(body.session_id)
     previous_context = session.context
     if body.text:
@@ -517,9 +421,7 @@ async def submit_input(body: InputPayload):
     if body.context:
         session.context = body.context
     session.state = SessionState.structuring
-    input_payload = body.model_dump()
-    input_payload["merged_text"] = session.raw_input
-    ledger.append(session.session_id, "input", input_payload)
+    ledger.append(session.session_id, "input", body.model_dump())
     # text → 模型结构化（kitten 优先，Step 兜底，都挂则用手工字段/默认值走规则）
     if USE_MODEL and body.text and body.hard_constraints is None:
         try:
@@ -571,13 +473,12 @@ async def submit_input(body: InputPayload):
                     session.context.channel = previous_context.channel
             ledger.append(session.session_id, "structured", {
                 "hard": hard.model_dump(), "soft": soft.model_dump(),
-                "ctx": ctx.model_dump(), "degraded": True,
-            })
-        except ValueError as exc:
-            session.risk_flags.append(f"structure_failed: rule: {exc}")
+                "ctx": ctx.model_dump(), "rules_only": True})
+        except ValueError as e:
+            session.risk_flags.append(f"structure_failed: rule: {e}")
             session.state = SessionState.error
             ledger.append(session.session_id, "error",
-                          {"stage": "structure", "reason": f"rule: {exc}"})
+                          {"stage": "structure", "reason": f"rule: {e}"})
             await push_state(session)
             return session.model_dump()
     prof = load_profile()
@@ -602,11 +503,6 @@ async def submit_input(body: InputPayload):
         asked_once[session.session_id] = True
         pending_ask[session.session_id] = True
         session.state = SessionState.listening
-        import asyncio as _aio_followup
-
-        _aio_followup.get_event_loop().create_task(
-            auto_idle_after_listening(session.session_id)
-        )
         ledger.append(session.session_id, "input", {"event": "followup_asked"})
         frame = DeviceStateFrame(state=SessionState.listening,
                                  display=DeviceDisplay(title="预算多少喵？",
@@ -678,8 +574,93 @@ async def submit_input(body: InputPayload):
     return session.model_dump()
 
 
+def cancel_background_decision(session_id: str) -> None:
+    import asyncio
+
+    task = decision_tasks.get(session_id)
+    current = asyncio.current_task()
+    if task is not None and task is not current and not task.done():
+        task.cancel()
+
+
+def advance_voice_generation(session_id: str) -> int:
+    generation = voice_generations.get(session_id, 0) + 1
+    voice_generations[session_id] = generation
+    return generation
+
+
+def voice_generation_is_current(session_id: str, generation: int) -> bool:
+    return voice_generations.get(session_id, 0) == generation
+
+
+def schedule_background_decision(session_id: str, coroutine):
+    import asyncio
+
+    cancel_background_decision(session_id)
+    task = asyncio.create_task(coroutine)
+    decision_tasks[session_id] = task
+    return task
+
+
+def background_task_is_current(session_id: str) -> bool:
+    import asyncio
+
+    task = asyncio.current_task()
+    tracked = decision_tasks.get(session_id)
+    return tracked is None or tracked is task
+
+
+async def mark_background_error(session_id: str, stage: str, error: Exception) -> None:
+    if not background_task_is_current(session_id):
+        return
+    session = sessions.get(session_id)
+    ledger.append(session_id, "error", {"stage": stage, "reason": str(error)})
+    if not session:
+        return
+    session.risk_flags.append(f"{stage}: {error}")
+    session.state = SessionState.error
+    await push_state(session)
+
+
+async def run_voice_decision(session_id: str, text: str) -> None:
+    import asyncio
+
+    try:
+        await submit_input(InputPayload(session_id=session_id, text=text))
+    except asyncio.CancelledError:
+        raise
+    except Exception as error:  # noqa: BLE001 - 后台异常必须收敛到可恢复状态
+        await mark_background_error(session_id, "voice_bg", error)
+    finally:
+        if decision_tasks.get(session_id) is asyncio.current_task():
+            decision_tasks.pop(session_id, None)
+
+
+async def run_recouncil_decision(session_id: str) -> None:
+    import asyncio
+
+    try:
+        session = sessions[session_id]
+        updated = await run_decision(
+            session,
+            session_pools.get(session_id) or load_candidates(),
+            model=router if USE_MODEL else None,
+            ledger_recent=ledger.recent_meals(),
+        )
+        sessions[session_id] = updated
+        await push_state(updated)
+    except asyncio.CancelledError:
+        raise
+    except Exception as error:  # noqa: BLE001 - 后台异常必须收敛到可恢复状态
+        await mark_background_error(session_id, "recouncil_bg", error)
+    finally:
+        if decision_tasks.get(session_id) is asyncio.current_task():
+            decision_tasks.pop(session_id, None)
+
+
 @app.post("/v1/device/event")
 async def device_event(evt: DeviceEvent):
+    advance_voice_generation(evt.session_id)
     session = get_or_revive(evt.session_id)
     # 幂等：网络抖动下固件重发同一事件（同 device+event+timestamp）只生效一次
     if evt.timestamp:
@@ -697,7 +678,8 @@ async def device_event(evt: DeviceEvent):
             and session.state == SessionState.error):
         session.state = SessionState.idle   # 错误态按任意耳=复位待命，不再反复推错帧
     elif evt.event == DeviceEventType.left_ear and session.state == SessionState.done:
-        session.state = SessionState.idle   # 喵单页点左半屏=反悔返回，避免卡在二维码
+        done_generations[session.session_id] = done_generations.get(session.session_id, 0) + 1
+        session.state = SessionState.idle
     elif evt.event == DeviceEventType.left_ear and session.state == SessionState.candidate:
         session.cursor += 1
     elif evt.event == DeviceEventType.right_ear and session.state == SessionState.candidate:
@@ -708,52 +690,29 @@ async def device_event(evt: DeviceEvent):
     ):
         # 重开议事会转后台：走 LLM 时耗时分钟级，攥着 HTTP 会让板子超时(-11 同款)
         session.decision_mode = None  # 沿用本轮候选池（含拍照菜品）
-        import asyncio as _aio3
-
-        async def _recouncil(sid: str):
-            try:
-                s2 = await run_decision(sessions[sid],
-                                        session_pools.get(sid) or load_candidates(),
-                                        model=router if USE_MODEL else None,
-                                        ledger_recent=ledger.recent_meals())
-                sessions[sid] = s2
-                await push_state(s2)
-            except Exception as e:  # noqa: BLE001
-                ledger.append(sid, "error", {"stage": "recouncil_bg", "reason": str(e)})
-
-        _aio3.get_event_loop().create_task(_recouncil(evt.session_id))
         session.state = SessionState.council
         council_lines.pop(evt.session_id, None)   # 立刻给"四只猫开会中..."开场帧
+        schedule_background_decision(
+            evt.session_id, run_recouncil_decision(evt.session_id)
+        )
     elif evt.event == DeviceEventType.cancel and session.state != SessionState.acting:
+        cancel_background_decision(evt.session_id)
         session.state = SessionState.idle
     await push_state(session)
     return {"ok": True, "state": session.state}
 
 
 @app.post("/v1/confirm")
-async def confirm(body: dict, request: Request):
+async def confirm(body: dict):
+    advance_voice_generation(body.get("session_id", ""))
     session = sessions.get(body.get("session_id", ""))
     if not session:
         raise HTTPException(404, "session not found")
-    selected_id = body.get("candidate_id")
     if session.state != SessionState.confirming:
-        if selected_id and session.state == SessionState.candidate:
-            session.state = SessionState.confirming
-        else:
-            raise HTTPException(409, f"state is {session.state}, not confirming")
-    if selected_id and session.candidates:
-        for i, candidate in enumerate(session.candidates):
-            if candidate.id == selected_id:
-                session.cursor = i
-                break
-        else:
-            raise HTTPException(404, f"candidate {selected_id} not found")
+        raise HTTPException(409, f"state is {session.state}, not confirming")
     session.human_confirmed = True
     session.state = SessionState.acting
-    ledger.append(session.session_id, "confirm", {
-        "human_confirmed": True,
-        "candidate_id": selected_id or "",
-    })
+    ledger.append(session.session_id, "confirm", {"human_confirmed": True})
     await push_state(session)
 
     shown = session.candidates[session.cursor % len(session.candidates)]
@@ -769,29 +728,39 @@ async def confirm(body: dict, request: Request):
     session.action_result = build_action(shown, session.context.channel,
                                          budget_max=session.hard_constraints.budget_max)
     session.state = SessionState.done if session.action_result.ok else SessionState.error
+    generation = None
+    if session.state == SessionState.done:
+        generation = done_generations.get(session.session_id, 0) + 1
+        done_generations[session.session_id] = generation
     ledger.append(session.session_id, "action", session.action_result.model_dump())
     await push_state(session)
     if session.state == SessionState.done:
-        import asyncio as _aio_done
+        import asyncio
 
-        _aio_done.get_event_loop().create_task(auto_idle_after_done(session.session_id))
-    console_url = str(request.base_url).rstrip("/") + f"/console?sid={session.session_id}"
+        asyncio.get_running_loop().create_task(
+            auto_idle_after_done(session.session_id, generation=generation)
+        )
     return {"ok": session.action_result.ok,
             "action": session.action_result.action,
-            "console_url": console_url,
-            # 兼容旧固件/旧扫码端：主 url 始终回到 H5，由 H5 再打开外卖或地图链接。
-            "url": console_url,
-            "order_url": session.action_result.url,
-            "app_url": session.action_result.app_url,
-            "item": shown.item}
+            "url": session.action_result.url,
+            "app_url": session.action_result.app_url}
 
 
 @app.post("/v1/feedback")
 async def feedback(body: dict):
     sid = body.get("session_id", "")
+    advance_voice_generation(sid)
     if sid not in sessions:
         raise HTTPException(404, "session not found")
+    session = sessions[sid]
+    if session.state not in (SessionState.done, SessionState.idle):
+        ledger.append(sid, "feedback", {
+            **body, "ignored": True, "state": session.state.value,
+        })
+        return {"ok": True, "ignored": True, "state": session.state}
     ledger.append(sid, "feedback", body)
+    session.state = SessionState.idle
+    done_generations[sid] = done_generations.get(sid, 0) + 1
     # 联动：手机点了👍/👎，板子眨眼答应一声（记忆猫入账的实感）
     liked = bool(body.get("would_repeat"))
     frame = DeviceStateFrame(
@@ -825,27 +794,21 @@ async def _warm_asr():
 
 
 def _asr(pcm_bytes: bytes, rate: int) -> str:
-    """CPU ASR（faster-whisper, int8）——懒加载，不与 GPU 冲突。"""
+    """CPU ASR（faster-whisper small, int8）——懒加载，不与 GPU 冲突。"""
     import numpy as np
     if _ASR["model"] is None:
         from faster_whisper import WhisperModel
-        _ASR["model"] = WhisperModel(ASR_MODEL, device="cpu", compute_type="int8")
+        _ASR["model"] = WhisperModel("small", device="cpu", compute_type="int8")
     audio = np.frombuffer(pcm_bytes, dtype=np.int16).astype(np.float32) / 32768.0
     if rate != 16000 and len(audio):
         idx = (np.arange(0, len(audio), rate / 16000)).astype(int)
         audio = audio[idx[idx < len(audio)]]
-    prompt = ("点外卖场景：预算多少块以内，几分钟内吃上，想吃辣的，"
-              "不要面食，不吃香菜，米线、烤鱼、黄焖鸡、砂锅、麻辣烫、外卖。")
     segments, _ = _ASR["model"].transcribe(
         audio, language="zh", beam_size=1, vad_filter=True,
         # 点餐领域词表偏置：不加时"面食"常被解码成"面试"
-        initial_prompt=prompt)
+        initial_prompt="点外卖场景：预算多少块以内，几分钟内吃上，想吃辣的，"
+                       "不要面食，不吃香菜，米线、烤鱼、黄焖鸡、砂锅、麻辣烫、外卖。")
     text = "".join(seg.text for seg in segments).strip()
-    if not text and len(audio):
-        segments, _ = _ASR["model"].transcribe(
-            audio, language="zh", beam_size=1, vad_filter=False,
-            initial_prompt=prompt)
-        text = "".join(seg.text for seg in segments).strip()
     for wrong, right in (("面试", "面食"), ("免税", "面食")):   # 实测误听映射
         text = text.replace(wrong, right)
     return text
@@ -854,25 +817,18 @@ def _asr(pcm_bytes: bytes, rate: int) -> str:
 @app.post("/v1/voice")
 async def voice_input(request: Request, session_id: str = "", rate: int = 16000):
     """板载语音：原始 int16 PCM body → ASR → 走标准输入管线。"""
+    voice_generation = advance_voice_generation(session_id)
+    cancel_background_decision(session_id)
     pcm = await request.body()
     if len(pcm) < 8000:
         raise HTTPException(400, "audio too short")
-    import numpy as _np
-    samples = _np.frombuffer(pcm, dtype=_np.int16)
-    if len(samples):
-        peak = int(_np.max(_np.abs(samples)))
-        rms = float(_np.sqrt(_np.mean(samples.astype(_np.float32) ** 2)))
-        span = int(_np.max(samples)) - int(_np.min(samples))
-        dur = len(samples) / max(rate, 1)
-        Path("/tmp/cattv_last_voice.pcm").write_bytes(pcm)
-        print(f"[ASR] pcm bytes={len(pcm)} dur={dur:.2f}s peak={peak} rms={rms:.1f} span={span}")
-        if peak < 128 or rms < 8:
-            raise HTTPException(422, "audio is silent")
-        if span < 64:
-            raise HTTPException(422, "audio signal invalid")
     import asyncio as _aio
     text = await _aio.get_event_loop().run_in_executor(None, _asr, pcm, rate)
-    print(f"[ASR] text={text!r}")
+    if not voice_generation_is_current(session_id, voice_generation):
+        ledger.append(session_id or "anon", "input", {
+            "event": "voice_ignored", "reason": "superseded",
+        })
+        return {"accepted": False, "ignored": True, "reason": "superseded"}
     ledger.append(session_id or "anon", "input", {"event": "voice", "asr": text})
     if not text:
         raise HTTPException(422, "没听清")
@@ -886,8 +842,13 @@ async def voice_input(request: Request, session_id: str = "", rate: int = 16000)
         return await device_event(DeviceEvent(device_id="voice", session_id=session_id,
                                               event=DeviceEventType.left_ear, timestamp=0))
     # 闲聊拦截：没有任何吃饭信号（食物字/预算数字/饿）就不硬推荐，回一句猫式问候
-    _FOOD_SIGNAL = set("吃饿辣饭面米菜汤锅烤鱼肉鸡虾粥饼串炒蒸炸卤麻烫寿司沙拉轻食随便外卖点单配送")
+    _FOOD_SIGNAL = set(
+        "吃饿辣饭面米菜汤锅烤鱼肉鸡虾蟹粥饼串炒蒸炸卤麻烫寿司沙拉轻食"
+        "随便外卖点单配送预算元块分钟小时"
+    )
+    _NUMBER_SIGNAL = set("零〇一二两三四五六七八九十百千万")
     if (len(compact) <= 14 and not any(ch.isdigit() for ch in compact)
+            and not (_NUMBER_SIGNAL & set(compact))
             and not (_FOOD_SIGNAL & set(compact))):
         frame = DeviceStateFrame(state=SessionState.idle,
                                  display=DeviceDisplay(title="你好喵！",
@@ -901,15 +862,7 @@ async def voice_input(request: Request, session_id: str = "", rate: int = 16000)
         return {"chitchat": True, "reply": "你好喵！想吃什么跟我说", "state": "idle"}
     # 决策转后台立即回 200：慢网络下抽取+剧场会拖过板子 HTTP 超时(-11)；
     # 板子 UI 本就由 WS 帧驱动，不需要这个响应体
-    import asyncio as _aio2
-
-    async def _run():
-        try:
-            await submit_input(InputPayload(session_id=session_id, text=text))
-        except Exception as e:  # noqa: BLE001 —— 后台任务异常必须落日志
-            ledger.append(session_id, "error", {"stage": "voice_bg", "reason": str(e)})
-
-    _aio2.get_event_loop().create_task(_run())
+    schedule_background_decision(session_id, run_voice_decision(session_id, text))
     return {"accepted": True, "asr": text}
 
 
@@ -957,7 +910,7 @@ async def calorie(body: dict):
 
 @app.get("/v1/metrics")
 async def metrics():
-    """Product metrics data source for model, agent, safety, and result status."""
+    """演示证据面板数据源（结尾证据画面：模型/Agent/安全/结果四行）。"""
     choices = ledger.recent(kind="choice", limit=200)
     audits_failed = sum(
         1 for c in choices
@@ -1060,10 +1013,8 @@ async def device_stream(ws: WebSocket):
             await ws.receive_text()  # 心跳/ACK；内容暂不处理
     except WebSocketDisconnect:
         pass
-    except RuntimeError as exc:
-        # Starlette may expose a peer disconnect as a RuntimeError after the
-        # disconnect frame has already changed the socket state.
-        if "WebSocket is not connected" not in str(exc):
+    except RuntimeError as error:
+        if "WebSocket is not connected" not in str(error):
             raise
     finally:
         if ws in device_sockets:

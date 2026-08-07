@@ -77,7 +77,6 @@ summary{color:var(--dim);font-size:13px}
     <button class="big sec" onclick="$('food').click()">🍱 算卡路里</button>
     <button class="big sec" onclick="openJournal()">🐾 手账</button>
   </div>
-  <button class="big sec" onclick="checkHungry()">📡 看你饿不饿</button>
   <input id="menu" type="file" accept="image/*" hidden onchange="go()">
   <input id="food" type="file" accept="image/*" hidden onchange="calorie()">
   <div class="mini" id="calout"></div>
@@ -100,12 +99,12 @@ summary{color:var(--dim);font-size:13px}
     <div class="meta" id="dMeta"></div>
     <div class="why" id="dWhy"></div>
   </div>
-  <button class="big" onclick="accept()">✅ 就这个，出喵单</button>
+  <button class="big" onclick="accept()">就吃这个 ✔</button>
   <div class="row">
-    <button class="big sec" onclick="blindBox()">🎁 外卖盲盒</button>
-    <button class="big sec" onclick="nextDish()">🔄 再来一个</button>
+    <button class="big sec" onclick="ev('left_ear')">◀ 换一个</button>
+    <button class="big sec" onclick="ev('both_ears')">🐾 重新开会</button>
   </div>
-  <div class="mini">自己挑就点确认；懒得选就开盲盒。板子左触=再来一个 · 右触=确认。</div>
+  <div class="mini">板子上左触=换 · 右触=吃 · 摇一摇=尝鲜，两边等价</div>
 </div>
 
 <!-- ④ 喵单 -->
@@ -126,7 +125,7 @@ summary{color:var(--dim);font-size:13px}
     <button class="big sec" onclick="fb(5,true)">👍 好吃还想吃</button>
     <button class="big sec" onclick="fb(2,false)">👎 踩雷了</button>
   </div>
-  <button class="big sec" onclick="reset()">重新选择 / 回到首页</button>
+  <button class="big sec" onclick="reset()">再来一顿</button>
 </div>
 
 <!-- ⑤ 猫爪手账（记忆模式可视化：吃过什么、评价如何、复购意愿） -->
@@ -135,24 +134,6 @@ summary{color:var(--dim);font-size:13px}
   <div class="mini" id="jSummary" style="font-size:14px;margin:6px 0"></div>
   <div id="jList" style="display:flex;flex-direction:column;gap:8px;overflow-y:auto"></div>
   <button class="big sec" onclick="show('p1')" style="margin-top:12px">← 回去点餐</button>
-</div>
-
-<!-- ⑥ 毫米波饿不饿 -->
-<div class="page" id="p6">
-  <div class="statebar">📡 毫米波小检测 · 娱乐参考</div>
-  <div class="dish">
-    <div class="name" id="hTitle">检测中…</div>
-    <div class="meta" id="hMeta"></div>
-    <div class="why" id="hWhy"></div>
-  </div>
-  <div class="ticket">
-    <div class="tl"><span>心率</span><span id="hHeart">—</span></div>
-    <div class="tl"><span>呼吸</span><span id="hResp">—</span></div>
-    <div class="tl"><span>距离</span><span id="hDist">—</span></div>
-    <div class="tl"><span>数据</span><span id="hFresh">—</span></div>
-  </div>
-  <button class="big" onclick="go()">今天吃什么 →</button>
-  <button class="big sec" onclick="show('p1')">← 回首页</button>
 </div>
 
 <div id="toast"></div>
@@ -246,46 +227,10 @@ async function explore(){ await ensureSession(); watch(); show('p2');
 async function ev(e){ if(!sid) return; try{ await post("/v1/device/event",{device_id:"phone",session_id:sid,event:e,timestamp:Date.now()});
   if(e==="left_ear"){ cursor=(cursor+1)%Math.max(dishes.length,1); const c=dishes[cursor]; if(c){curDish=c; $('dName').textContent=c.item; $('dMeta').textContent=`¥${c.price_total} · ${c.eta_minutes}分钟 · ${c.restaurant}`;} }
   }catch(err){ toast(err.message); } }
-async function nextDish(){ await ev('left_ear'); toast("换一口，猫猫重新端上来"); meow(1.05); }
-async function blindBox(){
-  if(!dishes.length) return toast("还没有候选，先让猫咪们讨论");
-  const old = cursor;
-  if(dishes.length > 1){
-    for(let guard=0; guard<5 && cursor===old; guard++){
-      cursor = Math.floor(Math.random() * dishes.length);
-    }
-  }
-  curDish = dishes[cursor];
-  $('dName').textContent = curDish.item;
-  $('dMeta').textContent = `¥${curDish.price_total} · ${curDish.eta_minutes}分钟 · ${curDish.restaurant}`;
-  $('dWhy').textContent = "盲盒猫拍了拍盒子：就它吧，别再为难脑子了";
-  toast("🎁 盲盒已开：抽到 " + curDish.item);
-  meow(1.35);
-}
-
-async function checkHungry(){
-  show('p6'); $('hTitle').textContent="检测中…"; $('hMeta').textContent="让猫猫看一眼你的状态"; $('hWhy').textContent="";
-  try{
-    const r = await fetch(base+"/v1/hungry", {method:"POST"});
-    if(!r.ok) throw new Error(await r.text());
-    const d = await r.json(), s = d.sensor || {};
-    $('hTitle').textContent = d.title || "猫猫看完了";
-    $('hMeta').textContent = d.subtitle || "";
-    const hasSensor = !!(s.heart_bpm || s.respiration_bpm || s.distance_cm || s.target_count);
-    $('hWhy').textContent = s.fresh ? "结合毫米波和猫爪手账，仅作娱乐参考" : (hasSensor ? "已有毫米波历史样本，等待实时刷新" : "还没收到毫米波实时数据，先按手账判断");
-    $('hHeart').textContent = s.heart_bpm ? `${Math.round(s.heart_bpm)} bpm` : "—";
-    $('hResp').textContent = s.respiration_bpm ? `${Math.round(s.respiration_bpm)} /min` : "—";
-    $('hDist').textContent = s.distance_cm ? `${Math.round(s.distance_cm)} cm` : "—";
-    $('hFresh').textContent = s.fresh ? "实时" : (hasSensor ? "历史" : "未连接");
-  }catch(e){
-    $('hTitle').textContent="检测失败";
-    $('hMeta').textContent="先确认后端和毫米波桥接脚本在运行";
-  }
-}
 async function accept(){ if(!sid) return;
   try{ await post("/v1/device/event",{device_id:"phone",session_id:sid,event:"right_ear",timestamp:Date.now()});
-    const d = await post("/v1/confirm",{session_id:sid,candidate_id:curDish && curDish.id});
-    setOrderLinks(d.order_url || d.url, d.app_url); fillTicket(); show('p4'); meow(1.2);
+    const d = await post("/v1/confirm",{session_id:sid});
+    setOrderLinks(d.url, d.app_url); fillTicket(); show('p4'); meow(1.2);
   }catch(e){ toast("确认被拦: "+e.message); } }
 function fillTicket(){ if(!curDish) return; $('tName').textContent=curDish.item; $('tPrice').textContent="¥"+curDish.price_total; $('tEta').textContent=curDish.eta_minutes+"分钟"; }
 // 去下单：主按钮 href 直接用 tbopen scheme（浏览器对用户手点锚点最宽容），副链接=网页版兜底。
@@ -331,8 +276,8 @@ async function saveProfile(){
   } catch(e) { toast("保存失败 " + e.message); }
 }
 async function fb(r,rep){ try{ await post("/v1/feedback",{session_id:sid,rating:r,would_repeat:rep,reject_reason:rep?"":"不合口味"}); toast("已记进猫爪记忆 🐾"); }catch(e){} }
-async function reset(){ if(es) es.close(); const oldSid=sid; if(oldSid) { try{ await post("/v1/device/event",{device_id:"phone",session_id:oldSid,event:"cancel"}); }catch(e){} } sid=null; curDish=null; dishes=[]; document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel')); Object.keys(picks).forEach(k=>picks[k]=null); $('text').value=""; $('menu').value=""; show('p1'); }
-// 卡路里等待过场：台词轮播+呼吸点点，30 秒不冷场（分析在 local AI host 上跑，纯前端动画）
+function reset(){ if(es) es.close(); sid=null; curDish=null; dishes=[]; document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel')); Object.keys(picks).forEach(k=>picks[k]=null); $('text').value=""; $('menu').value=""; show('p1'); }
+// 卡路里等待过场：台词轮播+呼吸点点，30 秒不冷场（分析在 Spark 上跑，纯前端动画）
 const CAL_LINES = ["🐱 猫猫凑近看了看", "👀 唔…这是什么好吃的", "🍽 在数有几块肉",
                    "📏 估一估分量", "🤔 油放得多不多呢", "🧮 掐指一算卡路里", "😺 快好了快好了"];
 let calTimer = null;

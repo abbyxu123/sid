@@ -2,7 +2,10 @@
 # stage3：kitten v2 多任务训练（NLU+scorer 蒸馏）+ 1.7B 对照 + 全家桶评测 + 恢复服务
 # 前提：council_labels.jsonl 已生成。在 local AI host 上运行，日志 ~/kitten/stage3.log
 set -euo pipefail
-cd ~/hackathon/noon-decision-os
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+EVAL_DIR="${EVAL_DIR:-$ROOT_DIR/eval}"
+mkdir -p "$EVAL_DIR"
+cd "$ROOT_DIR"
 VENV=~/kitten/venv/bin
 export TORCH_COMPILE_DISABLE=1 TORCHDYNAMO_DISABLE=1
 export CPATH=$HOME/pydev/extract/usr/include/python3.12:$HOME/pydev/extract/usr/include
@@ -46,14 +49,15 @@ echo "=== [6/7] serve + evals ==="
 for port in 8081 8082; do
     for i in $(seq 1 60); do curl -s -m 2 http://127.0.0.1:$port/health | grep -q ok && break; sleep 5; done
 done
-cd ~/hackathon/eval
-python3 eval_extraction.py --base-url http://127.0.0.1:8081 --model kitten-nlu \
-    --cases cases.json --tag kitten_v2_nlu --concurrency 4 --max-tokens 600 --out-dir . || true
-python3 eval_extraction.py --base-url http://127.0.0.1:8082 --model kitten-17b \
-    --cases cases.json --tag kitten_17b_nlu --concurrency 4 --max-tokens 600 --out-dir . || true
-cd ~/hackathon/noon-decision-os
+cd "$ROOT_DIR"
+$VENV/python scripts/eval_extraction.py --base-url http://127.0.0.1:8081 --model kitten-nlu \
+    --cases tests/synthetic_cases/cases.json --tag kitten_v2_nlu --concurrency 4 \
+    --max-tokens 600 --out-dir "$EVAL_DIR" || true
+$VENV/python scripts/eval_extraction.py --base-url http://127.0.0.1:8082 --model kitten-17b \
+    --cases tests/synthetic_cases/cases.json --tag kitten_17b_nlu --concurrency 4 \
+    --max-tokens 600 --out-dir "$EVAL_DIR" || true
 $VENV/python scripts/eval_scorer.py --labels skills/food/kitten/council_labels.jsonl \
-    --holdout 40 --kitten-url http://127.0.0.1:8081 --tag scorer_v2 --out-dir ~/hackathon/eval || true
+    --holdout 40 --kitten-url http://127.0.0.1:8081 --tag scorer_v2 --out-dir "$EVAL_DIR" || true
 pkill -f "llama-server.*8082" || true
 
 echo "=== [7/7] restore Step ==="
