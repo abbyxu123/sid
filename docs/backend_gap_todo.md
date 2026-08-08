@@ -487,18 +487,18 @@ Avoid:
 
 ## Engineer Checklist
 
-- [ ] Add profile storage and profile API.
-- [ ] Add optional care profile fields: fitness/diet/cycle notes.
-- [ ] Add missing-field response or schema v1.1 state.
-- [ ] Add dining scene and distance radius fields or text fallback.
-- [ ] Make blind box mode renderable from safe candidates.
+- [x] Add profile storage and profile API.
+- [x] Add optional basic care profile fields; expand only with explicit consent UX.
+- [x] Add one missing-field follow-up response; a dedicated schema state remains optional.
+- [x] Add dining scene, people count, and distance controls to H5/context payloads.
+- [x] Make filtered random/explore mode renderable from safe candidates.
 - [ ] Support optional selected-candidate blind box.
 - [ ] Add lucky food response shape or stub data.
 - [ ] Add group decision payload design before implementation.
-- [ ] Add optional mmWave sensor endpoint.
-- [ ] Add small-screen journal grouping on top of `/v1/journal`.
+- [x] Add optional mmWave presence sensor endpoint.
+- [x] Add day grouping support on top of `/v1/journal`; small-screen rendering remains.
 - [ ] Add home-cooking suggestion mode or local stub.
 - [ ] Add curated food-pairing note data shape.
-- [ ] Ensure QR handoff exists in frontend.
-- [ ] Update UI to read page/state mapping from `docs/mvp_spec.md`.
-- [ ] Keep payment and health boundaries explicit.
+- [x] Ensure QR handoff and post-idle receipt recovery exist in frontend.
+- [ ] Keep UI implementation aligned with the canonical page/state mapping.
+- [x] Keep payment and health boundaries explicit.

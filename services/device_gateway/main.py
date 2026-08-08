@@ -121,6 +121,54 @@ def merge_constraints(session: DecisionSession, hard, soft):
     return hard, soft
 
 
+def merge_explicit_input(parsed_hard, parsed_soft, explicit_hard, explicit_soft):
+    """Merge H5/device controls into parsed speech without losing either source.
+
+    Explicit controls win for scalar values. Safety lists and ingredient lists are
+    combined so selecting a scene or budget never makes a spoken allergy vanish.
+    """
+    if explicit_hard is not None:
+        parsed_hard.allergens = list(dict.fromkeys([
+            *parsed_hard.allergens, *explicit_hard.allergens,
+        ]))
+        parsed_hard.diet_taboos = list(dict.fromkeys([
+            *parsed_hard.diet_taboos, *explicit_hard.diet_taboos,
+        ]))
+        parsed_hard.hated = list(dict.fromkeys([
+            *parsed_hard.hated, *explicit_hard.hated,
+        ]))
+        for field in ("budget_max", "eat_by_minutes", "max_distance_m"):
+            value = getattr(explicit_hard, field)
+            if value is not None:
+                setattr(parsed_hard, field, value)
+    if explicit_soft is not None:
+        if explicit_soft.spicy is not None:
+            parsed_soft.spicy = explicit_soft.spicy
+        if explicit_soft.temperature is not None:
+            parsed_soft.temperature = explicit_soft.temperature
+        if explicit_soft.novelty is not None:
+            parsed_soft.novelty = explicit_soft.novelty
+        parsed_soft.cuisines = list(dict.fromkeys([
+            *parsed_soft.cuisines, *explicit_soft.cuisines,
+        ]))
+        parsed_soft.wanted_ingredients = list(dict.fromkeys([
+            *parsed_soft.wanted_ingredients, *explicit_soft.wanted_ingredients,
+        ]))
+        parsed_soft.extra_ingredients = list(dict.fromkeys([
+            *parsed_soft.extra_ingredients, *explicit_soft.extra_ingredients,
+        ]))
+    return parsed_hard, parsed_soft
+
+
+def merge_explicit_context(parsed_context, explicit_context):
+    """Apply only context fields actually sent by the H5/device client."""
+    if explicit_context is None:
+        return parsed_context
+    for field in explicit_context.model_fields_set:
+        setattr(parsed_context, field, getattr(explicit_context, field))
+    return parsed_context
+
+
 def load_candidates() -> list[Candidate]:
     return [Candidate(**c) for c in json.loads(DEMO_DATA.read_text(encoding="utf-8"))]
 
@@ -349,7 +397,8 @@ async def get_profile():
 async def put_profile(body: dict):
     allowed = {"allergens", "diet_taboos", "hated", "budget_max",
                "eat_by_minutes", "max_distance_m", "spicy", "cuisines",
-               "wanted_ingredients", "extra_ingredients"}
+               "wanted_ingredients", "extra_ingredients", "display_name",
+               "care_profile"}
     prof = load_profile()
     prof.update({k: v for k, v in body.items() if k in allowed})
     PROFILE_PATH.write_text(json.dumps(prof, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -463,25 +512,30 @@ async def submit_input(body: InputPayload):
             session.raw_input = f"{session.raw_input} {body.text}"
         else:
             session.raw_input = body.text
-    if body.hard_constraints:
-        session.hard_constraints = body.hard_constraints
-    if body.soft_preferences:
-        session.soft_preferences = body.soft_preferences
-    if body.context:
-        session.context = body.context
+    # Text is parsed below and then merged with explicit H5/device controls.
+    # For control-only actions (for example shake/explore), apply fields directly.
+    if not body.text:
+        if body.hard_constraints:
+            session.hard_constraints = body.hard_constraints
+        if body.soft_preferences:
+            session.soft_preferences = body.soft_preferences
+        if body.context:
+            session.context = merge_explicit_context(session.context, body.context)
     session.state = SessionState.structuring
     ledger.append(session.session_id, "input", body.model_dump())
     # text → 模型结构化（kitten 优先，Step 兜底，都挂则用手工字段/默认值走规则）
-    if USE_MODEL and body.text and body.hard_constraints is None:
+    if USE_MODEL and body.text:
         try:
             goal, hard, soft, ctx = await router.structure_input(body.text)
             if pending_ask.pop(session.session_id, False):
                 hard, soft = merge_constraints(session, hard, soft)
+            hard, soft = merge_explicit_input(
+                hard, soft, body.hard_constraints, body.soft_preferences,
+            )
             session.goal, session.hard_constraints, session.soft_preferences = goal, hard, soft
-            if body.context is None:
-                session.context = ctx
-                if ctx.channel == Channel.any and previous_context.channel != Channel.any:
-                    session.context.channel = previous_context.channel
+            if ctx.channel == Channel.any and previous_context.channel != Channel.any:
+                ctx.channel = previous_context.channel
+            session.context = merge_explicit_context(ctx, body.context)
             ledger.append(session.session_id, "structured", {
                 "hard": hard.model_dump(), "soft": soft.model_dump(), "ctx": ctx.model_dump()})
         except ModelError as e:
@@ -492,11 +546,13 @@ async def submit_input(body: InputPayload):
                 goal, hard, soft, ctx = rule_structure(body.text)
                 if pending_ask.pop(session.session_id, False):
                     hard, soft = merge_constraints(session, hard, soft)
+                hard, soft = merge_explicit_input(
+                    hard, soft, body.hard_constraints, body.soft_preferences,
+                )
                 session.goal, session.hard_constraints, session.soft_preferences = goal, hard, soft
-                if body.context is None:
-                    session.context = ctx
-                    if ctx.channel == Channel.any and previous_context.channel != Channel.any:
-                        session.context.channel = previous_context.channel
+                if ctx.channel == Channel.any and previous_context.channel != Channel.any:
+                    ctx.channel = previous_context.channel
+                session.context = merge_explicit_context(ctx, body.context)
                 session.risk_flags.append(f"structure_degraded: 规则解析兜底（{e}）")
                 ledger.append(session.session_id, "structured", {
                     "hard": hard.model_dump(), "soft": soft.model_dump(),
@@ -508,18 +564,20 @@ async def submit_input(body: InputPayload):
                               {"stage": "structure", "reason": f"{e}; rule: {e2}"})
                 await push_state(session)
                 return session.model_dump()
-    elif body.text and body.hard_constraints is None:
+    elif body.text:
         try:
             from skills.food.agents.extraction import rule_structure
 
             goal, hard, soft, ctx = rule_structure(body.text)
             if pending_ask.pop(session.session_id, False):
                 hard, soft = merge_constraints(session, hard, soft)
+            hard, soft = merge_explicit_input(
+                hard, soft, body.hard_constraints, body.soft_preferences,
+            )
             session.goal, session.hard_constraints, session.soft_preferences = goal, hard, soft
-            if body.context is None:
-                session.context = ctx
-                if ctx.channel == Channel.any and previous_context.channel != Channel.any:
-                    session.context.channel = previous_context.channel
+            if ctx.channel == Channel.any and previous_context.channel != Channel.any:
+                ctx.channel = previous_context.channel
+            session.context = merge_explicit_context(ctx, body.context)
             ledger.append(session.session_id, "structured", {
                 "hard": hard.model_dump(), "soft": soft.model_dump(),
                 "ctx": ctx.model_dump(), "rules_only": True})
@@ -534,7 +592,7 @@ async def submit_input(body: InputPayload):
     if prof:
         apply_profile_defaults(session, prof)
     # 缺字段追问(CatTV P1): 口述里预算和时间都没给(档案也没兜住) → 猫追问一句
-    if (body.text and body.hard_constraints is None
+    if (body.text
             and session.hard_constraints.budget_max is None
             and session.hard_constraints.eat_by_minutes is None
             and not asked_once.get(session.session_id)):

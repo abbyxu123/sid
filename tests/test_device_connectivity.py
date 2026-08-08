@@ -8,6 +8,8 @@ from fastapi.testclient import TestClient
 
 from core.decision_schema import (
     AgentScore,
+    Channel,
+    Context,
     DecisionMode,
     DecisionSession,
     FinalChoice,
@@ -23,6 +25,10 @@ from skills.food.agents.extraction import rule_structure
 FIRMWARE = (
     Path(__file__).resolve().parents[1]
     / "firmware/esp32_amoled18/noon_cat_amoled18/noon_cat_amoled18.ino"
+)
+CONSOLE = (
+    Path(__file__).resolve().parents[1]
+    / "services/device_gateway/console.html"
 )
 
 
@@ -226,6 +232,89 @@ def test_current_wanted_food_overrides_only_saved_dislike() -> None:
     assert session.hard_constraints.allergens == ["花生"]
     assert session.hard_constraints.hated == ["辣椒"]
     assert session.soft_preferences.wanted_ingredients == ["鱼"]
+
+
+def test_spoken_food_rules_merge_with_explicit_h5_controls() -> None:
+    _goal, parsed_hard, parsed_soft, _context = rule_structure(
+        "我要吃鱼，不要大蒜"
+    )
+
+    hard, soft = gateway.merge_explicit_input(
+        parsed_hard,
+        parsed_soft,
+        HardConstraints(budget_max=80, eat_by_minutes=45, max_distance_m=3000),
+        SoftPreferences(spicy="mild"),
+    )
+
+    assert hard.hated == ["大蒜"]
+    assert hard.budget_max == 80
+    assert hard.eat_by_minutes == 45
+    assert hard.max_distance_m == 3000
+    assert soft.wanted_ingredients == ["鱼"]
+    assert soft.spicy == "mild"
+
+
+def test_explicit_h5_context_only_overrides_fields_the_user_touched() -> None:
+    parsed = Context(people=2, state="tired", channel=Channel.any)
+    explicit = Context(channel=Channel.delivery)
+
+    merged = gateway.merge_explicit_context(parsed, explicit)
+
+    assert merged.channel == Channel.delivery
+    assert merged.people == 2
+    assert merged.state == "tired"
+
+
+def test_profile_keeps_optional_product_identity_and_care_context(
+    monkeypatch, tmp_path
+) -> None:
+    profile_path = tmp_path / "profile.json"
+    monkeypatch.setattr(gateway, "PROFILE_PATH", profile_path)
+    monkeypatch.setattr(gateway.ledger, "append", lambda *_args, **_kwargs: None)
+    client = TestClient(gateway.app)
+
+    response = client.put("/v1/profile", json={
+        "display_name": "Abby",
+        "care_profile": {
+            "fitness_goal": "balanced",
+            "cycle_note_enabled": False,
+        },
+        "hated": ["折耳根", "大蒜"],
+    })
+
+    assert response.status_code == 200
+    assert response.json()["profile"]["display_name"] == "Abby"
+    assert response.json()["profile"]["care_profile"]["fitness_goal"] == "balanced"
+    assert client.get("/v1/profile").json()["hated"] == ["折耳根", "大蒜"]
+
+
+def test_h5_collects_the_detailed_mvp_decision_context() -> None:
+    source = CONSOLE.read_text(encoding="utf-8")
+
+    assert 'data-k="channel" data-v="delivery"' in source
+    assert 'data-k="channel" data-v="dine_in"' in source
+    assert 'data-k="people" data-v="1"' in source
+    assert 'data-k="people" data-v="2"' in source
+    assert 'data-k="distance" data-v="3000"' in source
+    assert 'hard_constraints: buildHardConstraints()' in source
+    assert 'soft_preferences: buildSoftPreferences()' in source
+    assert 'context: buildContext()' in source
+    assert 'return Object.keys(c).length ? c : null' in source
+
+
+def test_h5_supports_multiple_taboo_and_allergy_choices() -> None:
+    source = CONSOLE.read_text(encoding="utf-8")
+
+    assert 'data-k="taboo" data-multi="true"' in source
+    assert 'data-k="allergy" data-multi="true"' in source
+    assert "function selectedValues(key)" in source
+
+
+def test_h5_restores_receipt_after_device_auto_idle() -> None:
+    source = CONSOLE.read_text(encoding="utf-8")
+
+    assert 'd.action_result && d.action_result.ok' in source
+    assert 'restoreReceipt(d)' in source
 
 
 def test_voice_treats_chinese_numbers_as_food_intent(monkeypatch) -> None:

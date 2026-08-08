@@ -55,7 +55,7 @@ const NetProfile NETS[] = {
   {"DEMO", DEMO_WIFI_SSID, DEMO_WIFI_PASS, DEMO_GW_HOST, DEMO_GW_PORT},
   {"DEMO-ASCII", DEMO_ASCII_WIFI_SSID, DEMO_ASCII_WIFI_PASS, DEMO_ASCII_GW_HOST, DEMO_ASCII_GW_PORT},
 };
-uint8_t netOrder[] = {2};                // demo safe mode: lock to the current ASCII hotspot
+uint8_t netOrder[] = {0, 1};             // home first, then the portable Abby hotspot
 uint8_t activeNetSlot = 0;
 bool wsStarted = false;
 uint32_t wsFailSince = 0;

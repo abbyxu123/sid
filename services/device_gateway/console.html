@@ -13,6 +13,7 @@ body{margin:0;font:16px/1.6 -apple-system,"PingFang SC",sans-serif;background:va
 h1{font-size:26px;margin:10px 0 4px}
 .sub{color:var(--dim);margin-bottom:14px}
 textarea{width:100%;font:inherit;font-size:17px;border-radius:14px;border:1px solid #333;background:var(--card);color:var(--fg);padding:14px;min-height:88px}
+input.profile{width:100%;font:inherit;border-radius:8px;border:1px solid #3a3a46;background:var(--card);color:var(--fg);padding:10px 12px;margin:6px 0}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
 .chipgrp{width:100%;font-size:12px;color:var(--dim);margin-top:6px}
 .chip{background:var(--card);border:1px solid #333;border-radius:20px;padding:7px 14px;font-size:14px;color:var(--dim)}
@@ -50,6 +51,18 @@ summary{color:var(--dim);font-size:13px}
   <button class="big sec" id="micBtn" onclick="dictate()" style="display:none">🎤 直接说给猫听</button>
   <!-- 三栏结构对齐设计稿：口味偏好 / 预算时间 / 忌口过敏 -->
   <div class="chips" id="chips">
+    <div class="chipgrp">📍 这顿怎么吃</div>
+    <span class="chip sel" data-k="channel" data-v="any">都可以</span>
+    <span class="chip" data-k="channel" data-v="delivery">叫外卖</span>
+    <span class="chip" data-k="channel" data-v="dine_in">出去吃</span>
+    <div class="chipgrp">👥 几个人</div>
+    <span class="chip sel" data-k="people" data-v="1">1人</span>
+    <span class="chip" data-k="people" data-v="2">2人</span>
+    <span class="chip" data-k="people" data-v="4">3-4人</span>
+    <div class="chipgrp">🧭 距离范围</div>
+    <span class="chip" data-k="distance" data-v="1000">1公里内</span>
+    <span class="chip" data-k="distance" data-v="3000">3公里内</span>
+    <span class="chip" data-k="distance" data-v="5000">5公里内</span>
     <div class="chipgrp">🌶 口味偏好</div>
     <span class="chip" data-k="spicy" data-v="none">不辣</span>
     <span class="chip" data-k="spicy" data-v="mild">微辣</span>
@@ -64,13 +77,25 @@ summary{color:var(--dim);font-size:13px}
     <span class="chip" data-k="state" data-v="low_patience">别让我选</span>
     <span class="chip" data-k="state" data-v="indulge">放纵吃😋</span>
     <div class="chipgrp">🚫 忌口 / 过敏</div>
-    <span class="chip" data-k="taboo" data-v="面食">不吃面</span>
-    <span class="chip" data-k="taboo" data-v="香菜">不要香菜</span>
-    <span class="chip" data-k="allergy" data-v="花生">花生过敏</span>
-    <span class="chip" data-k="allergy" data-v="海鲜">海鲜过敏</span>
+    <span class="chip" data-k="taboo" data-multi="true" data-v="面食">不吃面</span>
+    <span class="chip" data-k="taboo" data-multi="true" data-v="香菜">不要香菜</span>
+    <span class="chip" data-k="taboo" data-multi="true" data-v="折耳根">不要折耳根</span>
+    <span class="chip" data-k="taboo" data-multi="true" data-v="大蒜">不要大蒜</span>
+    <span class="chip" data-k="taboo" data-multi="true" data-v="葱">不要葱</span>
+    <span class="chip" data-k="allergy" data-multi="true" data-v="花生">花生过敏</span>
+    <span class="chip" data-k="allergy" data-multi="true" data-v="海鲜">海鲜过敏</span>
   </div>
   <button class="big" onclick="go()">让猫咪们讨论 🐾</button>
   <button class="big sec" onclick="saveProfile()" style="font-size:14px;padding:10px">💾 把上面的选择存为我的默认（过敏/忌口永久生效）</button>
+  <details style="margin-top:8px;padding-top:0"><summary>长期档案</summary>
+    <input class="profile" id="displayName" maxlength="24" placeholder="怎么称呼你">
+    <div class="chips" style="margin-bottom:0">
+      <div class="chipgrp">日常目标（可不选）</div>
+      <span class="chip" data-k="fitness" data-v="balanced">均衡</span>
+      <span class="chip" data-k="fitness" data-v="fat_loss">控脂</span>
+      <span class="chip" data-k="fitness" data-v="muscle_gain">增肌</span>
+    </div>
+  </details>
   <div class="row">
     <button class="big sec" onclick="$('menu').click()">📷 拍菜单</button>
     <button class="big sec" onclick="explore()">🍎 摇苹果树</button>
@@ -148,11 +173,13 @@ const CATIMG = a => `/assets/noon_cat_${a}.jpg`;
 const picks = {};
 function toast(m){ const t=$('toast'); t.textContent=m; t.style.display='block'; setTimeout(()=>t.style.display='none',2500); }
 function show(p){ document.querySelectorAll('.page').forEach(x=>x.classList.remove('on')); $(p).classList.add('on'); }
+function selectedValues(key){ return Array.from(document.querySelectorAll(`.chip.sel[data-k="${key}"]`)).map(x=>x.dataset.v); }
 document.querySelectorAll('.chip').forEach(c => c.onclick = () => {
   const k = c.dataset.k;
-  document.querySelectorAll(`.chip[data-k=${k}]`).forEach(x => { if (x!==c) x.classList.remove('sel'); });
+  if (c.dataset.multi !== "true")
+    document.querySelectorAll(`.chip[data-k="${k}"]`).forEach(x => { if (x!==c) x.classList.remove('sel'); });
   c.classList.toggle('sel');
-  picks[k] = c.classList.contains('sel') ? c.dataset.v : null;
+  picks[k] = c.dataset.multi === "true" ? selectedValues(k) : (c.classList.contains('sel') ? c.dataset.v : null);
 });
 
 async function post(p, body){ const r = await fetch(base+p,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); if(!r.ok) throw new Error((await r.text()).slice(0,80)); return r.json(); }
@@ -203,19 +230,39 @@ async function refresh(d){ if(!d) return; dishes=d.candidates||[]; cursor=d.curs
   if(d.final_choice){ const cur=dishes[cursor%dishes.length]; if(cur){curDish=cur; $('dName').textContent=cur.item; $('dMeta').textContent=`¥${cur.price_total} · ${cur.eta_minutes}分钟 · ${cur.restaurant}`; $('dWhy').textContent=(d.final_choice.reasons||[]).join(" · ");} show('p3'); } }
 
 function buildText(){
-  let t = $('text').value.trim(); const parts=[];
-  if(picks.budget) parts.push(picks.budget+"块以内"); if(picks.eatby) parts.push(picks.eatby+"分钟内要吃到");
-  const SPICY_TXT={none:"不要辣",mild:"来点微辣",medium:"想吃辣的",hot:"要重辣"};
-  if(picks.spicy) parts.push(SPICY_TXT[picks.spicy]); if(picks.taboo) parts.push("不吃"+picks.taboo);
-  if(picks.allergy) parts.push("对"+picks.allergy+"过敏");
-  if(picks.state==="tired") parts.push("有点累"); if(picks.state==="low_patience") parts.push("别让我选快点定");
-  if(picks.state==="indulge") parts.push("今天想放纵吃");
-  return [t, ...parts].filter(Boolean).join("，");
+  return $('text').value.trim();
+}
+function selectedValue(key, fallback=null){ const values=selectedValues(key); return values.length ? values[0] : fallback; }
+function buildHardConstraints(){
+  const h={}, allergies=selectedValues("allergy"), taboos=selectedValues("taboo");
+  if(allergies.length) h.allergens=allergies;
+  if(taboos.length) h.diet_taboos=taboos;
+  const budget=selectedValue("budget"), eatby=selectedValue("eatby"), distance=selectedValue("distance");
+  if(budget) h.budget_max=Number(budget);
+  if(eatby) h.eat_by_minutes=Number(eatby);
+  if(distance) h.max_distance_m=Number(distance);
+  return Object.keys(h).length ? h : null;
+}
+function buildSoftPreferences(){
+  const s={}, spicy=selectedValue("spicy");
+  if(spicy) s.spicy=spicy;
+  return Object.keys(s).length ? s : null;
+}
+function buildContext(){
+  const c={};
+  if(picks.channel) c.channel=picks.channel;
+  if(picks.people) c.people=Number(picks.people);
+  if(picks.state) c.state=picks.state;
+  return Object.keys(c).length ? c : null;
 }
 async function go(){ await ensureSession(); watch();
-  const text = buildText(); if(!text && !$('menu').files[0]) return toast("说点什么或选个标签～");
+  const text = buildText();
+  const hasControls = buildHardConstraints() || buildSoftPreferences() || selectedValue("channel","any") !== "any" || selectedValue("people","1") !== "1";
+  if(!text && !hasControls && !$('menu').files[0]) return toast("说点什么或选个标签～");
   show('p2'); $('stateTxt').textContent="💭 猫猫在理解你的需求…";
-  const body={session_id:sid, text}; const mf=$('menu').files[0];
+  const body={session_id:sid, text, hard_constraints: buildHardConstraints(),
+              soft_preferences: buildSoftPreferences(), context: buildContext()};
+  const mf=$('menu').files[0];
   if(mf){ $('stateTxt').textContent="📷 猫猫在看菜单…(约30秒)";
     body.menu_image_b64 = await new Promise(res=>{const r=new FileReader(); r.onload=()=>res(r.result.split(",")[1]); r.readAsDataURL(mf);}); }
   try{ const d = await post("/v1/input", body);
@@ -223,7 +270,9 @@ async function go(){ await ensureSession(); watch();
     refresh(d);
   } catch(e){ toast("失败:"+e.message); show('p1'); } }
 async function explore(){ await ensureSession(); watch(); show('p2');
-  try{ refresh(await post("/v1/input",{session_id:sid, soft_preferences:{novelty:"bold"}})); }catch(e){ toast(e.message); show('p1'); } }
+  const soft=buildSoftPreferences()||{}; soft.novelty="bold";
+  try{ refresh(await post("/v1/input",{session_id:sid, hard_constraints:buildHardConstraints(),
+    soft_preferences:soft, context:buildContext()})); }catch(e){ toast(e.message); show('p1'); } }
 async function ev(e){ if(!sid) return; try{ await post("/v1/device/event",{device_id:"phone",session_id:sid,event:e,timestamp:Date.now()});
   if(e==="left_ear"){ cursor=(cursor+1)%Math.max(dishes.length,1); const c=dishes[cursor]; if(c){curDish=c; $('dName').textContent=c.item; $('dMeta').textContent=`¥${c.price_total} · ${c.eta_minutes}分钟 · ${c.restaurant}`;} }
   }catch(err){ toast(err.message); } }
@@ -264,19 +313,41 @@ async function openJournal(){
 }
 async function saveProfile(){
   const prof = {};
-  if (picks.allergy) prof.allergens = [picks.allergy];
-  if (picks.taboo) prof.diet_taboos = [picks.taboo];
-  if (picks.budget) prof.budget_max = Number(picks.budget);
-  if (picks.eatby) prof.eat_by_minutes = Number(picks.eatby);
-  if (picks.spicy) prof.spicy = picks.spicy;
+  const allergies=selectedValues("allergy"), taboos=selectedValues("taboo");
+  const budget=selectedValue("budget"), eatby=selectedValue("eatby"), distance=selectedValue("distance"), spicy=selectedValue("spicy");
+  if (allergies.length) prof.allergens = allergies;
+  if (taboos.length) prof.diet_taboos = taboos;
+  if (budget) prof.budget_max = Number(budget);
+  if (eatby) prof.eat_by_minutes = Number(eatby);
+  if (distance) prof.max_distance_m = Number(distance);
+  if (spicy) prof.spicy = spicy;
+  if ($('displayName').value.trim()) prof.display_name = $('displayName').value.trim();
+  const fitness=selectedValue("fitness");
+  if (fitness) prof.care_profile = {fitness_goal:fitness};
   if (!Object.keys(prof).length) return toast("先点几个标签再存～");
-  try { await fetch(base + "/v1/profile", {method: "PUT",
+  try { const response=await fetch(base + "/v1/profile", {method: "PUT",
     headers: {"content-type": "application/json"}, body: JSON.stringify(prof)});
+    if(!response.ok) throw new Error(await response.text());
     toast("记住了！以后每次决策自动带上 🐾");
   } catch(e) { toast("保存失败 " + e.message); }
 }
 async function fb(r,rep){ try{ await post("/v1/feedback",{session_id:sid,rating:r,would_repeat:rep,reject_reason:rep?"":"不合口味"}); toast("已记进猫爪记忆 🐾"); }catch(e){} }
-function reset(){ if(es) es.close(); sid=null; curDish=null; dishes=[]; document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel')); Object.keys(picks).forEach(k=>picks[k]=null); $('text').value=""; $('menu').value=""; show('p1'); }
+function setChip(key,value,on=true){ const chip=document.querySelector(`.chip[data-k="${key}"][data-v="${value}"]`); if(chip) chip.classList.toggle('sel',on); }
+function applyDefaultChips(){ setChip("channel","any"); setChip("people","1"); }
+function reset(){ if(es) es.close(); sid=null; curDish=null; dishes=[]; document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel')); applyDefaultChips(); Object.keys(picks).forEach(k=>picks[k]=null); $('text').value=""; $('menu').value=""; show('p1'); }
+async function loadProfile(){
+  try{
+    const prof=await (await fetch(base+"/v1/profile")).json();
+    if(prof.display_name) $('displayName').value=prof.display_name;
+    (prof.allergens||[]).forEach(v=>setChip("allergy",v));
+    (prof.diet_taboos||[]).forEach(v=>setChip("taboo",v));
+    if(prof.budget_max!=null) setChip("budget",String(prof.budget_max));
+    if(prof.eat_by_minutes!=null) setChip("eatby",String(prof.eat_by_minutes));
+    if(prof.max_distance_m!=null) setChip("distance",String(prof.max_distance_m));
+    if(prof.spicy) setChip("spicy",prof.spicy);
+    if(prof.care_profile&&prof.care_profile.fitness_goal) setChip("fitness",prof.care_profile.fitness_goal);
+  }catch(e){}
+}
 // 卡路里等待过场：台词轮播+呼吸点点，30 秒不冷场（分析在 Spark 上跑，纯前端动画）
 const CAL_LINES = ["🐱 猫猫凑近看了看", "👀 唔…这是什么好吃的", "🍽 在数有几块肉",
                    "📏 估一估分量", "🤔 油放得多不多呢", "🧮 掐指一算卡路里", "😺 快好了快好了"];
@@ -311,19 +382,21 @@ function dictate(){
 }
 async function metrics(){ try{ const d=await (await fetch(base+"/v1/metrics")).json();
   $('metrics').innerHTML=`<span class="badge">Step: ${d.model.step_3_7_flash}</span><span class="badge">学徒: ${d.model.kitten_local}</span><span class="badge">第三方API: ${d.safety.third_party_model_api_calls}</span><span class="badge">违规: ${d.safety.hard_constraint_violations_shipped}</span><span class="badge">审核拦截: ${d.safety.blocked_by_audit}</span><span class="badge">用户确认: ${d.safety.external_actions_user_confirmed}</span><span class="badge">决策: ${d.decisions_total}</span>`; }catch(e){} }
-setInterval(metrics, 5000); metrics();
+function restoreReceipt(d){
+  dishes=d.candidates||[]; cursor=d.cursor||0;
+  const cur=dishes[cursor%Math.max(dishes.length,1)];
+  if(cur){ curDish=cur; $('dName').textContent=cur.item;
+    $('dMeta').textContent=`¥${cur.price_total} · ${cur.eta_minutes}分钟 · ${cur.restaurant}`; }
+  if(d.action_result && d.action_result.ok && curDish){
+    setOrderLinks(d.action_result.url,d.action_result.app_url); fillTicket(); show('p4'); return true;
+  }
+  return false;
+}
+setInterval(metrics, 5000); metrics(); loadProfile();
 if (sid) { watch(); toast("已连接猫咪决策机 🐱");
   fetch(base + "/v1/session/" + sid).then(r => r.json()).then(d => {
-    dishes = d.candidates || []; cursor = d.cursor || 0;
-    const cur = dishes[cursor % Math.max(dishes.length, 1)];
-    if (cur) { curDish = cur; $('dName').textContent = cur.item;
-      $('dMeta').textContent = `¥${cur.price_total} · ${cur.eta_minutes}分钟 · ${cur.restaurant}`; }
-    if (d.state === "done" && curDish) {
-      fillTicket();
-      if (d.action_result && d.action_result.url)
-        setOrderLinks(d.action_result.url, d.action_result.app_url);
-      show('p4');
-    } else if (d.state === "candidate" && curDish) show('p3');
+    if (restoreReceipt(d)) return;
+    if (d.state === "candidate" && curDish) show('p3');
   }).catch(()=>{}); }
 </script>
 </body>

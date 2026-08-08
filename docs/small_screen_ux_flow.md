@@ -44,9 +44,9 @@ Use short captions and large visual states. The cat should carry emotion; the in
 | Page | Folder name | Priority | Main action | Backend mapping |
 |---|---|---|---|---|
 | 01 | `01_idle_start` | P0 | Start decision | `POST /v1/session`, `idle` |
-| 02 | `02_profile_setup` | P1 | Save name/profile | future `/v1/profile` |
-| 03 | `03_care_profile` | P1 | Save optional care state | future `/v1/profile.care_profile` |
-| 04 | `04_mode_scene_select` | P1 | Choose decision mode, dining scene, distance | normal now; blind/lucky/group/hungry planned |
+| 02 | `02_profile_setup` | P1 | Save name/profile | existing `/v1/profile`; account sync later |
+| 03 | `03_care_profile` | P1 | Save optional adult care state | basic `/v1/profile.care_profile`; richer UI later |
+| 04 | `04_mode_scene_select` | P1 | Choose dining scene, people, distance | H5 supports delivery/dine-out/either; home cooking later |
 | 05 | `05_preference_filter` | P0 | Set food constraints, people count, distance | `POST /v1/input` structured fields |
 | 06 | `06_voice_input` | P0 | Speak/type today's thought | `POST /v1/input` or `/v1/voice` |
 | 07 | `07_clarify_question` | P1 | Answer one missing field | future `missing_fields` response |
